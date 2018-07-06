@@ -35,11 +35,20 @@ public class taverne : MonoBehaviour {
     GameObject hocker13;
     GameObject hocker14;
     GameObject treppe;
+    GameObject wand1;
+    GameObject wand2;
+    GameObject wand3;
+    GameObject wand4;
+    GameObject decke;
 
     //Deklaration der Meshes und Hilfslisten für Bereiche
     Mesh barbermesh;
     List<Vector3> barberVert;
     List<int> barberTri;
+
+    Mesh bermesh;
+    List<Vector3> berVert;
+    List<int> berTri;
 
     Mesh buebermesh;
     List<Vector3> bueberVert;
@@ -309,6 +318,56 @@ public class taverne : MonoBehaviour {
 
         treppe.GetComponent<Renderer>().material.color = new Color(0.0f, 1.0f, 1.0f);
     }
+   
+    //Bereiche werden generiert
+    void berBuilder(GameObject bereich, Vector3 vert1, Vector3 vert2, Vector3 vert3, Vector3 vert4) {
+
+        berVert = new List<Vector3>();
+        berTri = new List<int>();
+
+        berVert.Add(vert1);
+        berVert.Add(vert2);
+        berVert.Add(vert3);
+        berVert.Add(vert4);
+
+        bermesh = new Mesh();
+        bermesh.vertices = berVert.ToArray();
+        bereich.GetComponent<MeshFilter>().mesh = bermesh;
+
+        berTri.Add(0);
+        berTri.Add(1);
+        berTri.Add(2);
+
+        berTri.Add(2);
+        berTri.Add(1);
+        berTri.Add(3);
+
+        bermesh.triangles = berTri.ToArray();
+    }
+
+    //Zufällige Generierung
+    void randomize() {
+        float konfig = Mathf.Floor(Random.Range(1, 3));
+        Debug.Log(konfig);
+        if (konfig == 1) {
+            berBuilder(barbereich, new Vector3(-5, 0.1f, -5f), new Vector3(-5, 0.1f, 0), new Vector3(-2, 0.1f, -5f), new Vector3(-2, 0.1f, 0));
+            berBuilder(buehnenbereich, new Vector3(-3, 0.1f, 2), new Vector3(-3, 0.1f, 5), new Vector3(+3, 0.1f, 2), new Vector3(+3, 0.1f, 5));
+            berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
+        }
+
+        if (konfig == 2)
+        {
+            berBuilder(barbereich, new Vector3( 2, 0.1f, -5f), new Vector3( 2, 0.1f, 0), new Vector3( 5, 0.1f, -5f), new Vector3( 5, 0.1f, 0));
+            berBuilder(buehnenbereich, new Vector3(-3, 0.1f, 2), new Vector3(-3, 0.1f, 5), new Vector3(+3, 0.1f, 2), new Vector3(+3, 0.1f, 5));
+            berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3( 1, 0.1f, -4.5f), new Vector3( 1, 0.1f, 1));
+        }
+
+        if (konfig == 3)
+        {
+
+        }
+
+    }
 
     void Start () {
 
@@ -338,14 +397,11 @@ public class taverne : MonoBehaviour {
         tisch1 = GameObject.CreatePrimitive(PrimitiveType.Quad);
         tisch2 = GameObject.CreatePrimitive(PrimitiveType.Quad);
         treppe = GameObject.CreatePrimitive(PrimitiveType.Quad);
-
-        //Instanzierung der Hilfslisten der Bereiche
-        barberVert = new List<Vector3>();
-        barberTri = new List<int>();
-        bueberVert = new List<Vector3>();
-        bueberTri = new List<int>();
-        tiberVert = new List<Vector3>();
-        tiberTri = new List<int>();
+        wand1 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        wand2 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        wand3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        wand4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        decke = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
         //Instanzierung der Hilfslisten der Objekte
         barVert = new List<Vector3>();
@@ -377,70 +433,15 @@ public class taverne : MonoBehaviour {
         hocker12.name = "Hocker12";
         hocker13.name = "Hocker13";
         hocker14.name = "Hocker14";
+        wand1.name = "wand1";
+        wand2.name = "wand2";
+        wand3.name = "wand3";
+        wand4.name = "wand4";
+        decke.name = "decke";
 
         //Bereiche der Taverne einteilen
 
-        //Barbereich
-        barberVert.Add(new Vector3(-5, 0.1f, -5f));
-        barberVert.Add(new Vector3(-5, 0.1f, 0));
-        barberVert.Add(new Vector3(-2, 0.1f, -5f));
-        barberVert.Add(new Vector3(-2, 0.1f, 0));
 
-        barbermesh = new Mesh();
-        barbermesh.vertices = barberVert.ToArray();
-        barbereich.GetComponent<MeshFilter>().mesh = barbermesh;
-
-        barberTri.Add(0);
-        barberTri.Add(1);
-        barberTri.Add(2);
-
-        barberTri.Add(2);
-        barberTri.Add(1);
-        barberTri.Add(3);
-
-        barbermesh.triangles = barberTri.ToArray();
-
-        //Buehnenbereich
-        bueberVert.Add(new Vector3(-3, 0.1f, 2));
-        bueberVert.Add(new Vector3(-3, 0.1f, 5));
-        bueberVert.Add(new Vector3(+3, 0.1f, 2));
-        bueberVert.Add(new Vector3(+3, 0.1f, 5));
-
-        buebermesh = new Mesh();
-        buebermesh.vertices = bueberVert.ToArray();
-
-        buehnenbereich.GetComponent<MeshFilter>().mesh = buebermesh;
-
-        bueberTri.Add(0);
-        bueberTri.Add(1);
-        bueberTri.Add(2);
-
-        bueberTri.Add(2);
-        bueberTri.Add(1);
-        bueberTri.Add(3);
-
-        buebermesh.triangles = bueberTri.ToArray();
-
-        //Tischbereich
-        tiberVert.Add(new Vector3( -1, 0.1f, -4.5f));
-        tiberVert.Add(new Vector3( -1, 0.1f, 1));
-        tiberVert.Add(new Vector3( 4, 0.1f, -4.5f));
-        tiberVert.Add(new Vector3( 4, 0.1f, 1));
-
-        tibermesh = new Mesh();
-        tibermesh.vertices = tiberVert.ToArray();
-
-        tischbereich.GetComponent<MeshFilter>().mesh = tibermesh;
-
-        tiberTri.Add(0);
-        tiberTri.Add(1);
-        tiberTri.Add(2);
-
-        tiberTri.Add(2);
-        tiberTri.Add(1);
-        tiberTri.Add(3);
-
-        tibermesh.triangles = tiberTri.ToArray();
 
         //Farben der einzelnen Bereiche
         barbereich.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
@@ -593,13 +594,31 @@ public class taverne : MonoBehaviour {
         buehne.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 1.0f);
         bar.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 1.0f);
         boden.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
+        decke.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
+        wand1.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
+        wand2.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
+        wand3.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
+        wand4.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
 
         //treppe
         treppenmesh(-2.5f, 0.6f, 3.75f, treppe);
+
+        //wände
+        berBuilder( wand1, new Vector3(-5, 0f, -5f), new Vector3(-5, 3, -5f), new Vector3(-5, 0f, 5f), new Vector3(-5f, 3, 5f));
+        berBuilder( wand2, new Vector3(-5, 0f, 5), new Vector3(-5, 3, 5), new Vector3( 5, 0f, 5), new Vector3(5, 3, 5));
+        berBuilder( wand3, new Vector3( 5, 0, 5), new Vector3( 5, 3, 5), new Vector3(5, 0, -5), new Vector3(5, 3, -5));
+        berBuilder( wand4, new Vector3(5, 0, -5), new Vector3(5, 3, -5), new Vector3(-5, 0, -5), new Vector3(-5, 3, -5));
+
+        berBuilder(decke, new Vector3(5, 3, -5), new Vector3(5, 3, 5), new Vector3( -5, 3, -5), new Vector3(-5, 3, 5));
+
+        randomize();
     }
 
     // Update is called once per frame
     void Update () {
-		
+		if (Input.GetKeyDown(KeyCode.S))
+            {
+                randomize();
+            }
 	}
 }
