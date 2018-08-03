@@ -8,6 +8,7 @@ public class Control : MonoBehaviour {
     GameObject character = null;
     // Reference to Init Script for Character Creation
     Init initDone;
+    bool pressed = false;
     // Use this for initialization
     void Start () {
         // Get Reference to Init Script
@@ -34,7 +35,8 @@ public class Control : MonoBehaviour {
                 if (Input.GetKey(KeyCode.RightArrow)) {
                     character.transform.Rotate(0, 2.5f, 0);
                 }
-                if (Input.GetKeyDown(KeyCode.Space)) {
+                if (Input.GetKeyDown(KeyCode.Space) && !pressed) {
+                    StartCoroutine(Jump());
                     // https://www.gamedev.net/forums/topic/490713-jump-formula/
                 }
                 // Bard Mode
@@ -45,7 +47,7 @@ public class Control : MonoBehaviour {
     }
 
     // Temporary for Mode Change / will be changed later
-    void modeChange() {
+    void ModeChange() {
 
     }
 
@@ -56,5 +58,21 @@ public class Control : MonoBehaviour {
         }
         character = GameObject.Find("Bard");
         character.transform.Translate(-4.23f, 0.606f, 0.98f);
+    }
+
+    IEnumerator Jump() {
+        pressed = true;
+        float jumpStart = character.transform.position.y, aktPos = jumpStart;
+        while (aktPos < (jumpStart + 0.5f)) {
+            aktPos += 0.05f;
+            character.transform.Translate(0, 0.05f, 0);
+            yield return new WaitForSeconds(0.01f);
+        }
+        while (aktPos > jumpStart) {
+            aktPos -= 0.05f;
+            character.transform.Translate(0, -0.05f, 0);
+            yield return new WaitForSeconds(0.01f);
+        }
+        pressed = false;
     }
 }
