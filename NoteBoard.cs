@@ -15,8 +15,6 @@ public class NoteBoard : MonoBehaviour {
     // Move x Units along Screen - Higher number = Faster notes
     float moveAlongScreen = 0.03f;
 
-    private int testVar = 0;
-
     // Use this for initialization
     void Start () {
         StartCoroutine(WaitForStage());
@@ -76,7 +74,8 @@ public class NoteBoard : MonoBehaviour {
         post2.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust right post position
         post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, post2Pos.z);
-        despawn = post1.transform.position;
+        // + 0.1 Units on X to avoid clipping
+        despawn = post1.transform.position + new Vector3(0.1f, 0, 0);
     }
 
     void buildScreen() {
@@ -126,8 +125,36 @@ public class NoteBoard : MonoBehaviour {
     IEnumerator generateNotes() {
         while (true) {
             GameObject note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
+            /*note.AddComponent<MeshRenderer>();
+            Material[] noteMaterials;
+            noteMaterials = note.GetComponentInChildren<MeshRenderer>().materials;
+            Debug.Log(noteMaterials[0]);
+
+            MeshRenderer fadeMesh = note.GetComponent<MeshRenderer>();
+            fadeMesh.enabled = true;
+
+            for (int i = 0; i < noteMaterials.Length; ++i) {
+                //ENABLE FADE Mode on the material if not done already
+                noteMaterials[i].SetFloat("_Mode", 2);
+                noteMaterials[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                noteMaterials[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                noteMaterials[i].SetInt("_ZWrite", 0);
+                noteMaterials[i].DisableKeyword("_ALPHATEST_ON");
+                noteMaterials[i].EnableKeyword("_ALPHABLEND_ON");
+                noteMaterials[i].DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                noteMaterials[i].renderQueue = 3000;
+                Debug.Log(noteMaterials[i].GetFloat("_Mode"));
+
+                Color meshColor = noteMaterials[i].color;
+                //noteMaterials[i].color = new Color(meshColor.r, meshColor.g, meshColor.b, 0f);
+                meshColor.a = 0f;
+                noteMaterials[i].color = meshColor;
+                Debug.Log(noteMaterials[i].name);
+            }*/
+            
             note.transform.position = post2.transform.position;
-            note.transform.Translate(0, 0.2f, 0);
+            note.transform.Translate(-0.1f, 0.2f, 0);
+            //StartCoroutine(fade(fadeMesh, 2f, true));
             notes.Add(note);
             yield return new WaitForSeconds(1);
         }
@@ -159,4 +186,47 @@ public class NoteBoard : MonoBehaviour {
             yield return new WaitForSeconds(refresh);
         }
     }
+
+    /*
+    // Based on https://stackoverflow.com/questions/44933517/fading-in-out-gameobject
+    IEnumerator fade(MeshRenderer fadingNote, float duration, bool fadeInOut) {
+        float start, end;
+
+        // fadeInOut true = fadeIn, fadeInOut false = fadeOut
+        if (fadeInOut) {
+            start = 0;
+            end = 1;
+        } else {
+            start = 1;
+            end = 0;
+        }
+
+        //ENABLE FADE Mode on the material if not done already
+        fadingNote.material.SetFloat("_Mode", 2);
+        fadingNote.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        fadingNote.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        fadingNote.material.SetInt("_ZWrite", 0);
+        fadingNote.material.DisableKeyword("_ALPHATEST_ON");
+        fadingNote.material.EnableKeyword("_ALPHABLEND_ON");
+        fadingNote.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        fadingNote.material.renderQueue = 3000;
+
+        float counter = 0;
+
+        // Get current color
+        Color spriteColor = fadingNote.material.color;
+
+        while (counter < duration) {
+            counter += Time.deltaTime;
+
+            //Fade from start to end
+            float alpha = Mathf.Lerp(start, end, counter / duration);
+
+            //Change alpha only
+            fadingNote.material.color = new Color(spriteColor.r, spriteColor.g, spriteColor.b, alpha);
+
+            //Wait for a frame
+            yield return null;
+        }
+    }*/
 }
