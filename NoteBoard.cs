@@ -1,12 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NoteBoard : MonoBehaviour {
     // Reference to stage
-    private GameObject stageRef, post1, post2, screen;
+    private GameObject stageRef, post1, post2, screen, borderLeft, borderRight, scoreText;
     private Mesh screenMesh;
-    public List<GameObject> notes;
+    // Flag for Score Coroutine
+    private bool scoreCRrunning;
+    // Saves last called Score Coroutine
+    public Coroutine lastScoreCR;
+    public int bad, good, great;
+    public List<GameObject> notes = new List<GameObject>();
+    // Random numbers for testing
+    System.Random rnd = new System.Random();
     Vector3 despawn;
 
     // Refreshes the Noteposition every x Seconds
@@ -18,14 +26,18 @@ public class NoteBoard : MonoBehaviour {
     // Use this for initialization
     void Start () {
         StartCoroutine(WaitForStage());
-        StartCoroutine(generateNotes());
+        bad = 0;
+        good = 0;
+        great = 0;
+        scoreCRrunning = false;
+        lastScoreCR = null;
     }
 	
 	// Update is called once per frame
 	void Update () {
 	}
 
-    void buildBoard() {
+    void BuildBoard() {
         stageRef = GameObject.Find("Tavern").GetComponent<taverne>().getBuehne();
 
         Mesh stageRefMesh = stageRef.GetComponent<MeshFilter>().mesh;
@@ -37,11 +49,11 @@ public class NoteBoard : MonoBehaviour {
         float stageLenZ = stageRefMesh.bounds.size.z * stageRefTrans.localScale.z;
         Debug.Log(stageLenX + " " + stageLenY + " " + stageLenZ + " ");*/
 
-        buildPosts(stageRefMesh, stageRefTrans);
-        buildScreen();
+        BuildPosts(stageRefMesh, stageRefTrans);
+        BuildScreen();
     }
 
-    void buildPosts(Mesh stageRefMesh, Transform stageRefTrans) {
+    void BuildPosts(Mesh stageRefMesh, Transform stageRefTrans) {
         Vector3 post1Pos = new Vector3(0, 0, 0), post2Pos = new Vector3(0, 0, 0);
         for (int i = 0; i < stageRefMesh.vertices.Length; i++) {
             if (i == 0) {
@@ -76,9 +88,11 @@ public class NoteBoard : MonoBehaviour {
         post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, post2Pos.z);
         // + 0.1 Units on X to avoid clipping
         despawn = post1.transform.position + new Vector3(0.1f, 0, 0);
+        post1.name = "LeftPost";
+        post2.name = "RightPost";
     }
 
-    void buildScreen() {
+    void BuildScreen() {
         screenMesh = new Mesh();
         screen = new GameObject("Screen");
         //screen.transform.position = post2.transform.position;
@@ -89,11 +103,22 @@ public class NoteBoard : MonoBehaviour {
         screen.GetComponent<MeshFilter>().mesh = screenMesh;
 
         List<Vector3> newVertices = new List<Vector3>();
+        float post1XPos = post1.transform.position.x;
+        float post1YPos = post1.transform.position.y;
+        float post1ZPos = post1.transform.position.z;
+        float post2XPos = post2.transform.position.x;
+        //float post2YPos = post2.transform.position.y;
+        float post2ZPos = post2.transform.position.z;
+        float post1XScale = post1.transform.localScale.x;
+        float post2XScale = post2.transform.localScale.x;
+        // upperLimit and lowerLimit are the same for post1YPos and post2YPos
+        float upperLimit = post1YPos + 1.1f;
+        float lowerLimit = post1YPos - 0.1f;
 
-        newVertices.Add(new Vector3(post1.transform.position.x + post1.transform.localScale.x / 2, post1.transform.position.y + 1.1f, post1.transform.position.z - 0.01f));
-        newVertices.Add(new Vector3(post1.transform.position.x + post1.transform.localScale.x / 2, post1.transform.position.y - 0.1f, post1.transform.position.z - 0.01f));
-        newVertices.Add(new Vector3(post2.transform.position.x - post2.transform.localScale.x / 2, post2.transform.position.y + 1.1f, post2.transform.position.z - 0.01f));
-        newVertices.Add(new Vector3(post2.transform.position.x - post2.transform.localScale.x / 2, post2.transform.position.y - 0.1f, post2.transform.position.z - 0.01f));
+        newVertices.Add(new Vector3(post1XPos + post1XScale / 2, upperLimit, post1ZPos - 0.01f));
+        newVertices.Add(new Vector3(post1XPos + post1XScale / 2, lowerLimit, post1ZPos - 0.01f));
+        newVertices.Add(new Vector3(post2XPos - post2XScale / 2, upperLimit, post2ZPos - 0.01f));
+        newVertices.Add(new Vector3(post2XPos - post2XScale / 2, lowerLimit, post2ZPos - 0.01f));
 
         screenMesh.vertices = newVertices.ToArray();
 
@@ -110,7 +135,9 @@ public class NoteBoard : MonoBehaviour {
         screenMesh.triangles = faces.ToArray();
 
         screen.GetComponent<Renderer>().material.color = Color.white;
-    
+
+        BuildHitArea(upperLimit-lowerLimit, screenMesh.vertices[0]);
+
         /*GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         test.transform.position = post1.transform.position;
         test.transform.Translate(post1.transform.localScale.x / 2, 1.1f, -0.01f);
@@ -122,9 +149,139 @@ public class NoteBoard : MonoBehaviour {
         test2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);*/
     }
 
-    IEnumerator generateNotes() {
+    void BuildHitArea(float length, Vector3 screenPos) {
+        screenPos.y = screenPos.y - length / 2;
+        screenPos.x = screenPos.x + 0.3f;
+        // For better visibility
+        screenPos.z = screenPos.z + 0.038f;
+        borderLeft = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        // Rescaling the HitArea according to the size of the screen
+        length = length * borderLeft.transform.localScale.y / borderLeft.GetComponent<Renderer>().bounds.size.y;
+        borderLeft.name = "BorderLeft";
+        borderLeft.transform.position = screenPos;
+        borderLeft.transform.localScale = new Vector3(0.1f, length, 0.1f);
+        screenPos.x = screenPos.x + 0.8f;
+        borderRight = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        borderRight.name = "BorderRight";
+        borderRight.transform.position = screenPos;
+        borderRight.transform.localScale = new Vector3(0.1f, length, 0.1f);
+        Debug.Log(length);
+        borderLeft.GetComponent<Renderer>().material.color = Color.black;
+        borderRight.GetComponent<Renderer>().material.color = Color.black;
+    }
+
+    int RandomNumber() {
+        return rnd.Next(0, 4);
+    }
+
+    // For score calculation
+    private float acceptance = 0.2f;
+
+    // Note Rating depending on HitArea
+    public void ScorePos() {
+        Vector3 notePos = notes[0].transform.position;
+        float rightBorder = borderRight.transform.position.x;
+        float leftBorder = borderLeft.transform.position.x;
+        // Checks if Coroutine of ShowScore already running
+        ScoreCRrunningCheck();
+        if (notePos.x > (rightBorder + acceptance) || notePos.x < (leftBorder - acceptance)) {
+            // Notescore Bad (0)
+            lastScoreCR = StartCoroutine(ShowScore(0));
+            bad++;
+        } else if (notePos.x < (rightBorder - acceptance) && notePos.x > (leftBorder + acceptance)) {
+            // Notescore Great (2)
+            lastScoreCR = StartCoroutine(ShowScore(2));
+            great++;
+        } else {
+            // Notescore Good (1)
+            lastScoreCR = StartCoroutine(ShowScore(1));
+            good++;
+        }
+        DestroyNote();
+    }
+
+    // Starts Coroutine if called from another script
+    public void BadScoreExtCall() {
+        ScoreCRrunningCheck();
+        lastScoreCR = StartCoroutine(ShowScore(0));
+    }
+
+    // Checks if Coroutine of ShowScore already running - if it does, kill it
+    private void ScoreCRrunningCheck() {
+        if (scoreCRrunning) {
+            StopCoroutine(lastScoreCR);
+            Destroy(scoreText);
+            scoreCRrunning = false;
+        }
+    }
+
+    public void DestroyNote() {
+        if (notes[0].transform.position.x < borderRight.transform.position.x + acceptance) {
+            Destroy(notes[0]);
+            notes.RemoveAt(0);
+        }
+    }
+
+    IEnumerator ShowScore(int scoreType) {
+        scoreCRrunning = true;
+        int destroyCycle = 0;
+        while (destroyCycle < 2) {
+            if (destroyCycle == 0) {
+                switch (scoreType) {
+                    case 0:
+                        scoreText = (GameObject)Instantiate(Resources.Load("Prefab/Bad"));
+                        scoreText.name = "BadText";
+                        break;
+                    case 1:
+                        scoreText = (GameObject)Instantiate(Resources.Load("Prefab/Good"));
+                        scoreText.name = "GoodText";
+                        break;
+                    case 2:
+                        scoreText = (GameObject)Instantiate(Resources.Load("Prefab/Great"));
+                        scoreText.name = "GreatText";
+                        break;
+                    default:
+                        scoreText = null;
+                        Debug.Log("Error - Not a valid case in \"ShowScore()\"");
+                        break;
+                }
+            } else {
+                Destroy(scoreText);
+                scoreCRrunning = false;
+            }
+            destroyCycle++;
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    IEnumerator GenerateNotes() {
+        int noteNum;
+        GameObject note;
         while (true) {
-            GameObject note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
+            noteNum = RandomNumber();
+            switch (noteNum) {
+                case 0:
+                    note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
+                    note.name = "NoteUp";
+                    break;
+                case 1:
+                    note = (GameObject)Instantiate(Resources.Load("Prefab/NoteRight"));
+                    note.name = "NoteRight";
+                    break;
+                case 2:
+                    note = (GameObject)Instantiate(Resources.Load("Prefab/NoteDown"));
+                    note.name = "NoteDown";
+                    break;
+                case 3:
+                    note = (GameObject)Instantiate(Resources.Load("Prefab/NoteLeft"));
+                    note.name = "NoteLeft";
+                    break;
+                default:
+                    note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
+                    Debug.Log("Error - Not a valid number in \"generateNotes()\"");
+                    break;
+            }
+
             /*note.AddComponent<MeshRenderer>();
             Material[] noteMaterials;
             noteMaterials = note.GetComponentInChildren<MeshRenderer>().materials;
@@ -165,11 +322,12 @@ public class NoteBoard : MonoBehaviour {
         while ((GameObject.Find("Buehne") == null)) {
             yield return new WaitForSeconds(0.1f);
         }
-        buildBoard();
-        StartCoroutine(moveNotes());
+        BuildBoard();
+        StartCoroutine(GenerateNotes());
+        StartCoroutine(MoveNotes());
     }
 
-    IEnumerator moveNotes() {
+    IEnumerator MoveNotes() {
         bool remove = false;
         while (true) {
             foreach (GameObject note in notes) {
@@ -179,8 +337,9 @@ public class NoteBoard : MonoBehaviour {
                 }
             }
             if (remove) {
-                Destroy(notes[0]);
-                notes.RemoveAt(0);
+                lastScoreCR = StartCoroutine(ShowScore(0));
+                DestroyNote();
+                bad++;
                 remove = false;
             }
             yield return new WaitForSeconds(refresh);
