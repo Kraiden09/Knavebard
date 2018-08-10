@@ -25,22 +25,25 @@ public class NoteBoard : MonoBehaviour
     float moveAlongScreen = 0.03f;
 
 
-    //JOERGSTUFF ONLY FOR TESTING
-    // chosen Song
-    int[] songNotes = { 1, 2, 3, 0, 1, 2, 3, 1, 1, 1, 2, 2, 2 };
-    float[] noteTiming = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    //calling NoteReader (joerg)
+    NoteReader noteReader;
 
 
 
     // Use this for initialization
     void Start()
     {
+        //JOERG REFERENCE
+        noteReader = GameObject.Find("NoteReader").GetComponent<NoteReader>();
+
+
         StartCoroutine(WaitForStage());
         bad = 0;
         good = 0;
         great = 0;
         scoreCRrunning = false;
         lastScoreCR = null;
+
 
     }
 
@@ -296,12 +299,11 @@ public class NoteBoard : MonoBehaviour
 
     IEnumerator GenerateNotes()
     {
-        //int noteNum;
         GameObject note;
-        for (int i = 0; i < songNotes.Length; i++)
+        for (int i = 0; i < noteReader.songlength(); i++)
         {
-            //noteNum = RandomNumber();
-            switch (songNotes[i])
+            //switch (songNotes[i])
+            switch(noteReader.readNotes(i))
             {
                 case 0:
                     note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
@@ -354,9 +356,9 @@ public class NoteBoard : MonoBehaviour
 
             note.transform.position = post2.transform.position;
             note.transform.Translate(-0.1f, 0.2f, 0);
-            //StartCoroutine(fade(fadeMesh, 2f, true));
             notes.Add(note);
-            yield return new WaitForSeconds(noteTiming[i]);
+            //yield return new WaitForSeconds(noteTiming[i]);
+            yield return new WaitForSeconds(noteReader.readTime(i));
         }
     }
 
@@ -394,6 +396,7 @@ public class NoteBoard : MonoBehaviour
             }
             yield return new WaitForSeconds(refresh);
         }
+        
     }
 
     /*
