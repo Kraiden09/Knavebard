@@ -12,6 +12,7 @@ public class taverne : MonoBehaviour {
     GameObject barbereich;
     GameObject tischbereich;
     GameObject buehnenbereich;
+    GameObject kamerabereich;
 
     //Deklaration der Objekte in den Bereichen
     GameObject buehne;
@@ -40,6 +41,7 @@ public class taverne : MonoBehaviour {
     GameObject wand3;
     GameObject wand4;
     GameObject decke;
+    GameObject spawn;
 
     //Deklaration der Meshes und Hilfslisten für Bereiche
     Mesh barbermesh;
@@ -350,15 +352,15 @@ public class taverne : MonoBehaviour {
         float konfig = Mathf.Floor(Random.Range(1, 3));
         Debug.Log(konfig);
         if (konfig == 1) {
-            berBuilder(barbereich, new Vector3(-5, 0.1f, -5f), new Vector3(-5, 0.1f, 0), new Vector3(-2, 0.1f, -5f), new Vector3(-2, 0.1f, 0));
-            berBuilder(buehnenbereich, new Vector3(-3, 0.1f, 2), new Vector3(-3, 0.1f, 5), new Vector3(+3, 0.1f, 2), new Vector3(+3, 0.1f, 5));
+            berBuilder(barbereich, new Vector3(-7, 0.1f, -5f), new Vector3(-7, 0.1f, 0), new Vector3(-4, 0.1f, -5f), new Vector3(-4, 0.1f, 0));
+            berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
         }
 
         if (konfig == 2)
         {
-            berBuilder(barbereich, new Vector3( 2, 0.1f, -5f), new Vector3( 2, 0.1f, 0), new Vector3( 5, 0.1f, -5f), new Vector3( 5, 0.1f, 0));
-            berBuilder(buehnenbereich, new Vector3(-3, 0.1f, 2), new Vector3(-3, 0.1f, 5), new Vector3(+3, 0.1f, 2), new Vector3(+3, 0.1f, 5));
+            berBuilder(barbereich, new Vector3( 4, 0.1f, -5f), new Vector3( 4, 0.1f, 0), new Vector3( 7, 0.1f, -5f), new Vector3( 7, 0.1f, 0));
+            berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3( 1, 0.1f, -4.5f), new Vector3( 1, 0.1f, 1));
         }
 
@@ -376,6 +378,7 @@ public class taverne : MonoBehaviour {
         barbereich = GameObject.CreatePrimitive(PrimitiveType.Quad);
         buehnenbereich = GameObject.CreatePrimitive(PrimitiveType.Quad);
         tischbereich = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        kamerabereich = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
         //Instanzierung der Objekte in den Bereichen
         buehne = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -402,6 +405,7 @@ public class taverne : MonoBehaviour {
         wand3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
         wand4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
         decke = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        spawn = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
         //Instanzierung der Hilfslisten der Objekte
         barVert = new List<Vector3>();
@@ -415,6 +419,7 @@ public class taverne : MonoBehaviour {
         barbereich.name = "Barbereich";
         buehnenbereich.name = "Buehnenbereich";
         tischbereich.name = "Tischbereich";
+        kamerabereich.name = "Kamerabereich";
         buehne.name = "Buehne";
         bar.name = "Bar";
         tisch1.name = "Tisch1";
@@ -438,6 +443,7 @@ public class taverne : MonoBehaviour {
         wand3.name = "wand3";
         wand4.name = "wand4";
         decke.name = "decke";
+        spawn.name = "name";
 
         //Bereiche der Taverne einteilen
 
@@ -453,24 +459,24 @@ public class taverne : MonoBehaviour {
 
         //buehne
 
-        buVert.Add(new Vector3( -2.5f, 0.1f, 2.5f));
-        buVert.Add(new Vector3( -2.5f, 0.6f, 2.5f));
-        buVert.Add(new Vector3( 2.5f, 0.1f, 2.5f));
-        buVert.Add(new Vector3( 2.5f, 0.6f, 2.5f));
+        buVert.Add(new Vector3( -3f, 0.1f, 4.5f));
+        buVert.Add(new Vector3( -3f, 0.6f, 4.5f));
+        buVert.Add(new Vector3( 3f, 0.1f, 4.5f));
+        buVert.Add(new Vector3( 3f, 0.6f, 4.5f));
 
-        buVert.Add(new Vector3( 2.5f, 0.1f, 5));
-        buVert.Add(new Vector3( 2.5f, 0.6f, 5));
+        buVert.Add(new Vector3( 3f, 0.1f, 7));
+        buVert.Add(new Vector3( 3f, 0.6f, 7));
 
-        buVert.Add(new Vector3(-2.5f, 0.1f, 5));
-        buVert.Add(new Vector3(-2.5f, 0.6f, 5));
+        buVert.Add(new Vector3(-3f, 0.1f, 7));
+        buVert.Add(new Vector3(-3f, 0.6f, 7));
 
-        buVert.Add(new Vector3(-2.5f, 0.1f, 2.5f));
-        buVert.Add(new Vector3(-2.5f, 0.6f, 2.5f));
+        buVert.Add(new Vector3(-3f, 0.1f, 4.5f));
+        buVert.Add(new Vector3(-3f, 0.6f, 4.5f));
 
-        buVert.Add(new Vector3(-2.5f, 0.6f, 2.5f));
-        buVert.Add(new Vector3(-2.5f, 0.6f, 5));
-        buVert.Add(new Vector3( 2.5f, 0.6f, 2.5f));
-        buVert.Add(new Vector3( 2.5f, 0.6f, 5));
+        buVert.Add(new Vector3(-3f, 0.6f, 4.5f));
+        buVert.Add(new Vector3(-3f, 0.6f, 7));
+        buVert.Add(new Vector3( 3f, 0.6f, 4.5f));
+        buVert.Add(new Vector3( 3f, 0.6f, 7));
 
         bumesh = new Mesh();
         bumesh.vertices = buVert.ToArray();
@@ -513,34 +519,44 @@ public class taverne : MonoBehaviour {
         //Barbereichobjekte
 
         //Bar
-        barVert.Add(new Vector3( -4, 0.1f, -5));
-        barVert.Add(new Vector3( -4, 0.6f, -5));
-        barVert.Add(new Vector3( -3, 0.1f, -5));
-        barVert.Add(new Vector3( -3, 0.6f, -5));
-
-        barVert.Add(new Vector3(-3, 0.1f, 0));
-        barVert.Add(new Vector3(-3, 0.6f, 0));
+        barVert.Add(new Vector3( -7, 0.1f, -5));
+        barVert.Add(new Vector3( -7, 0.6f, -5));
+        barVert.Add(new Vector3( -5, 0.1f, -5));
+        barVert.Add(new Vector3( -5, 0.6f, -5));
 
         barVert.Add(new Vector3(-5, 0.1f, 0));
         barVert.Add(new Vector3(-5, 0.6f, 0));
 
-        barVert.Add(new Vector3(-5, 0.1f, -1));
+        barVert.Add(new Vector3(-7, 0.1f, 0));
+        barVert.Add(new Vector3(-7, 0.6f, 0));
+
+        barVert.Add(new Vector3(-7, 0.1f, -1));
+        barVert.Add(new Vector3(-7, 0.6f, -1));
+
+        barVert.Add(new Vector3(-6, 0.1f, -1));
+        barVert.Add(new Vector3(-6, 0.6f, -1));
+
+        barVert.Add(new Vector3(-6, 0.1f, -5));
+        barVert.Add(new Vector3(-6, 0.6f, -5));
+
+        barVert.Add(new Vector3(-6, 0.6f, -5));
+        barVert.Add(new Vector3(-6, 0.6f, -1));
+        barVert.Add(new Vector3(-5, 0.6f, -5));
         barVert.Add(new Vector3(-5, 0.6f, -1));
-
-        barVert.Add(new Vector3(-4, 0.1f, -1));
-        barVert.Add(new Vector3(-4, 0.6f, -1));
-
-        barVert.Add(new Vector3(-4, 0.1f, -5));
-        barVert.Add(new Vector3(-4, 0.6f, -5));
-
-        barVert.Add(new Vector3(-4, 0.6f, -5));
-        barVert.Add(new Vector3(-4, 0.6f, -1));
-        barVert.Add(new Vector3(-3, 0.6f, -5));
-        barVert.Add(new Vector3(-3, 0.6f, -1));
+        barVert.Add(new Vector3(-7, 0.6f, -1));
+        barVert.Add(new Vector3(-7, 0.6f, 0));
         barVert.Add(new Vector3(-5, 0.6f, -1));
         barVert.Add(new Vector3(-5, 0.6f, 0));
-        barVert.Add(new Vector3(-3, 0.6f, -1));
-        barVert.Add(new Vector3(-3, 0.6f, 0));
+
+        barVert.Add(new Vector3(-7, 0.6f, -5));
+        barVert.Add(new Vector3(-7, 0.6f, -4));
+        barVert.Add(new Vector3(-6, 0.6f, -5));
+        barVert.Add(new Vector3(-6, 0.6f, -4));
+
+        barVert.Add(new Vector3(-6, 0.1f, -4));
+        barVert.Add(new Vector3(-6, 0.6f, -4));
+        barVert.Add(new Vector3(-7, 0.1f, -4));
+        barVert.Add(new Vector3(-7, 0.6f, -4));
 
         barmesh = new Mesh();
         barmesh.vertices = barVert.ToArray();
@@ -579,12 +595,12 @@ public class taverne : MonoBehaviour {
         barmesh.triangles = barTri.ToArray();
 
         //Hocker
-        hockermesh(-2.4f, 0.1f, -4.5f, hocker1);
-        hockermesh(-2.4f, 0.1f, -3.7f, hocker2);
-        hockermesh(-2.4f, 0.1f, -2.9f, hocker3);
-        hockermesh(-2.4f, 0.1f, -2.1f, hocker4);
-        hockermesh(-2.4f, 0.1f, -1.3f, hocker5);
-        hockermesh(-2.4f, 0.1f, -0.5f, hocker6);
+        hockermesh(-4.4f, 0.1f, -4.5f, hocker1);
+        hockermesh(-4.4f, 0.1f, -3.7f, hocker2);
+        hockermesh(-4.4f, 0.1f, -2.9f, hocker3);
+        hockermesh(-4.4f, 0.1f, -2.1f, hocker4);
+        hockermesh(-4.4f, 0.1f, -1.3f, hocker5);
+        hockermesh(-4.4f, 0.1f, -0.5f, hocker6);
 
         //Tische
         tischmeshwaage(0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
@@ -599,24 +615,29 @@ public class taverne : MonoBehaviour {
         wand2.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
         wand3.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
         wand4.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
+        spawn.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
+        kamerabereich.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 0.0f);
 
         //treppe
-        treppenmesh(-2.5f, 0.6f, 3.75f, treppe);
+        treppenmesh(-3f, 0.6f, 5.75f, treppe);
 
         //wände
-        berBuilder( wand1, new Vector3(-5, 0f, -5f), new Vector3(-5, 3, -5f), new Vector3(-5, 0f, 5f), new Vector3(-5f, 3, 5f));
-        berBuilder( wand2, new Vector3(-5, 0f, 5), new Vector3(-5, 3, 5), new Vector3( 5, 0f, 5), new Vector3(5, 3, 5));
-        berBuilder( wand3, new Vector3( 5, 0, 5), new Vector3( 5, 3, 5), new Vector3(5, 0, -5), new Vector3(5, 3, -5));
-        berBuilder( wand4, new Vector3(5, 0, -5), new Vector3(5, 3, -5), new Vector3(-5, 0, -5), new Vector3(-5, 3, -5));
+        berBuilder( wand1, new Vector3(-7, 0f, -9f), new Vector3(-7, 5, -9f), new Vector3(-7, 0f, 7f), new Vector3(-7f, 5, 7f));
+        berBuilder( wand2, new Vector3(-7, 0f, 7), new Vector3(-7, 5, 7), new Vector3( 7, 0f, 7), new Vector3(7, 5, 7));
+        berBuilder( wand3, new Vector3( 7, 0, 7), new Vector3( 7, 5, 7), new Vector3(7, 0, -9), new Vector3(7, 5, -9));
+        berBuilder( wand4, new Vector3(7, 0, -7), new Vector3(7, 5, -7), new Vector3(-7, 0, -7), new Vector3(-7, 5, -7));
 
-        berBuilder(decke, new Vector3(5, 3, -5), new Vector3(5, 3, 5), new Vector3( -5, 3, -5), new Vector3(-5, 3, 5));
+        berBuilder(decke, new Vector3(7, 5, -9), new Vector3(7, 5, 7), new Vector3( -7, 5, -9), new Vector3(-9, 5, 7));
+        berBuilder(boden, new Vector3(-7, 0, -9), new Vector3(-7, 0, 7), new Vector3(7, 0, -9), new Vector3(7, 0, 7));
 
+        berBuilder(spawn, new Vector3(7, 0, 1), new Vector3(7, 0, 3), new Vector3(9, 0, 1), new Vector3(9, 0, 3));
+        berBuilder(kamerabereich, new Vector3(-7, 0.1f, -9), new Vector3(-7, 0.1f, -7), new Vector3(7, 0.1f, -9), new Vector3(7, 0.1f, -7));
         randomize();
     }
 
     // Update is called once per frame
     void Update () {
-		if (Input.GetKeyDown(KeyCode.S))
+		if (Input.GetKeyDown(KeyCode.T))
             {
                 randomize();
             }
