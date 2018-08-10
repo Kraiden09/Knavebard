@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoteBoard : MonoBehaviour {
+public class NoteBoard : MonoBehaviour
+{
     // Reference to stage
     private GameObject stageRef, post1, post2, screen, borderLeft, borderRight, scoreText;
     private Mesh screenMesh;
@@ -18,26 +19,38 @@ public class NoteBoard : MonoBehaviour {
     Vector3 despawn;
 
     // Refreshes the Noteposition every x Seconds
-    float refresh = 0.01f;
+    float refresh = 0.01667f;
 
     // Move x Units along Screen - Higher number = Faster notes
     float moveAlongScreen = 0.03f;
 
+
+    //JOERGSTUFF ONLY FOR TESTING
+    // chosen Song
+    int[] songNotes = { 1, 2, 3, 0, 1, 2, 3, 1, 1, 1, 2, 2, 2 };
+    float[] noteTiming = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+
+
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         StartCoroutine(WaitForStage());
         bad = 0;
         good = 0;
         great = 0;
         scoreCRrunning = false;
         lastScoreCR = null;
-    }
-	
-	// Update is called once per frame
-	void Update () {
-	}
 
-    void BuildBoard() {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
+
+    void BuildBoard()
+    {
         stageRef = GameObject.Find("Tavern").GetComponent<taverne>().getBuehne();
 
         Mesh stageRefMesh = stageRef.GetComponent<MeshFilter>().mesh;
@@ -53,18 +66,24 @@ public class NoteBoard : MonoBehaviour {
         BuildScreen();
     }
 
-    void BuildPosts(Mesh stageRefMesh, Transform stageRefTrans) {
+    void BuildPosts(Mesh stageRefMesh, Transform stageRefTrans)
+    {
         Vector3 post1Pos = new Vector3(0, 0, 0), post2Pos = new Vector3(0, 0, 0);
-        for (int i = 0; i < stageRefMesh.vertices.Length; i++) {
-            if (i == 0) {
+        for (int i = 0; i < stageRefMesh.vertices.Length; i++)
+        {
+            if (i == 0)
+            {
                 post1Pos = stageRefMesh.vertices[0];
                 post2Pos = stageRefMesh.vertices[0];
             }
             // Left post - negative x, positive y and z
-            if (stageRefMesh.vertices[i].x <= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z) {
+            if (stageRefMesh.vertices[i].x <= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z)
+            {
                 post1Pos = stageRefMesh.vertices[i];
                 // Right post - positive x, y and z
-            } else if (stageRefMesh.vertices[i].x >= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z) {
+            }
+            else if (stageRefMesh.vertices[i].x >= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z)
+            {
                 post2Pos = stageRefMesh.vertices[i];
             }
         }
@@ -92,7 +111,8 @@ public class NoteBoard : MonoBehaviour {
         post2.name = "RightPost";
     }
 
-    void BuildScreen() {
+    void BuildScreen()
+    {
         screenMesh = new Mesh();
         screen = new GameObject("Screen");
         //screen.transform.position = post2.transform.position;
@@ -136,7 +156,7 @@ public class NoteBoard : MonoBehaviour {
 
         screen.GetComponent<Renderer>().material.color = Color.white;
 
-        BuildHitArea(upperLimit-lowerLimit, screenMesh.vertices[0]);
+        BuildHitArea(upperLimit - lowerLimit, screenMesh.vertices[0]);
 
         /*GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         test.transform.position = post1.transform.position;
@@ -149,7 +169,8 @@ public class NoteBoard : MonoBehaviour {
         test2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);*/
     }
 
-    void BuildHitArea(float length, Vector3 screenPos) {
+    void BuildHitArea(float length, Vector3 screenPos)
+    {
         screenPos.y = screenPos.y - length / 2;
         screenPos.x = screenPos.x + 0.3f;
         // For better visibility
@@ -170,7 +191,8 @@ public class NoteBoard : MonoBehaviour {
         borderRight.GetComponent<Renderer>().material.color = Color.black;
     }
 
-    int RandomNumber() {
+    int RandomNumber()
+    {
         return rnd.Next(0, 4);
     }
 
@@ -178,21 +200,27 @@ public class NoteBoard : MonoBehaviour {
     private float acceptance = 0.2f;
 
     // Note Rating depending on HitArea
-    public void ScorePos() {
+    public void ScorePos()
+    {
         Vector3 notePos = notes[0].transform.position;
         float rightBorder = borderRight.transform.position.x;
         float leftBorder = borderLeft.transform.position.x;
         // Checks if Coroutine of ShowScore already running
         ScoreCRrunningCheck();
-        if (notePos.x > (rightBorder + acceptance) || notePos.x < (leftBorder - acceptance)) {
+        if (notePos.x > (rightBorder + acceptance) || notePos.x < (leftBorder - acceptance))
+        {
             // Notescore Bad (0)
             lastScoreCR = StartCoroutine(ShowScore(0));
             bad++;
-        } else if (notePos.x < (rightBorder - acceptance) && notePos.x > (leftBorder + acceptance)) {
+        }
+        else if (notePos.x < (rightBorder - acceptance) && notePos.x > (leftBorder + acceptance))
+        {
             // Notescore Great (2)
             lastScoreCR = StartCoroutine(ShowScore(2));
             great++;
-        } else {
+        }
+        else
+        {
             // Notescore Good (1)
             lastScoreCR = StartCoroutine(ShowScore(1));
             good++;
@@ -201,33 +229,43 @@ public class NoteBoard : MonoBehaviour {
     }
 
     // Starts Coroutine if called from another script
-    public void BadScoreExtCall() {
+    public void BadScoreExtCall()
+    {
         ScoreCRrunningCheck();
         lastScoreCR = StartCoroutine(ShowScore(0));
     }
 
     // Checks if Coroutine of ShowScore already running - if it does, kill it
-    private void ScoreCRrunningCheck() {
-        if (scoreCRrunning) {
+    private void ScoreCRrunningCheck()
+    {
+        if (scoreCRrunning)
+        {
             StopCoroutine(lastScoreCR);
             Destroy(scoreText);
             scoreCRrunning = false;
         }
     }
 
-    public void DestroyNote() {
-        if (notes[0].transform.position.x < borderRight.transform.position.x + acceptance) {
+    public void DestroyNote()
+    {
+        // Only destroy the note, if position is < the position of the right border + acceptance
+        if (notes[0].transform.position.x < borderRight.transform.position.x + acceptance)
+        {
             Destroy(notes[0]);
             notes.RemoveAt(0);
         }
     }
 
-    IEnumerator ShowScore(int scoreType) {
+    IEnumerator ShowScore(int scoreType)
+    {
         scoreCRrunning = true;
         int destroyCycle = 0;
-        while (destroyCycle < 2) {
-            if (destroyCycle == 0) {
-                switch (scoreType) {
+        while (destroyCycle < 2)
+        {
+            if (destroyCycle == 0)
+            {
+                switch (scoreType)
+                {
                     case 0:
                         scoreText = (GameObject)Instantiate(Resources.Load("Prefab/Bad"));
                         scoreText.name = "BadText";
@@ -245,7 +283,9 @@ public class NoteBoard : MonoBehaviour {
                         Debug.Log("Error - Not a valid case in \"ShowScore()\"");
                         break;
                 }
-            } else {
+            }
+            else
+            {
                 Destroy(scoreText);
                 scoreCRrunning = false;
             }
@@ -254,12 +294,15 @@ public class NoteBoard : MonoBehaviour {
         }
     }
 
-    IEnumerator GenerateNotes() {
-        int noteNum;
+    IEnumerator GenerateNotes()
+    {
+        //int noteNum;
         GameObject note;
-        while (true) {
-            noteNum = RandomNumber();
-            switch (noteNum) {
+        for (int i = 0; i < songNotes.Length; i++)
+        {
+            //noteNum = RandomNumber();
+            switch (songNotes[i])
+            {
                 case 0:
                     note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
                     note.name = "NoteUp";
@@ -308,18 +351,20 @@ public class NoteBoard : MonoBehaviour {
                 noteMaterials[i].color = meshColor;
                 Debug.Log(noteMaterials[i].name);
             }*/
-            
+
             note.transform.position = post2.transform.position;
             note.transform.Translate(-0.1f, 0.2f, 0);
             //StartCoroutine(fade(fadeMesh, 2f, true));
             notes.Add(note);
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(noteTiming[i]);
         }
     }
 
     // Wait for stage to be initialized
-    IEnumerator WaitForStage() {
-        while ((GameObject.Find("Buehne") == null)) {
+    IEnumerator WaitForStage()
+    {
+        while ((GameObject.Find("Buehne") == null))
+        {
             yield return new WaitForSeconds(0.1f);
         }
         BuildBoard();
@@ -327,16 +372,21 @@ public class NoteBoard : MonoBehaviour {
         StartCoroutine(MoveNotes());
     }
 
-    IEnumerator MoveNotes() {
+    IEnumerator MoveNotes()
+    {
         bool remove = false;
-        while (true) {
-            foreach (GameObject note in notes) {
+        while (true)
+        {
+            foreach (GameObject note in notes)
+            {
                 note.transform.Translate(-moveAlongScreen, 0, 0);
-                if(note.transform.position.x <= despawn.x) {
+                if (note.transform.position.x <= despawn.x)
+                {
                     remove = true;
                 }
             }
-            if (remove) {
+            if (remove)
+            {
                 lastScoreCR = StartCoroutine(ShowScore(0));
                 DestroyNote();
                 bad++;
