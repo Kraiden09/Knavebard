@@ -6,7 +6,7 @@ using UnityEngine;
 public class taverne : MonoBehaviour {
 
     // Use this for initialization
-
+    int cnt = 0;
     //Deklaration der Bereiche auf der Plane Boden
     GameObject boden;
     GameObject barbereich;
@@ -126,6 +126,11 @@ public class taverne : MonoBehaviour {
                 tiTri.Add(i);
                 tiTri.Add(i + 2);
             }
+
+            if (i == timesh.vertices.Length - 7)
+            {
+                i = i + 2;
+            }
         }
 
         timesh.triangles = tiTri.ToArray();
@@ -185,6 +190,11 @@ public class taverne : MonoBehaviour {
                 tiTri.Add(i);
                 tiTri.Add(i + 2);
             }
+
+            if (i == timesh.vertices.Length - 7)
+            {
+                i = i + 2;
+            }
         }
 
         timesh.triangles = tiTri.ToArray();
@@ -242,6 +252,9 @@ public class taverne : MonoBehaviour {
                 hoTri.Add(i + 1);
                 hoTri.Add(i);
                 hoTri.Add(i + 2);
+            }
+            if (i == homesh.vertices.Length - 7) {
+                i = i + 2;
             }
         }
 
@@ -347,21 +360,210 @@ public class taverne : MonoBehaviour {
         bermesh.triangles = berTri.ToArray();
     }
 
+    //Bargenerierung, Startpunkt am Ansatzpunkt, der nah an der Kamera ist
+    void barBuilder(GameObject bar, float xpos, float ypos, float zpos)
+    {
+        barVert = new List<Vector3>();
+        barTri = new List<int>();
+        //xpos = -7; ypos = 0.1f, zpos = -5
+        barVert.Add(new Vector3(xpos, ypos, zpos));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos + 2, ypos, zpos));
+        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos));
+
+        barVert.Add(new Vector3(xpos + 2, ypos, zpos + 5));
+        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 5));
+
+        barVert.Add(new Vector3(xpos, ypos, zpos + 5));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 5));
+
+        barVert.Add(new Vector3(xpos, ypos, zpos + 4));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 4));
+
+        barVert.Add(new Vector3(xpos + 1, ypos, zpos + 4));
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 4));
+
+        barVert.Add(new Vector3(xpos + 1, ypos, zpos));
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos));
+
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 5));
+        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 5));
+
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 1));
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 1));
+
+        barVert.Add(new Vector3(xpos + 1, ypos, zpos + 1));
+        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 1));
+        barVert.Add(new Vector3(xpos, ypos, zpos + 1));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 1));
+
+        barmesh = new Mesh();
+        barmesh.vertices = barVert.ToArray();
+        bar.GetComponent<MeshFilter>().mesh = barmesh;
+
+
+
+        cnt = 0;
+
+        for (int i = 0; i < barmesh.vertices.Length - 2; i++)
+        {
+            if (i % 2 == 0)
+            {
+                barTri.Add(i);
+                barTri.Add(i + 1);
+                barTri.Add(i + 2);
+            }
+
+            if (i % 2 == 1)
+            {
+                barTri.Add(i + 1);
+                barTri.Add(i);
+                barTri.Add(i + 2);
+            }
+
+            if (i > barmesh.vertices.Length - 13)
+            {
+
+                cnt++;
+
+                if (cnt % 2 == 0)
+                {
+                    i = i + 2;
+                }
+
+            }
+        }
+
+        barmesh.triangles = barTri.ToArray();
+
+        hockermesh(-4.4f, 0.1f, -4.5f, hocker1);
+        hockermesh(-4.4f, 0.1f, -3.7f, hocker2);
+        hockermesh(-4.4f, 0.1f, -2.9f, hocker3);
+        hockermesh(-4.4f, 0.1f, -2.1f, hocker4);
+        hockermesh(-4.4f, 0.1f, -1.3f, hocker5);
+        hockermesh(-4.4f, 0.1f, -0.5f, hocker6);
+    }
+
+    // bar auf der rechten seite, Ansatzpunkt am wietesten weg von der Kamera
+    void barBuilder2(GameObject bar, float xpos, float ypos, float zpos)
+    {
+        barVert = new List<Vector3>();
+        barTri = new List<int>();
+        //xpos = 7; ypos = 0.1f, zpos = 0   -5
+        barVert.Add(new Vector3(xpos, ypos, zpos));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos - 2, ypos, zpos));
+        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos));
+
+        barVert.Add(new Vector3(xpos - 2, ypos, zpos - 5));
+        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 5));
+
+        barVert.Add(new Vector3(xpos, ypos, zpos - 5));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 5));
+
+        barVert.Add(new Vector3(xpos, ypos, zpos - 4));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 4));
+
+        barVert.Add(new Vector3(xpos - 1, ypos, zpos - 4));
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 4));
+
+        barVert.Add(new Vector3(xpos - 1, ypos, zpos));
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos));
+
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 4));
+        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 4));
+        barVert.Add(new Vector3(xpos , ypos + 0.5f, zpos - 4));
+        barVert.Add(new Vector3(xpos , ypos + 0.5f, zpos - 5));
+        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 4));
+        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 5));
+
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 1));
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 1));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
+
+        barVert.Add(new Vector3(xpos - 1, ypos, zpos - 1));
+        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 1));
+        barVert.Add(new Vector3(xpos, ypos, zpos - 1));
+        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 1));
+
+        barmesh = new Mesh();
+        barmesh.vertices = barVert.ToArray();
+        bar.GetComponent<MeshFilter>().mesh = barmesh;
+
+
+        cnt = 0;
+
+        for (int i = 0; i < barmesh.vertices.Length - 2; i++)
+        {
+            if (i % 2 == 0)
+            {
+                barTri.Add(i);
+                barTri.Add(i + 1);
+                barTri.Add(i + 2);
+            }
+
+            if (i % 2 == 1)
+            {
+                barTri.Add(i + 1);
+                barTri.Add(i);
+                barTri.Add(i + 2);
+            }
+
+            if (i > barmesh.vertices.Length - 13)
+            {
+
+                cnt++;
+
+                if (cnt % 2 == 0)
+                {
+                    i = i + 2;
+                }
+
+            }
+        }
+
+        barmesh.triangles = barTri.ToArray();
+
+        hockermesh(4.4f, 0.1f, -4.5f, hocker1);
+        hockermesh(4.4f, 0.1f, -3.7f, hocker2);
+        hockermesh(4.4f, 0.1f, -2.9f, hocker3);
+        hockermesh(4.4f, 0.1f, -2.1f, hocker4);
+        hockermesh(4.4f, 0.1f, -1.3f, hocker5);
+        hockermesh(4.4f, 0.1f, -0.5f, hocker6);
+    }
+
     //Zufällige Generierung
     void randomize() {
         float konfig = Mathf.Floor(Random.Range(1, 3));
         Debug.Log(konfig);
         if (konfig == 1) {
             berBuilder(barbereich, new Vector3(-7, 0.1f, -5f), new Vector3(-7, 0.1f, 0), new Vector3(-4, 0.1f, -5f), new Vector3(-4, 0.1f, 0));
+            barBuilder(bar, -7, 0.1f, -5);
             berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
+            tischmeshwaage(0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
+            tischmeshsenk(2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
         }
 
         if (konfig == 2)
         {
             berBuilder(barbereich, new Vector3( 4, 0.1f, -5f), new Vector3( 4, 0.1f, 0), new Vector3( 7, 0.1f, -5f), new Vector3( 7, 0.1f, 0));
+            barBuilder2(bar, 7, 0.1f, 0);
             berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3( 1, 0.1f, -4.5f), new Vector3( 1, 0.1f, 1));
+            tischmeshwaage(-0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
+            tischmeshsenk(-2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
         }
 
         if (konfig == 3)
@@ -483,8 +685,6 @@ public class taverne : MonoBehaviour {
 
         buehne.GetComponent<MeshFilter>().mesh = bumesh;
 
-        int cnt = 0;
-
         for (int i = 0; i < bumesh.vertices.Length - 2; i++)
         {
             if (i % 2 == 0)
@@ -517,94 +717,6 @@ public class taverne : MonoBehaviour {
         bumesh.triangles = buTri.ToArray();
 
         //Barbereichobjekte
-
-        //Bar
-        barVert.Add(new Vector3( -7, 0.1f, -5));
-        barVert.Add(new Vector3( -7, 0.6f, -5));
-        barVert.Add(new Vector3( -5, 0.1f, -5));
-        barVert.Add(new Vector3( -5, 0.6f, -5));
-
-        barVert.Add(new Vector3(-5, 0.1f, 0));
-        barVert.Add(new Vector3(-5, 0.6f, 0));
-
-        barVert.Add(new Vector3(-7, 0.1f, 0));
-        barVert.Add(new Vector3(-7, 0.6f, 0));
-
-        barVert.Add(new Vector3(-7, 0.1f, -1));
-        barVert.Add(new Vector3(-7, 0.6f, -1));
-
-        barVert.Add(new Vector3(-6, 0.1f, -1));
-        barVert.Add(new Vector3(-6, 0.6f, -1));
-
-        barVert.Add(new Vector3(-6, 0.1f, -5));
-        barVert.Add(new Vector3(-6, 0.6f, -5));
-
-        barVert.Add(new Vector3(-6, 0.6f, -5));
-        barVert.Add(new Vector3(-6, 0.6f, -1));
-        barVert.Add(new Vector3(-5, 0.6f, -5));
-        barVert.Add(new Vector3(-5, 0.6f, -1));
-        barVert.Add(new Vector3(-7, 0.6f, -1));
-        barVert.Add(new Vector3(-7, 0.6f, 0));
-        barVert.Add(new Vector3(-5, 0.6f, -1));
-        barVert.Add(new Vector3(-5, 0.6f, 0));
-
-        barVert.Add(new Vector3(-7, 0.6f, -5));
-        barVert.Add(new Vector3(-7, 0.6f, -4));
-        barVert.Add(new Vector3(-6, 0.6f, -5));
-        barVert.Add(new Vector3(-6, 0.6f, -4));
-
-        barVert.Add(new Vector3(-6, 0.1f, -4));
-        barVert.Add(new Vector3(-6, 0.6f, -4));
-        barVert.Add(new Vector3(-7, 0.1f, -4));
-        barVert.Add(new Vector3(-7, 0.6f, -4));
-
-        barmesh = new Mesh();
-        barmesh.vertices = barVert.ToArray();
-
-        bar.GetComponent<MeshFilter>().mesh = barmesh;
-
-        cnt = 0;
-
-        for (int i = 0; i < barmesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
-                barTri.Add(i);
-                barTri.Add(i + 1);
-                barTri.Add(i + 2);
-            }
-
-            if (i % 2 == 1)
-            {
-                barTri.Add(i + 1);
-                barTri.Add(i);
-                barTri.Add(i + 2);
-            }
-
-            if (i > barmesh.vertices.Length - 13) {
-
-                cnt++;
-
-                if (cnt % 2 == 0) {
-                    i = i + 2;
-                }
-           
-            }
-        }
-
-        barmesh.triangles = barTri.ToArray();
-
-        //Hocker
-        hockermesh(-4.4f, 0.1f, -4.5f, hocker1);
-        hockermesh(-4.4f, 0.1f, -3.7f, hocker2);
-        hockermesh(-4.4f, 0.1f, -2.9f, hocker3);
-        hockermesh(-4.4f, 0.1f, -2.1f, hocker4);
-        hockermesh(-4.4f, 0.1f, -1.3f, hocker5);
-        hockermesh(-4.4f, 0.1f, -0.5f, hocker6);
-
-        //Tische
-        tischmeshwaage(0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
-        tischmeshsenk(2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
 
         //Farben der Objekte
         buehne.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 1.0f);
@@ -642,4 +754,9 @@ public class taverne : MonoBehaviour {
                 randomize();
             }
 	}
+
+    public GameObject getBuehne()
+    {
+        return buehne;
+    }
 }
