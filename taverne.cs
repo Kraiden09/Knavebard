@@ -7,6 +7,17 @@ public class taverne : MonoBehaviour {
 
     // Use this for initialization
     int cnt = 0;
+
+    //Hilfsvariablen für Randomize
+    int hockerzahl = 0;
+    int tischzahl = 0;
+    int maxtisch = 4;
+    int maxhocker = 28;
+    string hock = "Hocker";
+    string tis = "Tisch";
+    string nr;
+    string tinr;
+    GameObject h;
     //Deklaration der Bereiche auf der Plane Boden
     GameObject boden;
     GameObject barbereich;
@@ -18,6 +29,8 @@ public class taverne : MonoBehaviour {
     GameObject buehne;
     GameObject tisch1;
     GameObject tisch2;
+    GameObject tisch3;
+    GameObject tisch4;
     GameObject bar;
     GameObject stuhl;
     GameObject fass;
@@ -35,6 +48,20 @@ public class taverne : MonoBehaviour {
     GameObject hocker12;
     GameObject hocker13;
     GameObject hocker14;
+    GameObject hocker15;
+    GameObject hocker16;
+    GameObject hocker17;
+    GameObject hocker18;
+    GameObject hocker19;
+    GameObject hocker20;
+    GameObject hocker21;
+    GameObject hocker22;
+    GameObject hocker23;
+    GameObject hocker24;
+    GameObject hocker25;
+    GameObject hocker26;
+    GameObject hocker27;
+    GameObject hocker28;
     GameObject treppe;
     GameObject wand1;
     GameObject wand2;
@@ -142,6 +169,9 @@ public class taverne : MonoBehaviour {
         hockermesh(xpos + 0.4f, ypos, zpos + 0.8f, hocker2);
         hockermesh(xpos - 0.4f, ypos, zpos - 0.8f, hocker3);
         hockermesh(xpos + 0.4f, ypos, zpos - 0.8f, hocker4);
+
+        hockerzahl = hockerzahl + 4;
+        tischzahl = tischzahl + 1;
     }
 
     //senkrechte Tischmethode
@@ -206,6 +236,9 @@ public class taverne : MonoBehaviour {
         hockermesh(xpos + 0.8f, ypos, zpos + 0.4f, hocker2);
         hockermesh(xpos - 0.8f, ypos, zpos - 0.4f, hocker3);
         hockermesh(xpos + 0.8f, ypos, zpos - 0.4f, hocker4);
+
+        hockerzahl = hockerzahl + 4;
+        tischzahl = tischzahl + 1;
     }
 
     void hockermesh(float xpos, float ypos, float zpos, GameObject hocker)
@@ -444,12 +477,14 @@ public class taverne : MonoBehaviour {
 
         barmesh.triangles = barTri.ToArray();
 
-        hockermesh(-4.4f, 0.1f, -4.5f, hocker1);
-        hockermesh(-4.4f, 0.1f, -3.7f, hocker2);
-        hockermesh(-4.4f, 0.1f, -2.9f, hocker3);
-        hockermesh(-4.4f, 0.1f, -2.1f, hocker4);
-        hockermesh(-4.4f, 0.1f, -1.3f, hocker5);
-        hockermesh(-4.4f, 0.1f, -0.5f, hocker6);
+        hockermesh(xpos + 2.6f, ypos, zpos + 0.5f, hocker1);
+        hockermesh(xpos + 2.6f, ypos, zpos + 1.3f, hocker2);
+        hockermesh(xpos + 2.6f, ypos, zpos + 2.1f, hocker3);
+        hockermesh(xpos + 2.6f, ypos, zpos + 2.9f, hocker4);
+        hockermesh(xpos + 2.6f, ypos, zpos + 3.7f, hocker5);
+        hockermesh(xpos + 2.6f, ypos, zpos + 4.5f, hocker6);
+
+        hockerzahl = hockerzahl + 6;
     }
 
     // bar auf der rechten seite, Ansatzpunkt am wietesten weg von der Kamera
@@ -535,17 +570,23 @@ public class taverne : MonoBehaviour {
 
         barmesh.triangles = barTri.ToArray();
 
-        hockermesh(4.4f, 0.1f, -4.5f, hocker1);
-        hockermesh(4.4f, 0.1f, -3.7f, hocker2);
-        hockermesh(4.4f, 0.1f, -2.9f, hocker3);
-        hockermesh(4.4f, 0.1f, -2.1f, hocker4);
-        hockermesh(4.4f, 0.1f, -1.3f, hocker5);
-        hockermesh(4.4f, 0.1f, -0.5f, hocker6);
+        hockermesh(xpos - 2.6f, ypos, zpos - 4.5f, hocker1);
+        hockermesh(xpos - 2.6f, ypos, zpos - 3.7f, hocker2);
+        hockermesh(xpos - 2.6f, ypos, zpos - 2.9f, hocker3);
+        hockermesh(xpos - 2.6f, ypos, zpos - 2.1f, hocker4);
+        hockermesh(xpos - 2.6f, ypos, zpos - 1.3f, hocker5);
+        hockermesh(xpos - 2.6f, ypos, zpos - 0.5f, hocker6);
+
+        hockerzahl = hockerzahl + 6;
     }
 
     //Zufällige Generierung
     void randomize() {
-        float konfig = Mathf.Floor(Random.Range(1, 3));
+        Debug.Log(hockerzahl + "x");
+        Debug.Log(tischzahl + "y");
+        hockerzahl = 0;
+        tischzahl = 0;
+        float konfig = Mathf.Floor(Random.Range(1, 4));
         Debug.Log(konfig);
         if (konfig == 1) {
             berBuilder(barbereich, new Vector3(-7, 0.1f, -5f), new Vector3(-7, 0.1f, 0), new Vector3(-4, 0.1f, -5f), new Vector3(-4, 0.1f, 0));
@@ -554,6 +595,8 @@ public class taverne : MonoBehaviour {
             berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
             tischmeshwaage(0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
             tischmeshsenk(2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+            Debug.Log(hockerzahl + "a");
+            Debug.Log(tischzahl + "b");
         }
 
         if (konfig == 2)
@@ -568,9 +611,73 @@ public class taverne : MonoBehaviour {
 
         if (konfig == 3)
         {
+            tisch3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            tisch4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
+            hocker15 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker16 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker17 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker18 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker19 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker20 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker21 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker22 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker23 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker24 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker25 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker26 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker27 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            hocker28 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+            tisch3.name = "Tisch3";
+            tisch4.name = "Tisch4";
+
+            hocker15.name = "Hocker15";
+            hocker16.name = "Hocker16";
+            hocker17.name = "Hocker17";
+            hocker18.name = "Hocker18";
+            hocker19.name = "Hocker19";
+            hocker20.name = "Hocker20";
+            hocker21.name = "Hocker21";
+            hocker22.name = "Hocker22";
+            hocker23.name = "Hocker23";
+            hocker24.name = "Hocker24";
+            hocker25.name = "Hocker25";
+            hocker26.name = "Hocker26";
+            hocker27.name = "Hocker27";
+            hocker28.name = "Hocker28";
+
+            berBuilder(barbereich, new Vector3(-7, 0.1f, -4f), new Vector3(-7, 0.1f, 1), new Vector3(-4, 0.1f, -4f), new Vector3(-4, 0.1f, 1));
+            barBuilder(bar, -7, 0.1f, -4);
+            berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
+            berBuilder(tischbereich, new Vector3(-3, 0.1f, -6), new Vector3(-3, 0.1f, 3), new Vector3(6, 0.1f, -6f), new Vector3(6, 0.1f, 3));
+            tischmeshsenk(3.5f, 0.1f, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
+            tischmeshsenk(3.5f, 0.1f, -3, tisch2, hocker11, hocker12, hocker13, hocker14);
+            tischmeshsenk(-0.5f, 0.1f, -3, tisch3, hocker15, hocker16, hocker17, hocker18);
+            tischmeshsenk(-0.5f, 0.1f, 0, tisch4, hocker19, hocker20, hocker21, hocker22);
         }
+        if (hockerzahl != maxhocker) {
+            for (int i = hockerzahl + 1; i <= maxhocker; i++)
+            {
 
+                nr = i.ToString();
+                hock = hock + nr;
+                Debug.Log(hock);
+                Destroy(GameObject.Find(hock));
+                hock = "Hocker";
+            }
+        }
+        if (tischzahl != maxtisch)
+        {
+            for (int i = tischzahl + 1; i <= maxtisch; i++)
+            {
+                tinr = i.ToString();
+                tis = tis + tinr;
+                Debug.Log(tis);
+                Destroy(GameObject.Find(tis));
+                tis = "Tisch";
+            }
+        }
     }
 
     void Start () {
@@ -645,7 +752,7 @@ public class taverne : MonoBehaviour {
         wand3.name = "wand3";
         wand4.name = "wand4";
         decke.name = "decke";
-        spawn.name = "name";
+        spawn.name = "spawn";
 
         //Bereiche der Taverne einteilen
 
