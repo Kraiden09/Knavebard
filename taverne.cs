@@ -7,7 +7,7 @@ public class taverne : MonoBehaviour {
 
     // Use this for initialization
     int cnt = 0;
-
+    float lastkonf = 0;
     //Hilfsvariablen für Randomize
     int hockerzahl = 0;
     int tischzahl = 0;
@@ -611,41 +611,44 @@ public class taverne : MonoBehaviour {
 
         if (konfig == 3)
         {
-            tisch3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            tisch4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            if (lastkonf != 3)
+            {
+                tisch3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                tisch4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
-            hocker15 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker16 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker17 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker18 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker19 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker20 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker21 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker22 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker23 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker24 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker25 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker26 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker27 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            hocker28 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker15 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker16 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker17 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker18 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker19 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker20 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker21 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker22 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker23 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker24 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker25 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker26 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker27 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                hocker28 = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
-            tisch3.name = "Tisch3";
-            tisch4.name = "Tisch4";
+                tisch3.name = "Tisch3";
+                tisch4.name = "Tisch4";
 
-            hocker15.name = "Hocker15";
-            hocker16.name = "Hocker16";
-            hocker17.name = "Hocker17";
-            hocker18.name = "Hocker18";
-            hocker19.name = "Hocker19";
-            hocker20.name = "Hocker20";
-            hocker21.name = "Hocker21";
-            hocker22.name = "Hocker22";
-            hocker23.name = "Hocker23";
-            hocker24.name = "Hocker24";
-            hocker25.name = "Hocker25";
-            hocker26.name = "Hocker26";
-            hocker27.name = "Hocker27";
-            hocker28.name = "Hocker28";
+                hocker15.name = "Hocker15";
+                hocker16.name = "Hocker16";
+                hocker17.name = "Hocker17";
+                hocker18.name = "Hocker18";
+                hocker19.name = "Hocker19";
+                hocker20.name = "Hocker20";
+                hocker21.name = "Hocker21";
+                hocker22.name = "Hocker22";
+                hocker23.name = "Hocker23";
+                hocker24.name = "Hocker24";
+                hocker25.name = "Hocker25";
+                hocker26.name = "Hocker26";
+                hocker27.name = "Hocker27";
+                hocker28.name = "Hocker28";
+            }
 
             berBuilder(barbereich, new Vector3(-7, 0.1f, -4f), new Vector3(-7, 0.1f, 1), new Vector3(-4, 0.1f, -4f), new Vector3(-4, 0.1f, 1));
             barBuilder(bar, -7, 0.1f, -4);
@@ -678,6 +681,7 @@ public class taverne : MonoBehaviour {
                 tis = "Tisch";
             }
         }
+        lastkonf = konfig;
     }
 
     void Start () {
