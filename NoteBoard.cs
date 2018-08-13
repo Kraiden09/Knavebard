@@ -3,19 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoteBoard : MonoBehaviour
-{
+public class NoteBoard : MonoBehaviour {
     // Reference to stage
     private GameObject stageRef, post1, post2, screen, borderLeft, borderRight, scoreText;
     private Mesh screenMesh;
     // Flag for Score Coroutine
-    private bool scoreCRrunning;
+    private bool scoreCRrunning, fpsToLow;
     // Saves last called Score Coroutine
     public Coroutine lastScoreCR;
     public int bad, good, great;
     public List<GameObject> notes = new List<GameObject>();
+    public float deltaTime;
     // Random numbers for testing
-    System.Random rnd = new System.Random();
+    //System.Random rnd = new System.Random();
     Vector3 despawn;
 
     // Refreshes the Noteposition every x Seconds
@@ -24,36 +24,32 @@ public class NoteBoard : MonoBehaviour
     // Move x Units along Screen - Higher number = Faster notes
     float moveAlongScreen = 0.03f;
 
-
     //calling NoteReader (joerg)
     NoteReader noteReader;
 
-
-
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
         //JOERG REFERENCE
         noteReader = GameObject.Find("NoteReader").GetComponent<NoteReader>();
-
 
         StartCoroutine(WaitForStage());
         bad = 0;
         good = 0;
         great = 0;
         scoreCRrunning = false;
+        fpsToLow = false;
         lastScoreCR = null;
-
-
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
+        if(ShowFPS() < 50 && !fpsToLow) {
+            fpsToLow = true;
+            Debug.Log("FPS to low!");
+        }
     }
 
-    void BuildBoard()
-    {
+    void BuildBoard() {
         stageRef = GameObject.Find("Tavern").GetComponent<taverne>().getBuehne();
 
         Mesh stageRefMesh = stageRef.GetComponent<MeshFilter>().mesh;
@@ -69,24 +65,18 @@ public class NoteBoard : MonoBehaviour
         BuildScreen();
     }
 
-    void BuildPosts(Mesh stageRefMesh, Transform stageRefTrans)
-    {
+    void BuildPosts(Mesh stageRefMesh, Transform stageRefTrans) {
         Vector3 post1Pos = new Vector3(0, 0, 0), post2Pos = new Vector3(0, 0, 0);
-        for (int i = 0; i < stageRefMesh.vertices.Length; i++)
-        {
-            if (i == 0)
-            {
+        for (int i = 0; i < stageRefMesh.vertices.Length; i++) {
+            if (i == 0) {
                 post1Pos = stageRefMesh.vertices[0];
                 post2Pos = stageRefMesh.vertices[0];
             }
             // Left post - negative x, positive y and z
-            if (stageRefMesh.vertices[i].x <= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z)
-            {
+            if (stageRefMesh.vertices[i].x <= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z) {
                 post1Pos = stageRefMesh.vertices[i];
                 // Right post - positive x, y and z
-            }
-            else if (stageRefMesh.vertices[i].x >= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z)
-            {
+            } else if (stageRefMesh.vertices[i].x >= post1Pos.x && stageRefMesh.vertices[i].y >= post1Pos.y && stageRefMesh.vertices[i].z >= post1Pos.z) {
                 post2Pos = stageRefMesh.vertices[i];
             }
         }
@@ -114,8 +104,7 @@ public class NoteBoard : MonoBehaviour
         post2.name = "RightPost";
     }
 
-    void BuildScreen()
-    {
+    void BuildScreen() {
         screenMesh = new Mesh();
         screen = new GameObject("Screen");
         //screen.transform.position = post2.transform.position;
@@ -172,8 +161,7 @@ public class NoteBoard : MonoBehaviour
         test2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);*/
     }
 
-    void BuildHitArea(float length, Vector3 screenPos)
-    {
+    void BuildHitArea(float length, Vector3 screenPos) {
         screenPos.y = screenPos.y - length / 2;
         screenPos.x = screenPos.x + 0.3f;
         // For better visibility
@@ -194,36 +182,29 @@ public class NoteBoard : MonoBehaviour
         borderRight.GetComponent<Renderer>().material.color = Color.black;
     }
 
-    int RandomNumber()
-    {
-        return rnd.Next(0, 4);
-    }
+    /*byte RandomColorVal() {
+        return (byte)rnd.Next(0, 255);
+    }*/
 
     // For score calculation
     private float acceptance = 0.2f;
 
     // Note Rating depending on HitArea
-    public void ScorePos()
-    {
+    public void ScorePos() {
         Vector3 notePos = notes[0].transform.position;
         float rightBorder = borderRight.transform.position.x;
         float leftBorder = borderLeft.transform.position.x;
         // Checks if Coroutine of ShowScore already running
         ScoreCRrunningCheck();
-        if (notePos.x > (rightBorder + acceptance) || notePos.x < (leftBorder - acceptance))
-        {
+        if (notePos.x > (rightBorder + acceptance) || notePos.x < (leftBorder - acceptance)) {
             // Notescore Bad (0)
             lastScoreCR = StartCoroutine(ShowScore(0));
             bad++;
-        }
-        else if (notePos.x < (rightBorder - acceptance) && notePos.x > (leftBorder + acceptance))
-        {
+        } else if (notePos.x < (rightBorder - acceptance) && notePos.x > (leftBorder + acceptance)) {
             // Notescore Great (2)
             lastScoreCR = StartCoroutine(ShowScore(2));
             great++;
-        }
-        else
-        {
+        } else {
             // Notescore Good (1)
             lastScoreCR = StartCoroutine(ShowScore(1));
             good++;
@@ -232,43 +213,107 @@ public class NoteBoard : MonoBehaviour
     }
 
     // Starts Coroutine if called from another script
-    public void BadScoreExtCall()
-    {
+    public void BadScoreExtCall() {
         ScoreCRrunningCheck();
         lastScoreCR = StartCoroutine(ShowScore(0));
     }
 
     // Checks if Coroutine of ShowScore already running - if it does, kill it
-    private void ScoreCRrunningCheck()
-    {
-        if (scoreCRrunning)
-        {
+    private void ScoreCRrunningCheck() {
+        if (scoreCRrunning) {
             StopCoroutine(lastScoreCR);
             Destroy(scoreText);
             scoreCRrunning = false;
         }
     }
 
-    public void DestroyNote()
-    {
+    public void DestroyNote() {
         // Only destroy the note, if position is < the position of the right border + acceptance
-        if (notes[0].transform.position.x < borderRight.transform.position.x + acceptance)
-        {
+        if (notes[0].transform.position.x < borderRight.transform.position.x + acceptance) {
+            CreateNoteParticle(notes[0].transform.position);
             Destroy(notes[0]);
             notes.RemoveAt(0);
         }
     }
 
-    IEnumerator ShowScore(int scoreType)
-    {
+    private float ShowFPS() {
+        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        float fps = 1.0f / deltaTime;
+        return fps;
+    }
+
+    public ParticleSystemRenderMode renderMode = ParticleSystemRenderMode.Mesh;
+
+    private void CreateNoteParticle(Vector3 pos) {
+        // Create emitter
+        GameObject emitter = new GameObject();
+        emitter.name = "Emitter";
+        // Set emitter position to note position
+        emitter.transform.position = pos;
+        // Particle System for further customization
+        ParticleSystem ps = emitter.AddComponent<ParticleSystem>();
+        // Rotate emitter to generate particles away from screen
+        emitter.transform.Rotate(0, 180, 0);
+        // Set emission var for further customization
+        var emission = ps.emission;
+        // Set main var for further (general) customization
+        var main = ps.main;
+        // Particle lifetime
+        float lifetime = 0.5f;
+        main.startLifetime = lifetime;
+        // Allows particles to be customized
+        ParticleSystemRenderer emittedParticles = ps.GetComponent<ParticleSystemRenderer>();
+        // Emitted Particles Mesh = Sphere
+        emittedParticles.renderMode = ParticleSystemRenderMode.Mesh;
+        emittedParticles.mesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+        emittedParticles.material = (Material)Resources.Load("Materials/NoteParticleMat");
+        // Color Gradient for fading
+        var col = ps.colorOverLifetime;
+        col.enabled = true;
+        Gradient grad = new Gradient();
+        // Random Color for every Note PS
+        Color newColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        grad.SetKeys(new GradientColorKey[] { new GradientColorKey(newColor, 0.0f), new GradientColorKey(newColor, 1.0f) }, 
+                     new GradientAlphaKey[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+        col.color = grad;
+        //Color newColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        //emittedParticles.material.SetColor("_TintColor", newColor);
+        main.startSize = 0.05f;
+        emission.enabled = true;
+        // Emission Rate
+        emission.rateOverTime = 70;
+
+        ps.Play();
+        //StartCoroutine(Recolor(ps));
+        StartCoroutine(StopPS(emitter, ps, 0.5f, lifetime));
+    }
+
+    IEnumerator StopPS(GameObject emitter, ParticleSystem ps, float timeToEmit, float lifetime) {
+        yield return new WaitForSeconds(timeToEmit);
+        ps.Stop();
+        StartCoroutine(DeletePS(emitter, ps, lifetime));
+    }
+
+    IEnumerator DeletePS(GameObject emitter, ParticleSystem ps, float lifetime) {
+        yield return new WaitForSeconds(lifetime);
+        Destroy(emitter);
+    }
+
+    // TBC - Every Particle has another color (optional)
+    IEnumerator Recolor(ParticleSystem ps) {
+        ParticleSystem.Particle[] particles;
+        particles = new ParticleSystem.Particle[ps.particleCount];
+        int num = ps.GetParticles(particles);
+        Debug.Log(num);
+        yield return new WaitForSeconds(1f);
+    }
+
+    IEnumerator ShowScore(int scoreType) {
         scoreCRrunning = true;
         int destroyCycle = 0;
-        while (destroyCycle < 2)
-        {
-            if (destroyCycle == 0)
-            {
-                switch (scoreType)
-                {
+        while (destroyCycle < 2) {
+            if (destroyCycle == 0) {
+                switch (scoreType) {
                     case 0:
                         scoreText = (GameObject)Instantiate(Resources.Load("Prefab/Bad"));
                         scoreText.name = "BadText";
@@ -286,9 +331,7 @@ public class NoteBoard : MonoBehaviour
                         Debug.Log("Error - Not a valid case in \"ShowScore()\"");
                         break;
                 }
-            }
-            else
-            {
+            } else {
                 Destroy(scoreText);
                 scoreCRrunning = false;
             }
@@ -297,14 +340,15 @@ public class NoteBoard : MonoBehaviour
         }
     }
 
-    IEnumerator GenerateNotes()
-    {
+    IEnumerator GenerateNotes() {
         GameObject note;
-        for (int i = 0; i < noteReader.songlength(); i++)
-        {
+
+        //timing for 1st note
+        yield return new WaitForSeconds(1.5f);
+
+        for (int i = 0; i < noteReader.songlength(); i++) {
             //switch (songNotes[i])
-            switch(noteReader.readNotes(i))
-            {
+            switch (noteReader.readNotes(i)) {
                 case 0:
                     note = (GameObject)Instantiate(Resources.Load("Prefab/NoteUp"));
                     note.name = "NoteUp";
@@ -356,6 +400,8 @@ public class NoteBoard : MonoBehaviour
 
             note.transform.position = post2.transform.position;
             note.transform.Translate(-0.1f, 0.2f, 0);
+
+            //StartCoroutine(fade(fadeMesh, 2f, true));
             notes.Add(note);
             //yield return new WaitForSeconds(noteTiming[i]);
             yield return new WaitForSeconds(noteReader.readTime(i));
@@ -363,10 +409,8 @@ public class NoteBoard : MonoBehaviour
     }
 
     // Wait for stage to be initialized
-    IEnumerator WaitForStage()
-    {
-        while ((GameObject.Find("Buehne") == null))
-        {
+    IEnumerator WaitForStage() {
+        while ((GameObject.Find("Buehne") == null)) {
             yield return new WaitForSeconds(0.1f);
         }
         BuildBoard();
@@ -374,21 +418,16 @@ public class NoteBoard : MonoBehaviour
         StartCoroutine(MoveNotes());
     }
 
-    IEnumerator MoveNotes()
-    {
+    IEnumerator MoveNotes() {
         bool remove = false;
-        while (true)
-        {
-            foreach (GameObject note in notes)
-            {
+        while (true) {
+            foreach (GameObject note in notes) {
                 note.transform.Translate(-moveAlongScreen, 0, 0);
-                if (note.transform.position.x <= despawn.x)
-                {
+                if (note.transform.position.x <= despawn.x) {
                     remove = true;
                 }
             }
-            if (remove)
-            {
+            if (remove) {
                 lastScoreCR = StartCoroutine(ShowScore(0));
                 DestroyNote();
                 bad++;
@@ -396,7 +435,6 @@ public class NoteBoard : MonoBehaviour
             }
             yield return new WaitForSeconds(refresh);
         }
-        
     }
 
     /*
