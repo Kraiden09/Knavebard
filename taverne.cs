@@ -870,4 +870,76 @@ public class taverne : MonoBehaviour {
     {
         return buehne;
     }
+
+    public GameObject[] getHocker()
+    {
+        string str = "Hocker";
+        GameObject[] a = new GameObject[hockerzahl];
+        for (int i = 1; i <= hockerzahl; i++) {
+            str = str + i;
+            a[i - 1] = GameObject.Find(str);
+            str = "Hocker";
+        }
+        return a;
+
+    }
+
+    public GameObject[] getTische()
+    {
+        string str = "Tisch";
+        GameObject[] a = new GameObject[tischzahl];
+        for (int i = 1; i <= tischzahl; i++)
+        {
+            str = str + i;
+            a[i - 1] = GameObject.Find(str);
+            str = "Tisch";
+        }
+        return a;
+
+    }
+    public GameObject getWandRechts()
+    {
+        return wand3;
+    }
+
+    public GameObject getWandLinks()
+    {
+        return wand1;
+    }
+
+    public GameObject getWandFern()
+    {
+        return wand2;
+    }
+
+    public GameObject getWandNah()
+    {
+        return wand4;
+    }
+
+    public GameObject getBoden()
+    {
+        return boden;
+    }
+
+    public GameObject getDecke()
+    {
+        return decke;
+    }
+
+    public GameObject getSpawn()
+    {
+        return spawn;
+    }
+
+    public GameObject getBar()
+    {
+        return bar;
+    }
+
+    public GameObject getTreppe()
+    {
+        return treppe;
+    }
+
 }
