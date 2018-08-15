@@ -14,15 +14,32 @@ public class NoteBoard : MonoBehaviour {
     public int bad, good, great;
     public List<GameObject> notes = new List<GameObject>();
     public float deltaTime;
-    // Random numbers for testing
-    //System.Random rnd = new System.Random();
+
+    // Current Position in notes List for FadeOut
+    public int curNotePos;
+
+    // Current Position in notes List for FadeIn
+    int curNoteEndPos;
+
     Vector3 despawn;
+
+    // Notes being despawned / faded
+    int notesDespawning;
 
     // Refreshes the Noteposition every x Seconds
     float refresh = 0.01667f;
 
     // Move x Units along Screen - Higher number = Faster notes
     float moveAlongScreen = 0.03f;
+
+    // Time for the note to fade
+    float fadeTime = 0.2f;
+
+    // Time for a step of the fade
+    float fadeInterval = 0.04f;
+
+    // Time the note stays at Alpha 0f
+    float fadeInDelay = 0.3f;
 
     //calling NoteReader (joerg)
     NoteReader noteReader;
@@ -39,6 +56,9 @@ public class NoteBoard : MonoBehaviour {
         scoreCRrunning = false;
         fpsToLow = false;
         lastScoreCR = null;
+        curNotePos = 0;
+        curNoteEndPos = 0;
+        notesDespawning = 0;
     }
 
     // Update is called once per frame
@@ -177,7 +197,6 @@ public class NoteBoard : MonoBehaviour {
         borderRight.name = "BorderRight";
         borderRight.transform.position = screenPos;
         borderRight.transform.localScale = new Vector3(0.1f, length, 0.1f);
-        Debug.Log(length);
         borderLeft.GetComponent<Renderer>().material.color = Color.black;
         borderRight.GetComponent<Renderer>().material.color = Color.black;
     }
@@ -191,7 +210,7 @@ public class NoteBoard : MonoBehaviour {
 
     // Note Rating depending on HitArea
     public void ScorePos() {
-        Vector3 notePos = notes[0].transform.position;
+        Vector3 notePos = notes[curNotePos].transform.position;
         float rightBorder = borderRight.transform.position.x;
         float leftBorder = borderLeft.transform.position.x;
         // Checks if Coroutine of ShowScore already running
@@ -229,10 +248,10 @@ public class NoteBoard : MonoBehaviour {
 
     public void DestroyNote() {
         // Only destroy the note, if position is < the position of the right border + acceptance
-        if (notes[0].transform.position.x < borderRight.transform.position.x + acceptance) {
-            CreateNoteParticle(notes[0].transform.position);
-            Destroy(notes[0]);
-            notes.RemoveAt(0);
+        if (notes[curNotePos].transform.position.x < borderRight.transform.position.x + acceptance) {
+            //StartCoroutine(WaitTillFade());
+            ValidateFadeValues();
+            StartCoroutine(FadeOut(curNotePos, fadeInterval, fadeTime));
         }
     }
 
@@ -286,6 +305,90 @@ public class NoteBoard : MonoBehaviour {
         ps.Play();
         //StartCoroutine(Recolor(ps));
         StartCoroutine(StopPS(emitter, ps, 0.5f, lifetime));
+    }
+
+    void ValidateFadeValues() {
+        // fadeInterval and fadeTime need to be <= 1.0f (Alpha -> fully visible)
+        while (fadeInterval > 1f || fadeTime > 1f) {
+            if (fadeInterval > 1f) fadeInterval /= 10;
+            if (fadeTime > 1f) fadeTime /= 10;
+        }
+    }
+
+    IEnumerator FadeIn(int myPos, float increaseInterval, float time, float delay) {
+        if (increaseInterval > time) increaseInterval = time;
+        curNoteEndPos++;
+        // Fading happens over (time / increase) times, which means to reach 1f it has
+        // to increase the value by 1f / (time / increaseInterval).
+        float increaseVal = 1f / (time / increaseInterval);
+        Renderer[] rendererObjects = notes[myPos].GetComponentsInChildren<Renderer>();
+        Color col;
+        float currentAlpha = 0f;
+        // Set Alpha of note after init to 0f
+        foreach (Renderer item in rendererObjects) {
+            col = item.material.color;
+            col.a = 0f;
+            item.material.SetColor("_Color", col);
+        }
+        while (currentAlpha < 1f) {
+            if (delay > 0f) {
+                yield return new WaitForSeconds(increaseInterval);
+                delay -= increaseInterval;
+                continue;
+            }
+            // Not Alpha > 1f
+            if (currentAlpha + increaseInterval > 1f) {
+                increaseVal = 1f - currentAlpha;
+            }
+            foreach (Renderer item in rendererObjects) {
+                col = item.material.color;
+                col.a += increaseVal;
+                item.material.SetColor("_Color", col);
+            }
+            currentAlpha += increaseVal;
+            yield return new WaitForSeconds(increaseInterval);
+        }        
+    }
+
+    IEnumerator FadeOut(int myPos, float decreaseInterval, float time) {
+        // Multiple notes Despawning
+        bool multiple = false;
+        CreateNoteParticle(notes[myPos].transform.position);
+        curNotePos++;
+        notesDespawning++;
+        if (notesDespawning > 1) {
+            multiple = true;
+        }
+        if (decreaseInterval > time) decreaseInterval = time;
+        // Fading happens over (time / decrease) times, which means to reach 0f it has
+        // to decrease the value by 1f / (time / decreaseInterval).
+        float decreaseVal = 1f / (time / decreaseInterval);
+        Renderer[] rendererObjects = notes[myPos].GetComponentsInChildren<Renderer>();
+        Color col;
+        float currentAlpha = 1f;
+        while (currentAlpha > 0f) {
+            // No negative Alpha
+            if (currentAlpha - decreaseVal < 0f) {
+                decreaseVal = currentAlpha;
+            }
+            foreach (Renderer item in rendererObjects) {
+                col = item.material.color;
+                col.a -= decreaseVal;
+                item.material.SetColor("_Color", col);
+            }
+            currentAlpha -= decreaseVal;
+            yield return new WaitForSeconds(decreaseInterval);
+        }
+        if (multiple) {
+            Destroy(notes[curNotePos-1]);
+            notes.RemoveAt(curNotePos-1);
+        } else {
+            Destroy(notes[myPos]);
+            notes.RemoveAt(myPos);
+        }
+        notesDespawning--;
+        curNotePos--;
+        curNoteEndPos--;
     }
 
     IEnumerator StopPS(GameObject emitter, ParticleSystem ps, float timeToEmit, float lifetime) {
@@ -371,38 +474,14 @@ public class NoteBoard : MonoBehaviour {
                     break;
             }
 
-            /*note.AddComponent<MeshRenderer>();
-            Material[] noteMaterials;
-            noteMaterials = note.GetComponentInChildren<MeshRenderer>().materials;
-            Debug.Log(noteMaterials[0]);
-
-            MeshRenderer fadeMesh = note.GetComponent<MeshRenderer>();
-            fadeMesh.enabled = true;
-
-            for (int i = 0; i < noteMaterials.Length; ++i) {
-                //ENABLE FADE Mode on the material if not done already
-                noteMaterials[i].SetFloat("_Mode", 2);
-                noteMaterials[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                noteMaterials[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                noteMaterials[i].SetInt("_ZWrite", 0);
-                noteMaterials[i].DisableKeyword("_ALPHATEST_ON");
-                noteMaterials[i].EnableKeyword("_ALPHABLEND_ON");
-                noteMaterials[i].DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                noteMaterials[i].renderQueue = 3000;
-                Debug.Log(noteMaterials[i].GetFloat("_Mode"));
-
-                Color meshColor = noteMaterials[i].color;
-                //noteMaterials[i].color = new Color(meshColor.r, meshColor.g, meshColor.b, 0f);
-                meshColor.a = 0f;
-                noteMaterials[i].color = meshColor;
-                Debug.Log(noteMaterials[i].name);
-            }*/
-
             note.transform.position = post2.transform.position;
             note.transform.Translate(-0.1f, 0.2f, 0);
 
             //StartCoroutine(fade(fadeMesh, 2f, true));
             notes.Add(note);
+
+            StartCoroutine(FadeIn(curNoteEndPos, fadeInterval, fadeTime, fadeInDelay));
+
             //yield return new WaitForSeconds(noteTiming[i]);
             yield return new WaitForSeconds(noteReader.readTime(i));
         }
@@ -420,10 +499,15 @@ public class NoteBoard : MonoBehaviour {
 
     IEnumerator MoveNotes() {
         bool remove = false;
+        int i = 0;
         while (true) {
             foreach (GameObject note in notes) {
                 note.transform.Translate(-moveAlongScreen, 0, 0);
                 if (note.transform.position.x <= despawn.x) {
+                    if (i < notesDespawning) {
+                        i++;
+                        continue;
+                    }
                     remove = true;
                 }
             }
@@ -433,50 +517,25 @@ public class NoteBoard : MonoBehaviour {
                 bad++;
                 remove = false;
             }
+            i = 0;
             yield return new WaitForSeconds(refresh);
         }
     }
 
-    /*
-    // Based on https://stackoverflow.com/questions/44933517/fading-in-out-gameobject
-    IEnumerator fade(MeshRenderer fadingNote, float duration, bool fadeInOut) {
-        float start, end;
+    public GameObject[] getPosts() {
+        GameObject[] posts = new GameObject[2];
+        // Left Post
+        posts[0] = post1;
+        // Right Post
+        posts[1] = post2;
+        return posts;
+    }
 
-        // fadeInOut true = fadeIn, fadeInOut false = fadeOut
-        if (fadeInOut) {
-            start = 0;
-            end = 1;
-        } else {
-            start = 1;
-            end = 0;
-        }
+    public GameObject getScreen() {
+        return screen;
+    }
 
-        //ENABLE FADE Mode on the material if not done already
-        fadingNote.material.SetFloat("_Mode", 2);
-        fadingNote.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        fadingNote.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        fadingNote.material.SetInt("_ZWrite", 0);
-        fadingNote.material.DisableKeyword("_ALPHATEST_ON");
-        fadingNote.material.EnableKeyword("_ALPHABLEND_ON");
-        fadingNote.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        fadingNote.material.renderQueue = 3000;
-
-        float counter = 0;
-
-        // Get current color
-        Color spriteColor = fadingNote.material.color;
-
-        while (counter < duration) {
-            counter += Time.deltaTime;
-
-            //Fade from start to end
-            float alpha = Mathf.Lerp(start, end, counter / duration);
-
-            //Change alpha only
-            fadingNote.material.color = new Color(spriteColor.r, spriteColor.g, spriteColor.b, alpha);
-
-            //Wait for a frame
-            yield return null;
-        }
-    }*/
+    public List<GameObject> getNotes() {
+        return notes;
+    }
 }
