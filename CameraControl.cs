@@ -16,14 +16,20 @@ public class CameraControl : MonoBehaviour {
     int random;
     int ranDirection;
 
-    //CamPos front;
-    Vector3 standard = new Vector3(0, 1, -8);
-    Vector3 front = new Vector3(0, 1.8f, -2.5f);
-    Vector3 left;
-    Vector3 right;
+    /*
+    // used structs
+    CamPos[] Positions;
+    CamPos standard;
+    CamPos front;
+    CamPos left;
+    CamPos right;
+    */
 
-    Vector3[] Positions;
+    GameObject standard;
+    GameObject front;
+    GameObject left;
 
+    GameObject[] Positions;
 
 	// Use this for initialization
 	void Start () {
@@ -38,10 +44,24 @@ public class CameraControl : MonoBehaviour {
         director = false;
         waiting = false;
 
+        /*
+        //Structs
+        standard = new CamPos(0, 1, -8, 0, 0);
+        front = new CamPos(0, 1.8f, -2.5f,0,0);
+        left = new CamPos(-4.4f, 2f, -0.5f, 0, 25);
 
         //Order to switch between Positions
-        Positions = new Vector3[] { standard,front};
+        Positions = new CamPos[] { standard,front, left};
+        */
 
+
+        standard = new GameObject("StandardPos");
+        standard.transform.Translate(0, 1, -8);
+        front = new GameObject("RightPos");
+        front.transform.Translate(0, 1.8f, -2.5f);
+
+
+        Positions = new GameObject[]{ standard, front };
 	}
 	
 	// Update is called once per frame
@@ -59,7 +79,7 @@ public class CameraControl : MonoBehaviour {
         if (director)
         {
             //slowly moving in random direction
-            //int ranDirection used
+            //int ranDirection used (and possible rotation)
 
 
 
@@ -76,6 +96,7 @@ public class CameraControl : MonoBehaviour {
             if (waiting)
             {
                 CamMoveTo(Positions[random]);
+                
             }
             
             
@@ -151,35 +172,53 @@ public class CameraControl : MonoBehaviour {
         }
     }
 
-    /*
+    
     public struct CamPos
     {
         // Camera-Position
         public float x;
         public float y;
         public float z;
+        public float rotX;
+        public float rotY;
 
-        public CamPos(float x, float y, float z)
+        public CamPos(float x, float y, float z, float rotX, float rotY)
         {
+            //position
             this.x = x;
             this.y = y;
             this.z = z;
+
+            //rotation
+            this.rotX = rotX;
+            this.rotY = rotY;
         }
 
-    }*/
+    }
 
-
+    /*
     //moving Camera as Director
     public void CameraMoveAnchor(Vector3 pos)
     {
         transform.Translate(new Vector3(pos.x, pos.y, pos.z));
     }
+    */
 
-
-
-    public void CamMoveTo(Vector3 pos)
+    public void CamMoveTo(GameObject pos)
     {
-        transform.position = Vector3.MoveTowards(transform.position, pos, camSpeed * 2 * Time.deltaTime);
+        float step = camSpeed * Time.deltaTime;
+        //Vector3 target = pos.transform.position;
+        Vector3 targetDir = pos.transform.position - transform.position;
+
+
+        //moving itself towards pos
+        transform.position = Vector3.MoveTowards(transform.position,new Vector3(pos.transform.position.x, pos.transform.position.y,pos.transform.position.z), camSpeed * 2 * Time.deltaTime);
+
+
+        Vector3 rotat = Vector3.RotateTowards(transform.forward, targetDir, step, 1.0f);    //(pos.rotX, pos.rotY, 0);
+        //transform.rotation = Quaternion.RotateTowards(transform.rotation, new Quaternion(pos.rotX,pos.rotY,0,0), 0.1f);
+
+
     }
 
     // just there for waiting
