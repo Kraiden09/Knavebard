@@ -30,16 +30,21 @@ public class NoteBoard : MonoBehaviour {
     float refresh = 0.01667f;
 
     // Move x Units along Screen - Higher number = Faster notes
-    float moveAlongScreen = 0.03f;
+    float moveAlongScreen = 0.04f;
+
+    readonly float fadeBaseTime = 0.2f;
+    readonly float moveAlongScreenBase = 0.03f;
+    readonly float fadeBaseInterval = 0.04f;
+    readonly float fadeInBaseDelay = 0.3f;
 
     // Time for the note to fade
-    float fadeTime = 0.2f;
+    float fadeTime;
 
     // Time for a step of the fade
-    float fadeInterval = 0.04f;
+    float fadeInterval;
 
     // Time the note stays at Alpha 0f
-    float fadeInDelay = 0.3f;
+    float fadeInDelay;
 
     //calling NoteReader (joerg)
     NoteReader noteReader;
@@ -59,6 +64,13 @@ public class NoteBoard : MonoBehaviour {
         curNotePos = 0;
         curNoteEndPos = 0;
         notesDespawning = 0;
+
+        // Correct fading
+        fadeTime = fadeBaseTime * moveAlongScreenBase / moveAlongScreen; 
+        fadeInterval = fadeBaseInterval * moveAlongScreenBase / moveAlongScreen;
+        fadeInDelay = fadeInBaseDelay * moveAlongScreenBase / moveAlongScreen;
+        acceptance = baseAcceptance * moveAlongScreenBase / moveAlongScreen;
+        scoreTime = baseScoreTime * moveAlongScreenBase / moveAlongScreen;
     }
 
     // Update is called once per frame
@@ -118,8 +130,8 @@ public class NoteBoard : MonoBehaviour {
         post2.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust right post position
         post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, post2Pos.z);
-        // + 0.1 Units on X to avoid clipping
-        despawn = post1.transform.position + new Vector3(0.1f, 0, 0);
+        // + baseAcceptance Units on X to avoid clipping
+        despawn = post1.transform.position + new Vector3(baseAcceptance, 0, 0);
         post1.name = "LeftPost";
         post2.name = "RightPost";
     }
@@ -206,7 +218,8 @@ public class NoteBoard : MonoBehaviour {
     }*/
 
     // For score calculation
-    private float acceptance = 0.2f;
+    private readonly float baseAcceptance = 0.15f;
+    private float acceptance;
 
     // Note Rating depending on HitArea
     public void ScorePos() {
@@ -248,7 +261,7 @@ public class NoteBoard : MonoBehaviour {
 
     public void DestroyNote() {
         // Only destroy the note, if position is < the position of the right border + acceptance
-        if (notes[curNotePos].transform.position.x < borderRight.transform.position.x + acceptance) {
+        if (notes[curNotePos].transform.position.x < borderRight.transform.position.x + baseAcceptance) {
             //StartCoroutine(WaitTillFade());
             ValidateFadeValues();
             StartCoroutine(FadeOut(curNotePos, fadeInterval, fadeTime));
@@ -411,6 +424,9 @@ public class NoteBoard : MonoBehaviour {
         yield return new WaitForSeconds(1f);
     }
 
+    private readonly float baseScoreTime = 0.5f;
+    private float scoreTime;
+
     IEnumerator ShowScore(int scoreType) {
         scoreCRrunning = true;
         int destroyCycle = 0;
@@ -439,7 +455,7 @@ public class NoteBoard : MonoBehaviour {
                 scoreCRrunning = false;
             }
             destroyCycle++;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(scoreTime);
         }
     }
 
