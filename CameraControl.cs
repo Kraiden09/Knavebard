@@ -4,9 +4,21 @@ using UnityEngine;
 /* simpelste Bewegung der Kamera innerhalb simpler Grenzen
  * bisher: oben, unten, links, rechts, zoom, zoomout
  * 
+ * MANUAL: 1st: add Script to MainCamera Object in Unity
+ * 
+ * Switching Modes: Press "1"
+ * 
+ * During Manual-Mode:
+ * "WASD" for common directions
+ * "PageUp" and "PageDown" for zooming in and out
+ * "Q" and "E" for switching between preset Camerapositions
+ * 
+ * 
  */
 public class CameraControl : MonoBehaviour {
-
+    //references to noteboard
+    NoteBoard noteBoard;
+    GameObject screen;
 
     //Bewegungsgeschwindigkeit
     float camSpeed;
@@ -15,6 +27,9 @@ public class CameraControl : MonoBehaviour {
     bool waiting;
     int random;
     int ranDirection;
+
+    //Fixpunkt
+    Vector3 fix;
 
     /*
     // used structs
@@ -25,11 +40,20 @@ public class CameraControl : MonoBehaviour {
     CamPos right;
     */
 
+    //Camerapositions
     GameObject standard;
     GameObject front;
-    GameObject left;
+    GameObject leftfront;
+    GameObject rightfront;
 
     GameObject[] Positions;
+
+    //future positions
+    GameObject roof; //maybe
+    GameObject leftrear;
+    GameObject rightrear;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -56,16 +80,29 @@ public class CameraControl : MonoBehaviour {
 
 
         standard = new GameObject("StandardPos");
-        standard.transform.Translate(0, 1, -8);
-        front = new GameObject("RightPos");
+        standard.transform.Translate(0, 2.7f, -8);
+        front = new GameObject("FrontPos");
         front.transform.Translate(0, 1.8f, -2.5f);
+        leftfront = new GameObject("LeftFrontPos");
+        leftfront.transform.Translate(-4.5f, 2, -0.05f);
+        rightfront = new GameObject("LeftFrontPos");
+        rightfront.transform.Translate(4.5f, 2, -0.05f);
 
 
-        Positions = new GameObject[]{ standard, front };
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        Positions = new GameObject[]{ standard, front, leftfront, rightfront };
+
+        /*
+        //References (not necessary)
+        noteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
+        screen = noteBoard.getScreen();
+        */
+        
+        fix = new Vector3(0, 2.7f, 6.15f);
+        CamMoveTo(standard);
+    }
+
+    // Update is called once per frame
+    void Update () {
         //switch
         if (Input.GetKeyDown("1"))
         {
@@ -78,8 +115,7 @@ public class CameraControl : MonoBehaviour {
         //AUTO-MODE
         if (director)
         {
-            //slowly moving in random direction
-            //int ranDirection used (and possible rotation)
+            
 
 
 
@@ -96,11 +132,13 @@ public class CameraControl : MonoBehaviour {
             if (waiting)
             {
                 CamMoveTo(Positions[random]);
-                
+            }
+            if (Positions[random].transform.position == transform.position)
+            {
+                //slowly moving in random direction
+                //int ranDirection used (and possible rotation)
             }
             
-            
-        
         }
 
 
@@ -196,14 +234,38 @@ public class CameraControl : MonoBehaviour {
 
     }
 
-    /*
-    //moving Camera as Director
-    public void CameraMoveAnchor(Vector3 pos)
-    {
-        transform.Translate(new Vector3(pos.x, pos.y, pos.z));
-    }
-    */
 
+    //moving Camera as Director
+    //move cam in random direction (up, down,left, right)
+    //maybe
+    public void CameraMove4W()
+    {
+        switch (UnityEngine.Random.Range(2, 4))
+        {
+            /*
+            //UP
+            case 0:
+                break;
+
+            //Down
+            case 1:
+                break;
+                */
+            //Left
+            case 2:
+                break;
+
+            //Right
+            case 3:
+                break;
+
+            default:
+                break;
+        }
+        transform.LookAt(fix);
+    }
+
+    //move between set positions
     public void CamMoveTo(GameObject pos)
     {
         float step = camSpeed * Time.deltaTime;
@@ -215,16 +277,21 @@ public class CameraControl : MonoBehaviour {
         transform.position = Vector3.MoveTowards(transform.position,new Vector3(pos.transform.position.x, pos.transform.position.y,pos.transform.position.z), camSpeed * 2 * Time.deltaTime);
 
 
-        Vector3 rotat = Vector3.RotateTowards(transform.forward, targetDir, step, 1.0f);    //(pos.rotX, pos.rotY, 0);
+        //IMPLEMENT ROTATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        //Vector3 rotat = Vector3.RotateTowards(transform.forward, targetDir, step, 1.0f);    //(pos.rotX, pos.rotY, 0);
         //transform.rotation = Quaternion.RotateTowards(transform.rotation, new Quaternion(pos.rotX,pos.rotY,0,0), 0.1f);
 
-
+        transform.LookAt(fix);
     }
+
 
     // just there for waiting
     IEnumerator sleeper()
     {
         waiting = true;
+
+        //short time for testing
         yield return new WaitForSeconds(UnityEngine.Random.Range(2, 5));
         print("waited");
         waiting = false;
