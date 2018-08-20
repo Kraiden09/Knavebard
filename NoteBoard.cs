@@ -7,8 +7,10 @@ public class NoteBoard : MonoBehaviour {
     // Reference to stage
     private GameObject stageRef, post1, post2, screen, borderLeft, borderRight, scoreText;
     private Mesh screenMesh;
-    // Flag for Score Coroutine
-    private bool scoreCRrunning, fpsToLow;
+    // Flag for Score Coroutine, FPS Cap and to initialize note boundaries
+    private bool scoreCRrunning, fpsToLow, initNoteBound;
+    private float noteWidth, noteHeight, noteDepth;
+    private int fpsCap;
     // Saves last called Score Coroutine
     public Coroutine lastScoreCR;
     public int bad, good, great;
@@ -54,16 +56,17 @@ public class NoteBoard : MonoBehaviour {
         //JOERG REFERENCE
         noteReader = GameObject.Find("NoteReader").GetComponent<NoteReader>();
 
-        StartCoroutine(WaitForStage());
         bad = 0;
         good = 0;
         great = 0;
         scoreCRrunning = false;
         fpsToLow = false;
+        initNoteBound = true;
         lastScoreCR = null;
         curNotePos = 0;
         curNoteEndPos = 0;
         notesDespawning = 0;
+        fpsCap = 60;
 
         // Correct fading
         fadeTime = fadeBaseTime * moveAlongScreenBase / moveAlongScreen; 
@@ -71,6 +74,8 @@ public class NoteBoard : MonoBehaviour {
         fadeInDelay = fadeInBaseDelay * moveAlongScreenBase / moveAlongScreen;
         acceptance = baseAcceptance * moveAlongScreenBase / moveAlongScreen;
         scoreTime = baseScoreTime * moveAlongScreenBase / moveAlongScreen;
+
+        StartCoroutine(WaitForStage());
     }
 
     // Update is called once per frame
@@ -455,15 +460,18 @@ public class NoteBoard : MonoBehaviour {
                 scoreCRrunning = false;
             }
             destroyCycle++;
-            yield return new WaitForSeconds(scoreTime);
+            yield return new WaitForSeconds(scoreTime * deltaTime * fpsCap);
         }
     }
+
+    // Position of the clipping "area"
+    float noteClippingPos;
 
     IEnumerator GenerateNotes() {
         GameObject note;
 
         //timing for 1st note
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.5f + 0.98360655737f);
 
         for (int i = 0; i < noteReader.songlength(); i++) {
             //switch (songNotes[i])
@@ -490,8 +498,29 @@ public class NoteBoard : MonoBehaviour {
                     break;
             }
 
+
+            // Get noteWidth and noteWidth
+            if (initNoteBound) {
+                Mesh noteBody = note.GetComponentsInChildren<MeshFilter>()[1].mesh;
+                Transform noteTrans = note.GetComponent<Transform>();
+                noteWidth = noteBody.bounds.size.x * noteTrans.localScale.x;
+                noteHeight = noteBody.bounds.size.y * noteTrans.localScale.y;
+                noteDepth = noteBody.bounds.size.z * noteTrans.localScale.z;
+                initNoteBound = false;
+            }
+
             note.transform.position = post2.transform.position;
             note.transform.Translate(-0.1f, 0.2f, 0);
+
+            // Avoid notes clipping
+            if (notes.Count != 0) {
+                if (notes[notes.Count - 1].transform.position.y <= note.transform.position.y) {
+                    noteClippingPos = notes[notes.Count - 1].transform.position.x + noteWidth;
+                    if (note.transform.position.x <= noteClippingPos) {
+                        note.transform.Translate(0, noteHeight, -noteDepth / 2);
+                    }
+                }
+            }
 
             //StartCoroutine(fade(fadeMesh, 2f, true));
             notes.Add(note);
@@ -499,7 +528,7 @@ public class NoteBoard : MonoBehaviour {
             StartCoroutine(FadeIn(curNoteEndPos, fadeInterval, fadeTime, fadeInDelay));
 
             //yield return new WaitForSeconds(noteTiming[i]);
-            yield return new WaitForSeconds(noteReader.readTime(i));
+            yield return new WaitForSeconds(noteReader.readTime(i) * Time.deltaTime * fpsCap);
         }
     }
 
@@ -514,11 +543,13 @@ public class NoteBoard : MonoBehaviour {
     }
 
     IEnumerator MoveNotes() {
+        // FI = Framerate Independent
+        float fiMoveAlongScreen = moveAlongScreen * Time.deltaTime * fpsCap;
         bool remove = false;
         int i = 0;
         while (true) {
             foreach (GameObject note in notes) {
-                note.transform.Translate(-moveAlongScreen, 0, 0);
+                note.transform.Translate(-fiMoveAlongScreen, 0, 0);
                 if (note.transform.position.x <= despawn.x) {
                     if (i < notesDespawning) {
                         i++;
