@@ -460,7 +460,8 @@ public class NoteBoard : MonoBehaviour {
                 scoreCRrunning = false;
             }
             destroyCycle++;
-            yield return new WaitForSeconds(scoreTime * deltaTime * fpsCap);
+            //yield return new WaitForSeconds(scoreTime * deltaTime * fpsCap);
+            yield return new WaitForSeconds(scoreTime);
         }
     }
 
@@ -528,7 +529,8 @@ public class NoteBoard : MonoBehaviour {
             StartCoroutine(FadeIn(curNoteEndPos, fadeInterval, fadeTime, fadeInDelay));
 
             //yield return new WaitForSeconds(noteTiming[i]);
-            yield return new WaitForSeconds(noteReader.readTime(i) * Time.deltaTime * fpsCap);
+            //yield return new WaitForSeconds(noteReader.readTime(i) * Time.deltaTime * fpsCap);
+            yield return new WaitForSeconds(noteReader.readTime(i));
         }
     }
 
