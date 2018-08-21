@@ -70,12 +70,11 @@ public class Control : MonoBehaviour {
     void CheckNote(string arrowType) {
         if (notes.Count != 0) {
             if (notes[0].name.Equals(arrowType)) {
-                Debug.Log("Right");
                 //Debug.Log(noteBoard.ScorePos());
                 noteBoard.ScorePos();
             } else {
                 noteBoard.bad++;
-                noteBoard.DestroyNote();
+                noteBoard.ExtDropCall();
                 noteBoard.BadScoreExtCall();
             }
         } else {
