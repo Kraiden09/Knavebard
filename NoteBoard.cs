@@ -11,6 +11,8 @@ public class NoteBoard : MonoBehaviour {
     private bool scoreCRrunning, fpsToLow, initNoteBound;
     private float noteWidth, noteHeight, noteDepth;
     private int fpsCap;
+    private GameObject[] despawningNotes;
+    private readonly int noteArrSize = 10;
     // Saves last called Score Coroutine
     public Coroutine lastScoreCR;
     public int bad, good, great;
@@ -24,9 +26,6 @@ public class NoteBoard : MonoBehaviour {
     int curNoteEndPos;
 
     Vector3 despawn;
-
-    // Notes being despawned / faded
-    int notesDespawning;
 
     // Refreshes the Noteposition every x Seconds
     float refresh = 0.01667f;
@@ -48,13 +47,28 @@ public class NoteBoard : MonoBehaviour {
     // Time the note stays at Alpha 0f
     float fadeInDelay;
 
-    //calling NoteReader (joerg)
+    // calling NoteReader (joerg)
     NoteReader noteReader;
+
+    // For Colliding (Will be replaced by Marcel's Script)
+    taverne tavern;
+    GameObject floor, stairs;
 
     // Use this for initialization
     void Start() {
         //JOERG REFERENCE
         noteReader = GameObject.Find("NoteReader").GetComponent<NoteReader>();
+
+        // Collider
+        tavern = GameObject.Find("Tavern").GetComponent<taverne>();
+        floor = tavern.getBoden();
+        stageRef = tavern.getBuehne();
+        stairs = tavern.getTreppe();
+        floor.AddComponent<BoxCollider>();
+        stageRef.AddComponent<BoxCollider>();
+        stairs.AddComponent<MeshCollider>();
+
+        despawningNotes = new GameObject[noteArrSize];
 
         bad = 0;
         good = 0;
@@ -65,7 +79,6 @@ public class NoteBoard : MonoBehaviour {
         lastScoreCR = null;
         curNotePos = 0;
         curNoteEndPos = 0;
-        notesDespawning = 0;
         fpsCap = 60;
 
         // Correct fading
@@ -87,8 +100,6 @@ public class NoteBoard : MonoBehaviour {
     }
 
     void BuildBoard() {
-        stageRef = GameObject.Find("Tavern").GetComponent<taverne>().getBuehne();
-
         Mesh stageRefMesh = stageRef.GetComponent<MeshFilter>().mesh;
         Transform stageRefTrans = stageRef.GetComponent<Transform>();
 
@@ -131,14 +142,17 @@ public class NoteBoard : MonoBehaviour {
 
         post1.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust left post position
-        post1.transform.position = new Vector3(post1Pos.x + (post1Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post1Pos.y + (post1Mesh.bounds.size.y * post1Trans.localScale.y) / 2, post1Pos.z);
+        post1.transform.position = new Vector3(post1Pos.x + (post1Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post1Pos.y + (post1Mesh.bounds.size.y * post1Trans.localScale.y) / 2, post1Pos.z + 0.1f);
         post2.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust right post position
-        post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, post2Pos.z);
+        post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, post2Pos.z + 0.1f);
         // + baseAcceptance Units on X to avoid clipping
-        despawn = post1.transform.position + new Vector3(baseAcceptance, 0, 0);
+        despawn = post1.transform.position + new Vector3(baseAcceptance + 0.2f, 0, 0);
         post1.name = "LeftPost";
         post2.name = "RightPost";
+
+        Destroy(post1.GetComponent<CapsuleCollider>());
+        Destroy(post2.GetComponent<CapsuleCollider>());
     }
 
     void BuildScreen() {
@@ -152,10 +166,10 @@ public class NoteBoard : MonoBehaviour {
         screen.GetComponent<MeshFilter>().mesh = screenMesh;
 
         List<Vector3> newVertices = new List<Vector3>();
-        float post1XPos = post1.transform.position.x;
+        float post1XPos = post1.transform.position.x - 0.1f;
         float post1YPos = post1.transform.position.y;
         float post1ZPos = post1.transform.position.z;
-        float post2XPos = post2.transform.position.x;
+        float post2XPos = post2.transform.position.x + 0.1f;
         //float post2YPos = post2.transform.position.y;
         float post2ZPos = post2.transform.position.z;
         float post1XScale = post1.transform.localScale.x;
@@ -164,10 +178,10 @@ public class NoteBoard : MonoBehaviour {
         float upperLimit = post1YPos + 1.1f;
         float lowerLimit = post1YPos - 0.1f;
 
-        newVertices.Add(new Vector3(post1XPos + post1XScale / 2, upperLimit, post1ZPos - 0.01f));
-        newVertices.Add(new Vector3(post1XPos + post1XScale / 2, lowerLimit, post1ZPos - 0.01f));
-        newVertices.Add(new Vector3(post2XPos - post2XScale / 2, upperLimit, post2ZPos - 0.01f));
-        newVertices.Add(new Vector3(post2XPos - post2XScale / 2, lowerLimit, post2ZPos - 0.01f));
+        newVertices.Add(new Vector3(post1XPos + post1XScale / 2, upperLimit, post1ZPos - 0.11f));
+        newVertices.Add(new Vector3(post1XPos + post1XScale / 2, lowerLimit, post1ZPos - 0.11f));
+        newVertices.Add(new Vector3(post2XPos - post2XScale / 2, upperLimit, post2ZPos - 0.11f));
+        newVertices.Add(new Vector3(post2XPos - post2XScale / 2, lowerLimit, post2ZPos - 0.11f));
 
         screenMesh.vertices = newVertices.ToArray();
 
@@ -198,9 +212,11 @@ public class NoteBoard : MonoBehaviour {
         test2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);*/
     }
 
+    private float rightBorder, leftBorder;
+
     void BuildHitArea(float length, Vector3 screenPos) {
         screenPos.y = screenPos.y - length / 2;
-        screenPos.x = screenPos.x + 0.3f;
+        screenPos.x = screenPos.x + 0.6f;
         // For better visibility
         screenPos.z = screenPos.z + 0.038f;
         borderLeft = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -216,6 +232,11 @@ public class NoteBoard : MonoBehaviour {
         borderRight.transform.localScale = new Vector3(0.1f, length, 0.1f);
         borderLeft.GetComponent<Renderer>().material.color = Color.black;
         borderRight.GetComponent<Renderer>().material.color = Color.black;
+        rightBorder = borderRight.transform.position.x;
+        leftBorder = borderLeft.transform.position.x;
+
+        Destroy(borderLeft.GetComponent<CapsuleCollider>());
+        Destroy(borderRight.GetComponent<CapsuleCollider>());
     }
 
     /*byte RandomColorVal() {
@@ -223,14 +244,12 @@ public class NoteBoard : MonoBehaviour {
     }*/
 
     // For score calculation
-    private readonly float baseAcceptance = 0.15f;
+    private readonly float baseAcceptance = 0.20f;
     private float acceptance;
 
     // Note Rating depending on HitArea
     public void ScorePos() {
-        Vector3 notePos = notes[curNotePos].transform.position;
-        float rightBorder = borderRight.transform.position.x;
-        float leftBorder = borderLeft.transform.position.x;
+        Vector3 notePos = notes[0].transform.position;
         // Checks if Coroutine of ShowScore already running
         ScoreCRrunningCheck();
         if (notePos.x > (rightBorder + acceptance) || notePos.x < (leftBorder - acceptance)) {
@@ -266,10 +285,10 @@ public class NoteBoard : MonoBehaviour {
 
     public void DestroyNote() {
         // Only destroy the note, if position is < the position of the right border + acceptance
-        if (notes[curNotePos].transform.position.x < borderRight.transform.position.x + baseAcceptance) {
+        if (notes[0].transform.position.x < borderRight.transform.position.x + baseAcceptance) {
             //StartCoroutine(WaitTillFade());
             ValidateFadeValues();
-            StartCoroutine(FadeOut(curNotePos, fadeInterval, fadeTime));
+            StartCoroutine(FadeOut(curNotePos, fadeInterval, fadeTime, false));
         }
     }
 
@@ -333,7 +352,29 @@ public class NoteBoard : MonoBehaviour {
         }
     }
 
+    public void ExtDropCall() {
+        StartCoroutine(DropNote(curNotePos));
+    }
+
+    IEnumerator DropNote(int myPos) {
+        //Debug.Log(myPos);
+        despawningNotes[myPos] = notes[0];
+        notes.RemoveAt(0);
+        curNoteEndPos--;
+        curNotePos = (curNotePos + 1) % noteArrSize;
+        //notesDespawning++;
+        //StartCoroutine(WaitTillFade());
+        Rigidbody noteRB = despawningNotes[myPos].AddComponent<Rigidbody>();
+        despawningNotes[myPos].AddComponent<SphereCollider>();
+        noteRB.AddForce(new Vector3(-fiMoveAlongScreen, 0, 0) * UnityEngine.Random.Range(1, 100), ForceMode.Impulse);
+        noteRB.AddForce(new Vector3(0, 0, -fiMoveAlongScreen) * UnityEngine.Random.Range(1, 50), ForceMode.Impulse);
+        yield return new WaitForSeconds(1f);
+        ValidateFadeValues();
+        StartCoroutine(FadeOut(myPos, fadeInterval, fadeTime, true));
+    }
+
     IEnumerator FadeIn(int myPos, float increaseInterval, float time, float delay) {
+        //Debug.Log("Fade In: " + myPos);
         if (increaseInterval > time) increaseInterval = time;
         curNoteEndPos++;
         // Fading happens over (time / increase) times, which means to reach 1f it has
@@ -368,20 +409,25 @@ public class NoteBoard : MonoBehaviour {
         }        
     }
 
-    IEnumerator FadeOut(int myPos, float decreaseInterval, float time) {
+    IEnumerator FadeOut(int myPos, float decreaseInterval, float time, bool dropped) {
         // Multiple notes Despawning
-        bool multiple = false;
-        CreateNoteParticle(notes[myPos].transform.position);
-        curNotePos++;
-        notesDespawning++;
-        if (notesDespawning > 1) {
-            multiple = true;
+        //bool multiple = false;
+        if (!dropped) {
+            despawningNotes[myPos] = notes[0];
+            notes.RemoveAt(0);
+            curNoteEndPos--;
+            curNotePos = (curNotePos + 1) % noteArrSize;
+            //notesDespawning++;
         }
+        /*if (notesDespawning > 1) {
+            multiple = true;
+        }*/
+        CreateNoteParticle(despawningNotes[myPos].transform.position);
         if (decreaseInterval > time) decreaseInterval = time;
         // Fading happens over (time / decrease) times, which means to reach 0f it has
         // to decrease the value by 1f / (time / decreaseInterval).
         float decreaseVal = 1f / (time / decreaseInterval);
-        Renderer[] rendererObjects = notes[myPos].GetComponentsInChildren<Renderer>();
+        Renderer[] rendererObjects = despawningNotes[myPos].GetComponentsInChildren<Renderer>();
         Color col;
         float currentAlpha = 1f;
         while (currentAlpha > 0f) {
@@ -397,16 +443,19 @@ public class NoteBoard : MonoBehaviour {
             currentAlpha -= decreaseVal;
             yield return new WaitForSeconds(decreaseInterval);
         }
-        if (multiple) {
+        /*if (multiple) {
             Destroy(notes[curNotePos-1]);
             notes.RemoveAt(curNotePos-1);
         } else {
             Destroy(notes[myPos]);
             notes.RemoveAt(myPos);
-        }
-        notesDespawning--;
-        curNotePos--;
-        curNoteEndPos--;
+        }*/
+        Destroy(despawningNotes[myPos]);
+        despawningNotes[myPos] = null;
+        //Debug.Log("Despawned");
+        //notesDespawning--;
+        //curNotePos--;
+        //curNoteEndPos--;
     }
 
     IEnumerator StopPS(GameObject emitter, ParticleSystem ps, float timeToEmit, float lifetime) {
@@ -511,7 +560,7 @@ public class NoteBoard : MonoBehaviour {
             }
 
             note.transform.position = post2.transform.position;
-            note.transform.Translate(-0.1f, 0.2f, 0);
+            note.transform.Translate(-0.1f, 0.2f, -0.1f);
 
             // Avoid notes clipping
             if (notes.Count != 0) {
@@ -544,29 +593,30 @@ public class NoteBoard : MonoBehaviour {
         StartCoroutine(MoveNotes());
     }
 
+    float fiMoveAlongScreen;
+
     IEnumerator MoveNotes() {
         // FI = Framerate Independent
-        float fiMoveAlongScreen = moveAlongScreen * Time.deltaTime * fpsCap;
+        fiMoveAlongScreen = moveAlongScreen * Time.deltaTime * fpsCap;
         bool remove = false;
-        int i = 0;
         while (true) {
             foreach (GameObject note in notes) {
                 note.transform.Translate(-fiMoveAlongScreen, 0, 0);
                 if (note.transform.position.x <= despawn.x) {
-                    if (i < notesDespawning) {
+                    /*if (i < notesDespawning) {
                         i++;
                         continue;
-                    }
+                    }*/
                     remove = true;
                 }
             }
             if (remove) {
                 lastScoreCR = StartCoroutine(ShowScore(0));
-                DestroyNote();
+                //DestroyNote();
+                StartCoroutine(DropNote(curNotePos));
                 bad++;
                 remove = false;
             }
-            i = 0;
             yield return new WaitForSeconds(refresh);
         }
     }
@@ -586,5 +636,9 @@ public class NoteBoard : MonoBehaviour {
 
     public List<GameObject> getNotes() {
         return notes;
+    }
+
+    public GameObject[] getDespawningNotes() {
+        return despawningNotes;
     }
 }
