@@ -49,7 +49,7 @@ public class CameraControl : MonoBehaviour {
     GameObject[] Positions;
 
     //future positions
-    GameObject roof; //maybe
+    GameObject roof; //maybekn
     GameObject leftrear;
     GameObject rightrear;
 
@@ -85,11 +85,15 @@ public class CameraControl : MonoBehaviour {
         front.transform.Translate(0, 1.8f, -2.5f);
         leftfront = new GameObject("LeftFrontPos");
         leftfront.transform.Translate(-4.5f, 2, -0.05f);
-        rightfront = new GameObject("LeftFrontPos");
+        rightfront = new GameObject("RightFrontPos");
         rightfront.transform.Translate(4.5f, 2, -0.05f);
+        leftrear = new GameObject("LeftRearPos");
+        leftrear.transform.Translate(-4.5f, 4.5f, -8.3f);
+        rightrear = new GameObject("RightRearPos");
+        rightrear.transform.Translate(4.5f, 4.5f, -8.3f);
 
 
-        Positions = new GameObject[]{ standard, front, leftfront, rightfront };
+        Positions = new GameObject[]{ standard, front, leftfront, rightfront,rightrear,leftrear };
 
         /*
         //References (not necessary)
@@ -97,6 +101,7 @@ public class CameraControl : MonoBehaviour {
         screen = noteBoard.getScreen();
         */
         
+        //standard fixpoint for bard-mode (maybe later changed for free-roam)
         fix = new Vector3(0, 2.7f, 6.15f);
         CamMoveTo(standard);
     }
@@ -115,10 +120,6 @@ public class CameraControl : MonoBehaviour {
         //AUTO-MODE
         if (director)
         {
-            
-
-
-
 
             //moving camera from pos to pos
             //waiting in between changes
@@ -137,6 +138,7 @@ public class CameraControl : MonoBehaviour {
             {
                 //slowly moving in random direction
                 //int ranDirection used (and possible rotation)
+                CameraMoveSC();
             }
             
         }
@@ -149,40 +151,44 @@ public class CameraControl : MonoBehaviour {
             if (Input.GetKey(KeyCode.W))
             {
                 //Grenze
-                if (transform.position.y - bordery < 1)
+                if (transform.position.y - bordery < 2)
                 {
                     transform.Translate(new Vector3(0, camSpeed * Time.deltaTime, 0));
+                    transform.LookAt(fix);
                 }
             }
 
             if (Input.GetKey(KeyCode.A))
             {
-                if (transform.position.x - borderx > -1)
+                if (transform.position.x - borderx > -4)
                 {
                     transform.Translate(new Vector3(-camSpeed * Time.deltaTime, 0, 0));
+                    transform.LookAt(fix);
                 }
             }
 
             if (Input.GetKey(KeyCode.S))
             {
-                if (transform.position.y - bordery > -1)
+                if (transform.position.y - bordery > -0.5)
                 {
                     transform.Translate(new Vector3(0, -camSpeed * Time.deltaTime, 0));
+                    transform.LookAt(fix);
                 }
             }
 
             if (Input.GetKey(KeyCode.D))
             {
-                if (transform.position.x - borderx < 1)
+                if (transform.position.x - borderx < 4)
                 {
                     transform.Translate(new Vector3(camSpeed * Time.deltaTime, 0, 0));
+                    transform.LookAt(fix);
                 }
             }
 
             //Zoom + Zoom out
             if (Input.GetKey(KeyCode.PageUp))
             {
-                if (transform.position.z - borderz < 1)
+                if (transform.position.z - borderz < 5)
                 {
                     transform.Translate(new Vector3(0, 0, camSpeed * Time.deltaTime));
                 }
@@ -238,7 +244,7 @@ public class CameraControl : MonoBehaviour {
     //moving Camera as Director
     //move cam in random direction (up, down,left, right)
     //maybe
-    public void CameraMove4W()
+    public void CameraMoveSC()
     {
         switch (UnityEngine.Random.Range(2, 4))
         {
