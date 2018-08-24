@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Collision : MonoBehaviour {
-    private GameObject buehne;
+    private GameObject buehne, bard;
 
     // Use this for initialization
     void Start () {
@@ -21,8 +21,19 @@ public class Collision : MonoBehaviour {
             yield return new WaitForSeconds(0.1f);
         }
         buehne = GameObject.Find("Buehne");
-        // buehne.transform.position = (buehne.transform.position + new Vector3(0, 1, 0));
-        print(buehne.transform.position);
+
+        while ((GameObject.Find("Bard") == null)) {
+            yield return new WaitForSeconds(0.1f);
+        }
+        bard = GameObject.Find("Bard");
+
+        
+        buehne.AddComponent<BoxCollider>();
+        print(buehne);
+
+        Rigidbody bardRB = bard.AddComponent<Rigidbody>();
+        bard.AddComponent<SphereCollider>();
+        print(bard);
     }
 
 
