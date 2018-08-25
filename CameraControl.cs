@@ -28,6 +28,11 @@ public class CameraControl : MonoBehaviour {
     int random;
     int ranDirection;
 
+    //position in CamPos-Array for manual control
+    int current;
+    bool prev, next;
+    
+
     //Fixpunkt
     Vector3 fix;
 
@@ -61,8 +66,10 @@ public class CameraControl : MonoBehaviour {
         borderx = transform.position.x;
         bordery = transform.position.y;
         borderz = transform.position.z;
-
         camSpeed = 2;
+        current = 0;
+        prev = false;
+        next = false;
 
         //"Flags"
         director = false;
@@ -103,7 +110,7 @@ public class CameraControl : MonoBehaviour {
         
         //standard fixpoint for bard-mode (maybe later changed for free-roam)
         fix = new Vector3(0, 2.7f, 6.15f);
-        CamMoveTo(standard);
+        //transform.Translate(0,2.7f,-8);
     }
 
     // Update is called once per frame
@@ -113,14 +120,11 @@ public class CameraControl : MonoBehaviour {
         {
             director = !director;
         }
+        
 
-
-
-
-        //AUTO-MODE
+        //DIRECTOR-MODE
         if (director)
         {
-
             //moving camera from pos to pos
             //waiting in between changes
             if (!waiting)
@@ -206,13 +210,40 @@ public class CameraControl : MonoBehaviour {
             //manual change of Camera-Position
             if (Input.GetKeyDown("q"))
             {
-                
+                current--;
+                prev = true;
+                next = false;
             }
 
             if (Input.GetKeyDown("e"))
             {
+                current++;
+                next = true;
+                prev = false;
+            }
+
+            if (prev)
+            {
+                //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
+                CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
+
+                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position)
+                {
+                    prev = false;
+                }
 
             }
+            if (next)
+            {
+                CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
+                //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
+
+                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position)
+                {
+                    next = false;
+                }
+            }
+
         }
     }
 
@@ -302,5 +333,4 @@ public class CameraControl : MonoBehaviour {
         print("waited");
         waiting = false;
     }
-
 }
