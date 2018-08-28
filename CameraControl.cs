@@ -25,12 +25,14 @@ public class CameraControl : MonoBehaviour {
     float borderx, bordery, borderz;
     bool director;
     bool waiting;
-    int random;
-    int ranDirection;
+    int random, randomWays, lastPos;
 
     //position in CamPos-Array for manual control
     int current;
     bool prev, next;
+
+    //camera reached target
+    bool there;
     
 
     //Fixpunkt
@@ -130,18 +132,29 @@ public class CameraControl : MonoBehaviour {
             if (!waiting)
             {
                 StartCoroutine(sleeper());
-                random = UnityEngine.Random.Range(0, Positions.Length);
+                while(lastPos == random)
+                {
+                    random = UnityEngine.Random.Range(0, Positions.Length);
+                }
             }
             
             //moving
-            if (waiting)
+            if (waiting && !there)
             {
                 CamMoveTo(Positions[random]);
+
+                if (Positions[random].transform.position == transform.position)
+                {
+                    there = true;
+
+                    //lastPos to eliminate returning to the last position
+                    lastPos = random;
+                }
             }
-            if (Positions[random].transform.position == transform.position)
+            if (there)
             {
                 //slowly moving in random direction
-                //int ranDirection used (and possible rotation)
+                //int randomWays used
                 CameraMoveSC();
             }
             
@@ -155,7 +168,7 @@ public class CameraControl : MonoBehaviour {
             if (Input.GetKey(KeyCode.W))
             {
                 //Grenze
-                if (transform.position.y - bordery < 2)
+                if (transform.position.y - bordery < 1.5f)
                 {
                     transform.Translate(new Vector3(0, camSpeed * Time.deltaTime, 0));
                     transform.LookAt(fix);
@@ -164,7 +177,7 @@ public class CameraControl : MonoBehaviour {
 
             if (Input.GetKey(KeyCode.A))
             {
-                if (transform.position.x - borderx > -4)
+                if (transform.position.x - borderx > -6)
                 {
                     transform.Translate(new Vector3(-camSpeed * Time.deltaTime, 0, 0));
                     transform.LookAt(fix);
@@ -173,7 +186,7 @@ public class CameraControl : MonoBehaviour {
 
             if (Input.GetKey(KeyCode.S))
             {
-                if (transform.position.y - bordery > -0.5)
+                if (transform.position.y - bordery > -0.5f)
                 {
                     transform.Translate(new Vector3(0, -camSpeed * Time.deltaTime, 0));
                     transform.LookAt(fix);
@@ -182,7 +195,7 @@ public class CameraControl : MonoBehaviour {
 
             if (Input.GetKey(KeyCode.D))
             {
-                if (transform.position.x - borderx < 4)
+                if (transform.position.x - borderx < 6)
                 {
                     transform.Translate(new Vector3(camSpeed * Time.deltaTime, 0, 0));
                     transform.LookAt(fix);
@@ -245,6 +258,7 @@ public class CameraControl : MonoBehaviour {
             }
 
         }
+
     }
 
     
@@ -277,23 +291,99 @@ public class CameraControl : MonoBehaviour {
     //maybe
     public void CameraMoveSC()
     {
-        switch (UnityEngine.Random.Range(2, 4))
+        switch (//UnityEngine.Random.Range(2, 4))
+            randomWays)
         {
-            /*
             //UP
             case 0:
+                if (transform.position.y - bordery < 1.5f)
+                {
+                    transform.Translate(new Vector3(0, (camSpeed / 2) * Time.deltaTime, 0));
+                    transform.LookAt(fix);
+                }
                 break;
 
             //Down
             case 1:
+                if (transform.position.y - bordery > -0.5f)
+                {
+                    transform.Translate(new Vector3(0, (-camSpeed / 2) * Time.deltaTime, 0));
+                    transform.LookAt(fix);
+                }
                 break;
-                */
+                
             //Left
             case 2:
+                if (transform.position.x - borderx > -6)
+                {
+                    transform.Translate(new Vector3((-camSpeed / 2) * Time.deltaTime, 0, 0));
+                    transform.LookAt(fix);
+                }
                 break;
 
             //Right
             case 3:
+                if (transform.position.x - borderx < 6)
+                {
+                    transform.Translate(new Vector3((camSpeed / 2) * Time.deltaTime, 0, 0));
+                    transform.LookAt(fix);
+                }
+                break;
+            
+            //UP-right
+            case 4:
+                if (transform.position.y - bordery < 1.5f)
+                {
+                    transform.Translate(new Vector3(0, (camSpeed / 4) * Time.deltaTime, 0));
+                }
+
+                if (transform.position.x - borderx < 6)
+                {
+                    transform.Translate(new Vector3((camSpeed / 4) * Time.deltaTime, 0, 0));
+                }
+
+                transform.LookAt(fix);
+                break;
+
+            //Down-right
+            case 5:
+                if (transform.position.y - bordery > -0.5f)
+                {
+                    transform.Translate(new Vector3(0, (-camSpeed / 4) * Time.deltaTime, 0));
+                }
+
+                if (transform.position.x - borderx < 6)
+                {
+                    transform.Translate(new Vector3((camSpeed / 4) * Time.deltaTime, 0, 0));
+                }
+
+                transform.LookAt(fix);
+                break;
+
+            //Donw-left
+            case 6:
+                if (transform.position.y - bordery > -0.5f)
+                {
+                    transform.Translate(new Vector3(0, (-camSpeed / 4) * Time.deltaTime, 0));
+                }
+                if (transform.position.x - borderx > -6)
+                {
+                    transform.Translate(new Vector3((-camSpeed / 4) * Time.deltaTime, 0, 0));
+                }
+                transform.LookAt(fix);
+                break;
+
+            //Up-left
+            case 7:
+                if (transform.position.y - bordery < 1.5f)
+                {
+                    transform.Translate(new Vector3(0, (camSpeed / 4) * Time.deltaTime, 0));
+                }
+                if (transform.position.x - borderx > -6)
+                {
+                    transform.Translate(new Vector3((-camSpeed / 4) * Time.deltaTime, 0, 0));
+                }
+                transform.LookAt(fix);
                 break;
 
             default:
@@ -327,10 +417,13 @@ public class CameraControl : MonoBehaviour {
     IEnumerator sleeper()
     {
         waiting = true;
+        //randomization for CamMoveSC
+        randomWays = UnityEngine.Random.Range(0,4);
 
         //short time for testing
-        yield return new WaitForSeconds(UnityEngine.Random.Range(2, 5));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(5, 7));
         print("waited");
         waiting = false;
+        there = false;
     }
 }
