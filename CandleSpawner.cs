@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CandleSpawner : MonoBehaviour {
-    GameObject candle, wick;
+    GameObject candle, wick, candleLight;
     float height;
     int lastLayerIndexStart, verticesPerLayer, layers;
     bool initialized;
@@ -37,6 +37,14 @@ public class CandleSpawner : MonoBehaviour {
         wick.transform.localScale = new Vector3(0.02f, wickHeight / 2, 0.02f);
         wick.transform.Translate(0, wickHeight / 2, 0);
         wick.GetComponent<Renderer>().material.color = new Color(0.44f, 0.31f, 0.18f);
+
+        candleLight = new GameObject();
+        candleLight.transform.parent = wick.transform;
+        candleLight.name = "Candle Light";
+        candleLight.transform.position = new Vector3(0, wickHeight, 0);
+        Light lightComp = candleLight.AddComponent<Light>();
+        lightComp.color = new Color(1, 0.8393834f, 0.4009434f);
+
         CreateVertices();
     }
 
@@ -102,6 +110,8 @@ public class CandleSpawner : MonoBehaviour {
         candleMesh.vertices = newVertices;
         candleMesh.triangles = faces.ToArray();
 
+        candleMesh.RecalculateNormals();
+
         initialized = true;
     }
 
@@ -115,6 +125,7 @@ public class CandleSpawner : MonoBehaviour {
             newVertices[lastLayerIndexStart + 1] = newVertices[lastLayerIndexStart + 1] + new Vector3(0, -(burnValue / 2), 0);
             newVertices[lastLayerIndexStart - 1] = newVertices[lastLayerIndexStart - 1] + new Vector3(0, -(burnValue / 2), 0);
             candleMesh.vertices = newVertices;
+            candleMesh.RecalculateNormals();
             i++;
             yield return new WaitForSeconds(0.2f);
         }
