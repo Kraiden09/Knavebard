@@ -582,27 +582,24 @@ public class taverne : MonoBehaviour {
 
     //Zufällige Generierung
     void randomize() {
-        Debug.Log(hockerzahl + "x");
-        Debug.Log(tischzahl + "y");
         hockerzahl = 0;
         tischzahl = 0;
         float konfig = Mathf.Floor(Random.Range(1, 4));
-        Debug.Log(konfig);
+        float barpos = Random.Range(-6, -1);
+        float barpos2 = Random.Range(-1, 3);
         if (konfig == 1) {
-            berBuilder(barbereich, new Vector3(-7, 0.1f, -5f), new Vector3(-7, 0.1f, 0), new Vector3(-4, 0.1f, -5f), new Vector3(-4, 0.1f, 0));
-            barBuilder(bar, -7, 0.1f, -5);
+            berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
+            barBuilder(bar, -7, 0.1f, barpos);
             berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
             tischmeshwaage(0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
             tischmeshsenk(2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
-            Debug.Log(hockerzahl + "a");
-            Debug.Log(tischzahl + "b");
         }
 
         if (konfig == 2)
         {
-            berBuilder(barbereich, new Vector3( 4, 0.1f, -5f), new Vector3( 4, 0.1f, 0), new Vector3( 7, 0.1f, -5f), new Vector3( 7, 0.1f, 0));
-            barBuilder2(bar, 7, 0.1f, 0);
+            berBuilder(barbereich, new Vector3( 4, 0.1f, barpos2 - 6), new Vector3( 4, 0.1f, barpos2 + 1), new Vector3( 7, 0.1f, barpos2 - 6), new Vector3( 7, 0.1f, barpos2 + 1));
+            barBuilder2(bar, 7, 0.1f, barpos2);
             berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3( 1, 0.1f, -4.5f), new Vector3( 1, 0.1f, 1));
             tischmeshwaage(-0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
@@ -650,8 +647,8 @@ public class taverne : MonoBehaviour {
                 hocker28.name = "Hocker28";
             }
 
-            berBuilder(barbereich, new Vector3(-7, 0.1f, -4f), new Vector3(-7, 0.1f, 1), new Vector3(-4, 0.1f, -4f), new Vector3(-4, 0.1f, 1));
-            barBuilder(bar, -7, 0.1f, -4);
+            berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
+            barBuilder(bar, -7, 0.1f, barpos);
             berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
             berBuilder(tischbereich, new Vector3(-3, 0.1f, -6), new Vector3(-3, 0.1f, 3), new Vector3(6, 0.1f, -6f), new Vector3(6, 0.1f, 3));
             tischmeshsenk(3.5f, 0.1f, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
@@ -665,7 +662,6 @@ public class taverne : MonoBehaviour {
 
                 nr = i.ToString();
                 hock = hock + nr;
-                Debug.Log(hock);
                 Destroy(GameObject.Find(hock));
                 hock = "Hocker";
             }
@@ -676,7 +672,6 @@ public class taverne : MonoBehaviour {
             {
                 tinr = i.ToString();
                 tis = tis + tinr;
-                Debug.Log(tis);
                 Destroy(GameObject.Find(tis));
                 tis = "Tisch";
             }
