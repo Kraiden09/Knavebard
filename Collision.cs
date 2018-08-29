@@ -72,7 +72,7 @@ public class Collision : MonoBehaviour {
         }
 
 
-        buehne.AddComponent<BoxCollider>();
+        //buehne.AddComponent<BoxCollider>();
         bar.AddComponent<MeshCollider>();
         wand1.AddComponent<BoxCollider>();
         wand2.AddComponent<BoxCollider>();
@@ -80,9 +80,14 @@ public class Collision : MonoBehaviour {
         wand4.AddComponent<BoxCollider>();
         quad.AddComponent<MeshCollider>();
         screen.AddComponent<BoxCollider>();
-        leftpost.AddComponent<MeshCollider>();
-        rightpost.AddComponent<MeshCollider>();
+        //leftpost.AddComponent<MeshCollider>();
+        //rightpost.AddComponent<MeshCollider>();
 
+        Debug.Log("CapsuleCol deleted");
+        Collider[] bardCols = bard.GetComponentsInChildren<Collider>();
+        for (int i = 0; i < bardCols.Length; i++) {
+            Destroy(bardCols[i]);
+        }
         bard.AddComponent<Rigidbody>();
         bard.AddComponent<BoxCollider>();
     }
