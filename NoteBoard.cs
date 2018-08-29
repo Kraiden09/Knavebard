@@ -199,6 +199,8 @@ public class NoteBoard : MonoBehaviour {
 
         screen.GetComponent<Renderer>().material.color = Color.white;
 
+        //screenMesh.RecalculateNormals();
+
         BuildHitArea(upperLimit - lowerLimit, screenMesh.vertices[0]);
 
         /*GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -521,7 +523,7 @@ public class NoteBoard : MonoBehaviour {
         GameObject note;
 
         //timing for 1st note
-        yield return new WaitForSeconds(1.5f + 0.98360655737f);
+        yield return new WaitForSeconds(2.95081967208f);
 
         for (int i = 0; i < noteReader.songlength(); i++) {
             //switch (songNotes[i])
@@ -560,7 +562,7 @@ public class NoteBoard : MonoBehaviour {
             }
 
             note.transform.position = post2.transform.position;
-            note.transform.Translate(-0.1f, 0.2f, -0.1f);
+            note.transform.Translate(-0.1f, 0.2f, -0.2f);
 
             // Avoid notes clipping
             if (notes.Count != 0) {
