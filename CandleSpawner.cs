@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +78,24 @@ public class CandleSpawner : MonoBehaviour {
 
         List<int> faces = new List<int>();
 
+        CreateFaces(faces);
+
+        candleMesh = new Mesh();
+        candle.AddComponent<MeshFilter>();
+        candle.AddComponent<MeshRenderer>();
+        candle.GetComponent<MeshRenderer>().receiveShadows = true;
+        candle.GetComponent<MeshFilter>().mesh = candleMesh;
+        candle.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
+
+        candleMesh.vertices = newVertices;
+        candleMesh.triangles = faces.ToArray();
+
+        candleMesh.RecalculateNormals();
+
+        initialized = true;
+    }
+
+    void CreateFaces(List<int> faces) {
         for (int j = 0; j < (layers - 1); j++) {
             for (int i = 0; i < verticesPerLayer; i++) {
                 faces.Add(i + 1 + (j * verticesPerLayer));
@@ -99,35 +118,118 @@ public class CandleSpawner : MonoBehaviour {
                 faces.Add(verticesPerLayer + (j * verticesPerLayer));
             }
         }
-
-        candleMesh = new Mesh();
-        candle.AddComponent<MeshFilter>();
-        candle.AddComponent<MeshRenderer>();
-        candle.GetComponent<MeshRenderer>().receiveShadows = true;
-        candle.GetComponent<MeshFilter>().mesh = candleMesh;
-        candle.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
-
-        candleMesh.vertices = newVertices;
-        candleMesh.triangles = faces.ToArray();
-
-        candleMesh.RecalculateNormals();
-
-        initialized = true;
     }
 
     IEnumerator BurnDown() {
-        int i = 0;
         int lastIndex = newVertices.Length - 1;
-        float burnValue = 0.01f;
-        while (newVertices[lastLayerIndexStart].y >= newVertices[lastLayerIndexStart - verticesPerLayer].y) {
-            newVertices[lastIndex] = newVertices[lastIndex] + new Vector3(0, -burnValue, 0);
-            newVertices[lastLayerIndexStart] = newVertices[lastLayerIndexStart] + new Vector3(0, -burnValue, 0);
-            newVertices[lastLayerIndexStart + 1] = newVertices[lastLayerIndexStart + 1] + new Vector3(0, -(burnValue / 2), 0);
-            newVertices[lastLayerIndexStart - 1] = newVertices[lastLayerIndexStart - 1] + new Vector3(0, -(burnValue / 2), 0);
+
+        float burnValue = 0.015f;
+        float burnTimeRate = 0.1f;
+
+        float wickBurnt;
+        bool middleBurnt = false, layerBurnt = false;
+
+        Mesh wickMesh = wick.GetComponent<MeshFilter>().mesh;
+        float wickStartScale = wick.transform.localScale.y;
+
+        int main = lastLayerIndexStart;
+        int layer = main / verticesPerLayer;
+
+        int right, left;
+
+        bool[] burnt = new bool[verticesPerLayer];
+
+        while (layer > 0) {
+            for (int i = 0; i < verticesPerLayer; i++) {
+                burnt[i] = false;
+            }
+
+            while (!layerBurnt) {
+                main = UnityEngine.Random.Range(0, verticesPerLayer);
+
+                while (burnt[main]) {
+                    main = (main + 1) % verticesPerLayer;
+                }
+
+                main = main + (layer * verticesPerLayer);
+
+                right = ((main + 1) % verticesPerLayer) + (verticesPerLayer * layer);
+                left = ((main - 1) % verticesPerLayer) + (verticesPerLayer * layer);
+
+                while (newVertices[main].y >= newVertices[lastLayerIndexStart - verticesPerLayer].y) {
+                    if (!middleBurnt) {
+                        // Burn Middle Part
+                        newVertices[lastIndex] = newVertices[lastIndex] + new Vector3(0, -burnValue, 0);
+                    }
+                    // Burn "Main" Outer Part
+                    newVertices[main] = newVertices[main] + new Vector3(0, -burnValue, 0);
+                    // Burn Part Right of "Main" Part
+                    if ((newVertices[right] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[main - verticesPerLayer].y) {
+                        newVertices[right] = newVertices[right] + new Vector3(0, -(burnValue / 2), 0);
+                    }
+                    // Burn Part Left of "Main" Part
+                    if ((newVertices[left] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[main - verticesPerLayer].y) {
+                        newVertices[left] = newVertices[left] + new Vector3(0, -(burnValue / 2), 0);
+                    }
+                    /*if (lastLayerIndexStart % verticesPerLayer == 0) {
+                        if ((newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[lastLayerIndexStart - verticesPerLayer].y) {
+                            newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] = newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0);
+                        }
+                    } else {
+                    }*/
+
+                    //Debug.Log((wickStartScale / (layers - 1)) * (layer - 1));
+                    if (wickMesh.bounds.size.y * wick.transform.localScale.y - 0.2f > (candleMesh.bounds.size.y / (layers - 1)) * (layer - 1)) {
+                        wickBurnt = ((candleMesh.bounds.size.y / (layers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
+                        wick.transform.localScale -= new Vector3(0, wickBurnt, 0);
+                        wick.transform.Translate(0, -wickBurnt, 0);
+                    }
+
+                    candleMesh.vertices = newVertices;
+                    candleMesh.RecalculateNormals();
+                    yield return new WaitForSeconds(burnTimeRate);
+                }
+                middleBurnt = true;
+                burnt[main % verticesPerLayer] = true;
+
+                for (int i = 0; i < verticesPerLayer; i++) {
+                    if (burnt[i] == false) {
+                        layerBurnt = false;
+                        break;
+                    } else {
+                        layerBurnt = true;
+                    }
+                }
+
+                // Fix lighting / normals
+                int[] tris = candleMesh.triangles;
+                for (int i = 0; i < tris.Length; i++) {
+                    if (tris[i] == main) tris[i] = (main - verticesPerLayer);
+                }
+                candleMesh.triangles = tris;
+                candleMesh.RecalculateNormals();
+            }
+
+            /*for (int i = 0; i < verticesPerLayer; i++) {
+                newVertices[(((layer - 1) * verticesPerLayer) + i)] = newVertices[(layer * verticesPerLayer) + i];
+            }*/
+
+            newVertices[layer * verticesPerLayer] = newVertices[lastIndex];
+            lastIndex = layer * verticesPerLayer;
+
+            layers--;
+            layer--;
+            lastLayerIndexStart -= verticesPerLayer;
+            middleBurnt = false;
+            layerBurnt = false;
+
+            Array.Resize(ref newVertices, newVertices.Length - verticesPerLayer);
+            List<int> faces = new List<int>();
+            CreateFaces(faces);
+
+            candleMesh.triangles = faces.ToArray();
             candleMesh.vertices = newVertices;
-            candleMesh.RecalculateNormals();
-            i++;
-            yield return new WaitForSeconds(0.2f);
+
         }
     }
 }
