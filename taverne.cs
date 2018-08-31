@@ -890,11 +890,21 @@ public class taverne : MonoBehaviour {
             str = "Tisch";
         }
         return a;
-
     }
     public GameObject getWandRechts()
     {
         return wand3;
+    }
+
+    /* Reihenfolge der Vertices von der sichtbaren Seite der Wand: links unten, links oben, rechts unten, rechts oben*/
+    public Vector3[] getWandRechtsVert()
+    {
+        Vector3[] a = new Vector3[4];
+        a[0] = new Vector3(7, 0, 7);
+        a[1] = new Vector3(7, 5, 7);
+        a[2] = new Vector3(7, 0, -7);
+        a[3] = new Vector3(7, 5, -7);
+        return a;
     }
 
     public GameObject getWandLinks()
@@ -902,14 +912,44 @@ public class taverne : MonoBehaviour {
         return wand1;
     }
 
+    public Vector3[] getWandLinksVert()
+    {
+        Vector3[] a = new Vector3[4];
+        a[0] = new Vector3(-7, 0, -7);
+        a[1] = new Vector3(-7, 5, -7);
+        a[2] = new Vector3(-7, 0, 7);
+        a[3] = new Vector3(-7, 5, 7);
+        return a;
+    }
+
     public GameObject getWandFern()
     {
         return wand2;
     }
 
+    public Vector3[] getWandFernVert()
+    {
+        Vector3[] a = new Vector3[4];
+        a[0] = new Vector3(-7, 0, 7);
+        a[1] = new Vector3(-7, 5, 7);
+        a[2] = new Vector3(7, 0, 7);
+        a[3] = new Vector3(7, 5, 7);
+        return a;
+    }
+
     public GameObject getWandNah()
     {
         return wand4;
+    }
+
+    public Vector3[] getWandNahVert()
+    {
+        Vector3[] a = new Vector3[4];
+        a[0] = new Vector3(7, 0, -7);
+        a[1] = new Vector3(7, 5, -7);
+        a[2] = new Vector3(-7, 0, -7);
+        a[3] = new Vector3(-7, 5, -7);
+        return a;
     }
 
     public GameObject getBoden()
