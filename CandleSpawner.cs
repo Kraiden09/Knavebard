@@ -4,21 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CandleSpawner : MonoBehaviour {
-    GameObject candle, wick, candleLight;
+    taverne tavern;
+    GameObject candle, wick, candleLight, candleHolder;
     float height;
     int lastLayerIndexStart, verticesPerLayer, layers;
-    bool initialized;
+    bool initialized, wallLocated;
     Vector3[] newVertices;
     Mesh candleMesh;
 
+    Vector3 posWallLeft;
+
     // Use this for initialization
     void Start () {
+        initialized = false;
+        wallLocated = false;
+        tavern = GameObject.Find("Tavern").GetComponent<taverne>();
+        StartCoroutine(GetWallLeft());
         verticesPerLayer = 20;
         layers = 5;
-        initialized = false;
         height = 2f;
         InitCandle();
-        while (!initialized) {
+        while (!initialized && !wallLocated) {
             // Wait until initialized
         }
         StartCoroutine(BurnDown());
@@ -92,6 +98,10 @@ public class CandleSpawner : MonoBehaviour {
 
         candleMesh.RecalculateNormals();
 
+        candle.transform.localScale = new Vector3(0.359f, 0.359f, 0.359f);
+
+        CreateCandleHolder();
+
         initialized = true;
     }
 
@@ -120,6 +130,25 @@ public class CandleSpawner : MonoBehaviour {
         }
     }
 
+    void CreateCandleHolder() {
+        candleHolder = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
+        candleHolder.transform.position = posWallLeft;
+    }
+
+    IEnumerator GetWallLeft() {
+        bool valid = false;
+        while (!valid) {
+            valid = true;
+            try {
+                posWallLeft = tavern.getWandLinks();
+            } catch (NullReferenceException nre) {
+                valid = false;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        wallLocated = true;
+    }
+
     IEnumerator BurnDown() {
         int lastIndex = newVertices.Length - 1;
 
@@ -130,7 +159,6 @@ public class CandleSpawner : MonoBehaviour {
         bool middleBurnt = false, layerBurnt = false;
 
         Mesh wickMesh = wick.GetComponent<MeshFilter>().mesh;
-        float wickStartScale = wick.transform.localScale.y;
 
         int main = lastLayerIndexStart;
         int layer = main / verticesPerLayer;
@@ -178,11 +206,11 @@ public class CandleSpawner : MonoBehaviour {
                     } else {
                     }*/
 
-                    //Debug.Log((wickStartScale / (layers - 1)) * (layer - 1));
-                    if (wickMesh.bounds.size.y * wick.transform.localScale.y - 0.2f > (candleMesh.bounds.size.y / (layers - 1)) * (layer - 1)) {
+                    //Debug.Log((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - (0.05f) + " " + (((candleMesh.bounds.size.y * candle.transform.localScale.y) / (layers - 1)) * (layer - 1)));
+                    if (((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - 0.05f ) > ((candleMesh.bounds.size.y / (layers - 1)) * (layer - 1)) * candle.transform.localScale.y) {
                         wickBurnt = ((candleMesh.bounds.size.y / (layers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
                         wick.transform.localScale -= new Vector3(0, wickBurnt, 0);
-                        wick.transform.Translate(0, -wickBurnt, 0);
+                        wick.transform.Translate(0, -wickBurnt * candle.transform.localScale.y, 0);
                     }
 
                     candleMesh.vertices = newVertices;
