@@ -5,108 +5,182 @@ using UnityEngine;
 
 public class CandleSpawner : MonoBehaviour {
     taverne tavern;
-    GameObject candle, wick, candleLight, candleHolder;
-    float height;
-    int lastLayerIndexStart, verticesPerLayer, layers;
+    GameObject candleLight, candleHolder;
+    float height, wickHeight;
     bool initialized, wallLocated;
-    Vector3[] newVertices;
-    Mesh candleMesh;
+    Vector3[][] newVertices;
+    //Mesh candleMesh;
 
-    Vector3 posWallLeft;
+    readonly int verticesPerLayer = 20;
+    readonly int layers = 5;
+    readonly int numberOfCandles = 2;
+
+    Light lightComp;
+
+    Vector3[] posWallLeft;
+
+    int[] lastLayerIndexStart;
+    ParticleSystem[] particleSystems;
+    GameObject[] candles, wicks;
+    Mesh[] candleMeshs;
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         initialized = false;
         wallLocated = false;
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
         StartCoroutine(GetWallLeft());
-        verticesPerLayer = 20;
-        layers = 5;
+        //verticesPerLayer = 20;
+        //layers = 5;
         height = 2f;
-        InitCandle();
+        // One half for the left wall, the other half for the right wall
+        //numberOfCandles = 2;
+        particleSystems = new ParticleSystem[numberOfCandles];
+        candles = new GameObject[numberOfCandles];
+        wicks = new GameObject[numberOfCandles];
+        candleMeshs = new Mesh[numberOfCandles];
+        newVertices = new Vector3[numberOfCandles][];
+        lastLayerIndexStart = new int[numberOfCandles];
+        InitStart();
+    }
+
+    // Update is called once per frame
+    void Update() {
+    }
+
+    void InitStart() {
+        InitCandles();
         while (!initialized && !wallLocated) {
             // Wait until initialized
         }
-        StartCoroutine(BurnDown());
-    }
-	
-	// Update is called once per frame
-	void Update () {
-	}
-
-    void InitCandle() {
-        candle = new GameObject();
-        wick = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        wick.transform.parent = candle.transform;
-        candle.name = "Candle";
-        wick.name = "Wick";
-        float wickHeight = (height + 0.35f);
-        wick.transform.localScale = new Vector3(0.02f, wickHeight / 2, 0.02f);
-        wick.transform.Translate(0, wickHeight / 2, 0);
-        wick.GetComponent<Renderer>().material.color = new Color(0.44f, 0.31f, 0.18f);
-
-        candleLight = new GameObject();
-        candleLight.transform.parent = wick.transform;
-        candleLight.name = "Candle Light";
-        candleLight.transform.position = new Vector3(0, wickHeight, 0);
-        Light lightComp = candleLight.AddComponent<Light>();
-        lightComp.color = new Color(1, 0.8393834f, 0.4009434f);
-
-        CreateVertices();
+        for (int i = 0; i < numberOfCandles; i++) {
+            StartCoroutine(BurnDown(candles[i], wicks[i], i));
+        }
     }
 
-    void CreateVertices() {
-        newVertices = new Vector3[verticesPerLayer * layers + 1];
+    void InitCandles() {
+        GameObject candle, wick;
+        for (int i = 0; i < numberOfCandles; i++) {
+            candle = new GameObject();
+            wick = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            wick.transform.parent = candle.transform;
+            candle.name = "Candle" + (i + 1);
+            wick.name = "Wick";
+            wickHeight = (height + 0.35f);
+            wick.transform.localScale = new Vector3(0.02f, wickHeight / 2, 0.02f);
+            wick.transform.Translate(0, wickHeight / 2, 0);
+            wick.GetComponent<Renderer>().material.color = new Color(0.44f, 0.31f, 0.18f);
+
+            candleLight = new GameObject();
+            candleLight.transform.parent = wick.transform;
+            candleLight.name = "Candle Light";
+            candleLight.transform.position = new Vector3(0, wickHeight, 0);
+            lightComp = candleLight.AddComponent<Light>();
+            lightComp.color = new Color(1, 0.8393834f, 0.4009434f);
+
+            candles[i] = candle;
+            wicks[i] = wick;
+
+            CreateVertices(candles[i], i);
+            CreateBurnParticle(candles[i], wicks[i]);
+            CreateCandleHolder();
+        }
+    }
+
+    private void CreateBurnParticle(GameObject candle, GameObject wick) {
+        // Create emitter
+        GameObject emitter = new GameObject();
+        emitter.name = "Emitter";
+        emitter.transform.parent = wick.transform;
+        emitter.transform.position = wick.transform.position;
+        emitter.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+        // Set emitter position to wick position
+        emitter.transform.Translate(0, (wickHeight * candle.transform.localScale.y) / 2, 0);
+        // Particle System for further customization
+        ParticleSystem ps = emitter.AddComponent<ParticleSystem>();
+        // Rotate emitter to generate particles upwards
+        emitter.transform.Rotate(-90, 0, 0);
+        // Set emission var for further customization
+        var emission = ps.emission;
+        // Set main var for further (general) customization
+        var main = ps.main;
+        // Particle lifetime
+        float lifetime = 0.5f;
+        main.startLifetime = lifetime;
+        // Allows particles to be customized
+        ParticleSystemRenderer emittedParticles = ps.GetComponent<ParticleSystemRenderer>();
+        // Emitted Particles Mesh = Sphere
+        emittedParticles.renderMode = ParticleSystemRenderMode.Mesh;
+        emittedParticles.mesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+        emittedParticles.material = (Material)Resources.Load("Materials/NoteParticleMat");
+        // Color Gradient for fading
+        var col = ps.colorOverLifetime;
+        col.enabled = true;
+        Gradient grad = new Gradient();
+        Color newColor = lightComp.color;
+        grad.SetKeys(new GradientColorKey[] { new GradientColorKey(newColor, 0.0f), new GradientColorKey(newColor, 1.0f) },
+                     new GradientAlphaKey[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
+        col.color = grad;
+        emittedParticles.material.SetColor("_TintColor", newColor);
+        main.startSize = 0.05f;
+        main.startSpeed = 2;
+        emission.enabled = true;
+        // Emission Rate
+        emission.rateOverTime = 70;
+
+        ps.Play();
+    }
+
+    void CreateVertices(GameObject candle, int index) {
+        newVertices[index] = new Vector3[verticesPerLayer * layers + 1];
         for (int j = 0; j < layers; j++) {
             for (int i = 0; i < verticesPerLayer; i++) {
-                if (i == 0) lastLayerIndexStart = i + (j * verticesPerLayer);
+                if (i == 0) lastLayerIndexStart[index] = i + (j * verticesPerLayer);
                 //newVertices[i + (j * (verticesPerLayer + 1))] = new Vector3(0.5f, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
-                newVertices[i + (j * verticesPerLayer)] = new Vector3(0.5f, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
+                newVertices[index][i + (j * verticesPerLayer)] = new Vector3(0.5f, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
             }
             //newVertices[((j + 1) * verticesPerLayer) + j] = new Vector3(0, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
         }
-        newVertices[verticesPerLayer * layers] = new Vector3(0, ((height / (layers - 1)) * (layers - 2) + (height / (layers - 1))), 0f);
+        newVertices[index][verticesPerLayer * layers] = new Vector3(0, ((height / (layers - 1)) * (layers - 2) + (height / (layers - 1))), 0f);
 
         // Rotate
         Quaternion rotation = Quaternion.Euler(0, 360 / verticesPerLayer, 0);
-        for (int j = 0; j < newVertices.Length; j++) { 
-            for (int i = 0; i < (newVertices.Length - j); i++) {
-                newVertices[i] = rotation * newVertices[i];
+        for (int j = 0; j < newVertices[index].Length; j++) {
+            for (int i = 0; i < (newVertices[index].Length - j); i++) {
+                newVertices[index][i] = rotation * newVertices[index][i];
             }
         }
 
         // For Testing purposes
-        /*for (int i = 0; i < newVertices.Length; i++) {
+        /*for (int i = 0; i < newVertices[index].Length; i++) {
             GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            test.transform.position = newVertices[i];
+            test.transform.position = newVertices[index][i];
             test.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         }*/
 
         List<int> faces = new List<int>();
 
-        CreateFaces(faces);
+        CreateFaces(faces, index, layers);
 
-        candleMesh = new Mesh();
+        candleMeshs[index] = new Mesh();
         candle.AddComponent<MeshFilter>();
         candle.AddComponent<MeshRenderer>();
         candle.GetComponent<MeshRenderer>().receiveShadows = true;
-        candle.GetComponent<MeshFilter>().mesh = candleMesh;
+        candle.GetComponent<MeshFilter>().mesh = candleMeshs[index];
         candle.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
 
-        candleMesh.vertices = newVertices;
-        candleMesh.triangles = faces.ToArray();
+        candleMeshs[index].vertices = newVertices[index];
+        candleMeshs[index].triangles = faces.ToArray();
 
-        candleMesh.RecalculateNormals();
+        candleMeshs[index].RecalculateNormals();
 
         candle.transform.localScale = new Vector3(0.359f, 0.359f, 0.359f);
-
-        CreateCandleHolder();
 
         initialized = true;
     }
 
-    void CreateFaces(List<int> faces) {
-        for (int j = 0; j < (layers - 1); j++) {
+    void CreateFaces(List<int> faces, int index, int curLayers) {
+        for (int j = 0; j < (curLayers - 1); j++) {
             for (int i = 0; i < verticesPerLayer; i++) {
                 faces.Add(i + 1 + (j * verticesPerLayer));
                 faces.Add(i + (j * verticesPerLayer));
@@ -116,10 +190,10 @@ public class CandleSpawner : MonoBehaviour {
                 faces.Add(i + verticesPerLayer + 1 + (j * verticesPerLayer));
                 faces.Add(i + 1 + (j * verticesPerLayer));
 
-                if (j == (layers - 2) && i < (verticesPerLayer - 1)) {
+                if (j == (curLayers - 2) && i < (verticesPerLayer - 1)) {
                     faces.Add(i + verticesPerLayer + 1 + (j * verticesPerLayer));
                     faces.Add(i + verticesPerLayer + (j * verticesPerLayer));
-                    faces.Add(newVertices.Length - 1);
+                    faces.Add(newVertices[index].Length - 1);
                 }
             }
             if (j == 0) {
@@ -131,8 +205,34 @@ public class CandleSpawner : MonoBehaviour {
     }
 
     void CreateCandleHolder() {
+        float wallLen = Math.Abs(posWallLeft[0].x + posWallLeft[2].x);
+        float outerMargin = 2.2f;
+        // Correction - Candle Holder closer to wall
+        float correction = -0.264f;
+        float hangingHeight = 2.719f;
+        // Number of CandleHolder
+        int numberOfCH = numberOfCandles / 2;
+        float spaceBetween;
+        if (numberOfCH > 1) {
+            spaceBetween = (wallLen - (2 * outerMargin)) / (numberOfCH - 1);
+        } else {
+            spaceBetween = 0;
+        }
         candleHolder = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
-        candleHolder.transform.position = posWallLeft;
+        candleHolder.transform.position = posWallLeft[0] + new Vector3(correction, hangingHeight, outerMargin);
+
+        GameObject candleHolder2 = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
+        candleHolder2.transform.position = candleHolder.transform.position;
+        candleHolder2.transform.Translate(0, 0, spaceBetween);
+
+        GameObject candleHolder3 = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
+        candleHolder3.transform.position = candleHolder2.transform.position;
+        candleHolder3.transform.Translate(0, 0, spaceBetween);
+    }
+
+    void MoveCandle() {
+        //candle.transform.position = candleHolder.transform.position;
+        //candle.transform.Translate(0.791f, 0.154f, 0.022f);
     }
 
     IEnumerator GetWallLeft() {
@@ -140,7 +240,7 @@ public class CandleSpawner : MonoBehaviour {
         while (!valid) {
             valid = true;
             try {
-                posWallLeft = tavern.getWandLinks();
+                posWallLeft = tavern.getWandLinksVert();
             } catch (NullReferenceException nre) {
                 valid = false;
             }
@@ -149,8 +249,9 @@ public class CandleSpawner : MonoBehaviour {
         wallLocated = true;
     }
 
-    IEnumerator BurnDown() {
-        int lastIndex = newVertices.Length - 1;
+    IEnumerator BurnDown(GameObject candle, GameObject wick, int index) {
+        int lastIndex = newVertices[index].Length - 1;
+        int curLayers = layers;
 
         float burnValue = 0.015f;
         float burnTimeRate = 0.1f;
@@ -160,7 +261,7 @@ public class CandleSpawner : MonoBehaviour {
 
         Mesh wickMesh = wick.GetComponent<MeshFilter>().mesh;
 
-        int main = lastLayerIndexStart;
+        int main = lastLayerIndexStart[index];
         int layer = main / verticesPerLayer;
 
         int right, left;
@@ -184,20 +285,20 @@ public class CandleSpawner : MonoBehaviour {
                 right = ((main + 1) % verticesPerLayer) + (verticesPerLayer * layer);
                 left = ((main - 1) % verticesPerLayer) + (verticesPerLayer * layer);
 
-                while (newVertices[main].y >= newVertices[lastLayerIndexStart - verticesPerLayer].y) {
+                while (newVertices[index][main].y >= newVertices[index][lastLayerIndexStart[index] - verticesPerLayer].y) {
                     if (!middleBurnt) {
                         // Burn Middle Part
-                        newVertices[lastIndex] = newVertices[lastIndex] + new Vector3(0, -burnValue, 0);
+                        newVertices[index][lastIndex] = newVertices[index][lastIndex] + new Vector3(0, -burnValue, 0);
                     }
                     // Burn "Main" Outer Part
-                    newVertices[main] = newVertices[main] + new Vector3(0, -burnValue, 0);
+                    newVertices[index][main] = newVertices[index][main] + new Vector3(0, -burnValue, 0);
                     // Burn Part Right of "Main" Part
-                    if ((newVertices[right] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[main - verticesPerLayer].y) {
-                        newVertices[right] = newVertices[right] + new Vector3(0, -(burnValue / 2), 0);
+                    if ((newVertices[index][right] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
+                        newVertices[index][right] = newVertices[index][right] + new Vector3(0, -(burnValue / 2), 0);
                     }
                     // Burn Part Left of "Main" Part
-                    if ((newVertices[left] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[main - verticesPerLayer].y) {
-                        newVertices[left] = newVertices[left] + new Vector3(0, -(burnValue / 2), 0);
+                    if ((newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
+                        newVertices[index][left] = newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0);
                     }
                     /*if (lastLayerIndexStart % verticesPerLayer == 0) {
                         if ((newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[lastLayerIndexStart - verticesPerLayer].y) {
@@ -207,14 +308,13 @@ public class CandleSpawner : MonoBehaviour {
                     }*/
 
                     //Debug.Log((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - (0.05f) + " " + (((candleMesh.bounds.size.y * candle.transform.localScale.y) / (layers - 1)) * (layer - 1)));
-                    if (((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - 0.05f ) > ((candleMesh.bounds.size.y / (layers - 1)) * (layer - 1)) * candle.transform.localScale.y) {
-                        wickBurnt = ((candleMesh.bounds.size.y / (layers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
+                    if (((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - 0.05f) > ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * (layer - 1)) * candle.transform.localScale.y) {
+                        wickBurnt = ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
                         wick.transform.localScale -= new Vector3(0, wickBurnt, 0);
                         wick.transform.Translate(0, -wickBurnt * candle.transform.localScale.y, 0);
                     }
-
-                    candleMesh.vertices = newVertices;
-                    candleMesh.RecalculateNormals();
+                    candleMeshs[index].vertices = newVertices[index];
+                    candleMeshs[index].RecalculateNormals();
                     yield return new WaitForSeconds(burnTimeRate);
                 }
                 middleBurnt = true;
@@ -230,34 +330,33 @@ public class CandleSpawner : MonoBehaviour {
                 }
 
                 // Fix lighting / normals
-                int[] tris = candleMesh.triangles;
+                int[] tris = candleMeshs[index].triangles;
                 for (int i = 0; i < tris.Length; i++) {
                     if (tris[i] == main) tris[i] = (main - verticesPerLayer);
                 }
-                candleMesh.triangles = tris;
-                candleMesh.RecalculateNormals();
+                candleMeshs[index].triangles = tris;
+                candleMeshs[index].RecalculateNormals();
             }
 
             /*for (int i = 0; i < verticesPerLayer; i++) {
                 newVertices[(((layer - 1) * verticesPerLayer) + i)] = newVertices[(layer * verticesPerLayer) + i];
             }*/
 
-            newVertices[layer * verticesPerLayer] = newVertices[lastIndex];
+            newVertices[index][layer * verticesPerLayer] = newVertices[index][lastIndex];
             lastIndex = layer * verticesPerLayer;
 
-            layers--;
+            curLayers--;
             layer--;
-            lastLayerIndexStart -= verticesPerLayer;
+            lastLayerIndexStart[index] -= verticesPerLayer;
             middleBurnt = false;
             layerBurnt = false;
 
-            Array.Resize(ref newVertices, newVertices.Length - verticesPerLayer);
+            Array.Resize(ref newVertices[index], newVertices[index].Length - verticesPerLayer);
             List<int> faces = new List<int>();
-            CreateFaces(faces);
+            CreateFaces(faces, index, curLayers);
 
-            candleMesh.triangles = faces.ToArray();
-            candleMesh.vertices = newVertices;
-
+            candleMeshs[index].triangles = faces.ToArray();
+            candleMeshs[index].vertices = newVertices[index];
         }
     }
 }
