@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CandleSpawner : MonoBehaviour {
     taverne tavern;
-    GameObject candleLight, candleHolder;
+    GameObject candleLight;
     float height, wickHeight;
     bool initialized, wallLocated;
     Vector3[][] newVertices;
@@ -13,15 +13,17 @@ public class CandleSpawner : MonoBehaviour {
 
     readonly int verticesPerLayer = 20;
     readonly int layers = 5;
-    readonly int numberOfCandles = 2;
+    // Needs to be an even number
+    readonly int numberOfCandles = 6;
 
     Light lightComp;
 
     Vector3[] posWallLeft;
+    Vector3[] posWallRight;
 
     int[] lastLayerIndexStart;
     ParticleSystem[] particleSystems;
-    GameObject[] candles, wicks;
+    GameObject[] candles, wicks, candleHolders;
     Mesh[] candleMeshs;
 
     // Use this for initialization
@@ -30,6 +32,7 @@ public class CandleSpawner : MonoBehaviour {
         wallLocated = false;
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
         StartCoroutine(GetWallLeft());
+        StartCoroutine(GetWallRight());
         //verticesPerLayer = 20;
         //layers = 5;
         height = 2f;
@@ -38,6 +41,7 @@ public class CandleSpawner : MonoBehaviour {
         particleSystems = new ParticleSystem[numberOfCandles];
         candles = new GameObject[numberOfCandles];
         wicks = new GameObject[numberOfCandles];
+        candleHolders = new GameObject[numberOfCandles];
         candleMeshs = new Mesh[numberOfCandles];
         newVertices = new Vector3[numberOfCandles][];
         lastLayerIndexStart = new int[numberOfCandles];
@@ -82,12 +86,12 @@ public class CandleSpawner : MonoBehaviour {
             wicks[i] = wick;
 
             CreateVertices(candles[i], i);
-            CreateBurnParticle(candles[i], wicks[i]);
-            CreateCandleHolder();
+            CreateBurnParticle(candles[i], wicks[i], i);
         }
+        CreateCandleHolder();
     }
 
-    private void CreateBurnParticle(GameObject candle, GameObject wick) {
+    private void CreateBurnParticle(GameObject candle, GameObject wick, int index) {
         // Create emitter
         GameObject emitter = new GameObject();
         emitter.name = "Emitter";
@@ -127,6 +131,8 @@ public class CandleSpawner : MonoBehaviour {
         emission.enabled = true;
         // Emission Rate
         emission.rateOverTime = 70;
+
+        particleSystems[index] = ps;
 
         ps.Play();
     }
@@ -204,36 +210,60 @@ public class CandleSpawner : MonoBehaviour {
         }
     }
 
+    // For position of the candle holders and candles
+    int numberOfCH;
+    float distanceOfWalls, spaceBetween, correction;
+
     void CreateCandleHolder() {
         float wallLen = Math.Abs(posWallLeft[0].x + posWallLeft[2].x);
+        distanceOfWalls = Math.Abs(posWallLeft[0].x - posWallRight[2].x);
         float outerMargin = 2.2f;
         // Correction - Candle Holder closer to wall
-        float correction = -0.264f;
+        correction = -0.264f;
         float hangingHeight = 2.719f;
         // Number of CandleHolder
-        int numberOfCH = numberOfCandles / 2;
-        float spaceBetween;
+        numberOfCH = numberOfCandles / 2;
         if (numberOfCH > 1) {
             spaceBetween = (wallLen - (2 * outerMargin)) / (numberOfCH - 1);
         } else {
             spaceBetween = 0;
         }
-        candleHolder = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
-        candleHolder.transform.position = posWallLeft[0] + new Vector3(correction, hangingHeight, outerMargin);
 
-        GameObject candleHolder2 = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
-        candleHolder2.transform.position = candleHolder.transform.position;
-        candleHolder2.transform.Translate(0, 0, spaceBetween);
+        for (int i = 0; i < numberOfCH; i++) {
+            candleHolders[i] = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
+            candleHolders[i].transform.position = posWallLeft[0] + new Vector3(correction, hangingHeight, outerMargin);
+            candleHolders[i].transform.Translate(0, 0, spaceBetween * i);
+            candleHolders[i].name = "Candle Holder" + (i + 1);
 
-        GameObject candleHolder3 = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
-        candleHolder3.transform.position = candleHolder2.transform.position;
-        candleHolder3.transform.Translate(0, 0, spaceBetween);
+            candleHolders[i + numberOfCH] = (GameObject)Instantiate(Resources.Load("Prefab/CandleHolder"));
+            candleHolders[i + numberOfCH].transform.position = candleHolders[i].transform.position;
+            candleHolders[i + numberOfCH].transform.Translate(distanceOfWalls - (correction * 2), 0, 0);
+            candleHolders[i + numberOfCH].transform.Rotate(0, 180, 0);
+            candleHolders[i + numberOfCH].name = "Candle Holder" + (i + numberOfCH + 1);
+        }
+        MoveCandles();
     }
 
-    void MoveCandle() {
-        //candle.transform.position = candleHolder.transform.position;
-        //candle.transform.Translate(0.791f, 0.154f, 0.022f);
+    void MoveCandles() {
+        for (int i = 0; i < (numberOfCandles / 2); i++) {
+            candles[i].transform.position = candleHolders[i].transform.position;
+            candles[i].transform.Translate(0.791f, 0.154f, 0.022f);
+
+            candles[i + numberOfCH].transform.position = candleHolders[i + numberOfCH].transform.position;
+            candles[i + numberOfCH].transform.Translate(-0.791f, 0.154f, -0.022f);
+            candles[i + numberOfCH].transform.Rotate(0, 180, 0);
+        }
     }
+
+    /*IEnumerator WaitForCandles() {
+        for (int i = 0; i < numberOfCandles; i++) {
+            Debug.Log(candles[i]);
+        }
+        while (candles[0] == null) {
+            yield return new WaitForSeconds(0.05f);
+        }
+        candlesCreated = true;
+    }*/
 
     IEnumerator GetWallLeft() {
         bool valid = false;
@@ -241,6 +271,20 @@ public class CandleSpawner : MonoBehaviour {
             valid = true;
             try {
                 posWallLeft = tavern.getWandLinksVert();
+            } catch (NullReferenceException nre) {
+                valid = false;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        wallLocated = true;
+    }
+
+    IEnumerator GetWallRight() {
+        bool valid = false;
+        while (!valid) {
+            valid = true;
+            try {
+                posWallRight = tavern.getWandRechtsVert();
             } catch (NullReferenceException nre) {
                 valid = false;
             }
@@ -358,5 +402,7 @@ public class CandleSpawner : MonoBehaviour {
             candleMeshs[index].triangles = faces.ToArray();
             candleMeshs[index].vertices = newVertices[index];
         }
+        particleSystems[index].Stop();
+        Destroy(candles[index]);
     }
 }
