@@ -2,19 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/* script for audience-behavior and "jam", determining the behavior
+ * 
+ * Manual: simply attach to an GameObject called "AudienceBehave"
+*/
 public class AudienceBehave : MonoBehaviour {
-
+    //arrays with all audience-members and hocker
     GameObject[] crowd;
+    GameObject[] allHocker;
+
     //getting the grades
     NoteBoard NoteBoard;
+    //get the numbers to spawn
+    taverne Taverne;
 
     //quantification of the mood
     public int jam;
     //Grades given by NoteBoard
     int great, good, bad;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         great = 0;
         good = 0;
         bad = 0;
@@ -22,11 +30,15 @@ public class AudienceBehave : MonoBehaviour {
         //measure jam after each beat
         StartCoroutine(WaitForNoteBoard());
         StartCoroutine(WaitBeat());
-        
+
+
+        //creating Audience
+
+
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
     }
 
     //returns a percentage of good/bad-mooded audiencemembers
@@ -50,17 +62,17 @@ public class AudienceBehave : MonoBehaviour {
         bad = NoteBoard.bad;
         good = NoteBoard.good;
         great = NoteBoard.great;
-        jam = (great * 2 + good) - bad * 4;
+        jam = (great * 3 + good) - bad * 5;
         print("Jam =" + jam);
     }
 
     //continuous measuremeant after each beat
-    IEnumerator  WaitBeat()
+    IEnumerator WaitBeat()
     {
-        print("JAMMMMM");
-        
         yield return new WaitForSeconds(0.49180327868f);
+        //new Jam
         MeasureJam();
+        //infinite measuremeant
         StartCoroutine(WaitBeat());
     }
 
@@ -70,10 +82,26 @@ public class AudienceBehave : MonoBehaviour {
         NoteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
     }
 
-
-    // moving by little hops (be as cute as possible)
-    public void HopTo(GameObject destination)
+    //waiting for Tavern and getting the crowdsize and hocker
+    IEnumerator WaitForTavern()
     {
-
+        yield return new WaitForSeconds(0.49180327868f);
+        Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
+        allHocker = Taverne.getHocker();
+        crowd = new GameObject[Taverne.getHocker().Length];
     }
+
+    /*
+    public struct Person{
+        public GameObject Audience;
+
+        
+
+        // moving by little hops (be as cute as possible)
+        public void HopTo(Vector3 destination)
+        {
+            this.Audience.transform.Translate(destination);   
+        }
+    }
+    */
 }
