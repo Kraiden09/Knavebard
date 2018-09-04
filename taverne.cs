@@ -1012,4 +1012,14 @@ public class taverne : MonoBehaviour {
         return treppe;
     }
 
+    public Vector3[] getSpawnVert()
+    {
+        Vector3[] a = new Vector3[4];
+        a[0] = new Vector3(4.5f, 0.1f, 4.5f);
+        a[1] = new Vector3(4.5f, 0.1f, 6.5f);
+        a[2] = new Vector3(6.5f, 0.1f, 4.5f);
+        a[3] = new Vector3(6.5f, 0.1f, 6.5f);
+        return a;
+    }
+
 }
