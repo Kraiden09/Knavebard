@@ -3,7 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoteReader : MonoBehaviour {
+/* add it to Gameobject "NoteReader" in Unity
+ * 
+ * contains Beatmap and return-Methods for it
+ */
+public class NoteReader : MonoBehaviour
+{
     NoteBoard noteBoard;
 
     //errechnet aus den 122bpm
@@ -11,19 +16,33 @@ public class NoteReader : MonoBehaviour {
     //beat * 2 =      0.98360655737f
 
     //songinfo (spaeter auslagern)
+    //0 = up, 1 = right, 2 = down, 3 = left
     int[] songNotes = {1, 0, 2, 1,
         1, 1, 1, 1,
-        1, 1, 1, 1,
-        2, 2, 2, 2 };
+        1, 1, 1, 1, //bad timing somwhere here or
+        2, 2, 2, 2, // here
+    2, 2, 2, 1,
+    2, 1, 2, 1,
+    2, 1, 2, 1};
 
-    float[] noteTiming = { 0.49180327868f,0.49180327868f,0.49180327868f,      0.49180327868f,
+
+
+
+    float[] noteTiming = { 0.49180327868f,0.49180327868f, 0.49180327868f,      //0.49180327868f,
         0.98360655737f, 0.98360655737f, 0.98360655737f, 0.98360655737f,
         0.98360655737f, 0.98360655737f, 0.98360655737f, 0.98360655737f,
-        0.98360655737f, 0.98360655737f, 0.98360655737f, 0.98360655737f };
+        0.98360655737f, 0.98360655737f, 0.98360655737f, 0.98360655737f,
+    0.98360655737f,0.98360655737f,0.98360655737f,0.98360655737f,
+    0.98360655737f,0.98360655737f,0.98360655737f,0.98360655737f,
+    0.98360655737f,0.98360655737f,0.98360655737f,0.98360655737f,
+    0.98360655737f,0.98360655737f,0.98360655737f,0.98360655737f,
+    0.98360655737f,0.98360655737f,0.98360655737f,0.98360655737f,
+    0.98360655737f,0.98360655737f,0.98360655737f,0.98360655737f};
 
 
-// Use this for initialization
-void Start () {
+    // Use this for initialization
+    void Start()
+    {
 
 
         /*
@@ -44,10 +63,11 @@ void Start () {
             
         }*/
     }
-	
-	// Update is called once per frame
-	void Update () {
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
 
     public int readNotes(int i)
     {
