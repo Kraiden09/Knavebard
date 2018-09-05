@@ -7,6 +7,7 @@ public class taverne : MonoBehaviour {
 
     // Use this for initialization
     int cnt = 0;
+    float konfig;
     float lastkonf = 0;
     //Hilfsvariablen für Randomize
     int hockerzahl = 0;
@@ -111,27 +112,30 @@ public class taverne : MonoBehaviour {
     //waagerechte tischmethode
     void tischmeshwaage(float xpos, float ypos, float zpos, GameObject tisch, GameObject hocker1, GameObject hocker2, GameObject hocker3, GameObject hocker4) {
 
+        tisch.transform.position = new Vector3(xpos, ypos, zpos);
         tiVert = new List<Vector3>();
         tiTri = new List<int>();
 
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos, zpos - 0.4f));
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos + 0.6f, zpos - 0.4f));
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos, zpos + 0.4f));
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos + 0.6f, zpos + 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, 0, - 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, - 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, 0, + 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, + 0.4f));
 
-        tiVert.Add(new Vector3(xpos - 0.8f, ypos, zpos + 0.4f));
-        tiVert.Add(new Vector3(xpos - 0.8f, ypos + 0.6f, zpos + 0.4f));
+        tiVert.Add(new Vector3(- 0.8f, 0, + 0.4f));
+        tiVert.Add(new Vector3(- 0.8f, + 0.6f, + 0.4f));
 
-        tiVert.Add(new Vector3(xpos - 0.8f, ypos, zpos - 0.4f));
-        tiVert.Add(new Vector3(xpos - 0.8f, ypos + 0.6f, zpos - 0.4f));
+        tiVert.Add(new Vector3(- 0.8f, 0,- 0.4f));
+        tiVert.Add(new Vector3(- 0.8f, + 0.6f, - 0.4f));
 
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos, zpos - 0.4f));
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos + 0.6f, zpos - 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, 0, - 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, - 0.4f));
 
-        tiVert.Add(new Vector3(xpos - 0.8f, ypos + 0.6f, zpos - 0.4f));
-        tiVert.Add(new Vector3(xpos - 0.8f, ypos + 0.6f, zpos + 0.4f));
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos + 0.6f, zpos - 0.4f));
-        tiVert.Add(new Vector3(xpos + 0.8f, ypos + 0.6f, zpos + 0.4f));
+        tiVert.Add(new Vector3(- 0.8f, + 0.6f, - 0.4f));
+        tiVert.Add(new Vector3(- 0.8f, + 0.6f, + 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, - 0.4f));
+        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, + 0.4f));
+        
+
 
         timesh = new Mesh();
         timesh.vertices = tiVert.ToArray();
@@ -177,28 +181,49 @@ public class taverne : MonoBehaviour {
     //senkrechte Tischmethode
     void tischmeshsenk(float xpos, float ypos, float zpos, GameObject tisch, GameObject hocker1, GameObject hocker2, GameObject hocker3, GameObject hocker4)
     {
-
+        tisch.transform.position = new Vector3(xpos, ypos, zpos);
         tiVert = new List<Vector3>();
         tiTri = new List<int>();
 
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos - 0.8f));
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos + 0.8f));
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
+        /* tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos + 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
 
-        tiVert.Add(new Vector3(xpos - 0.4f, ypos, zpos + 0.8f));
-        tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos + 0.8f));
+         tiVert.Add(new Vector3(xpos - 0.4f, ypos, zpos + 0.8f));
+         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos + 0.8f));
 
-        tiVert.Add(new Vector3(xpos - 0.4f, ypos, zpos - 0.8f));
-        tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos - 0.4f, ypos, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos - 0.8f));
 
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos - 0.8f));
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
 
-        tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos - 0.8f));
-        tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos + 0.8f));
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
-        tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
+         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos + 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
+         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
+         */
+
+        tiVert.Add(new Vector3(+ 0.4f, 0, - 0.8f));
+        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, - 0.8f));
+        tiVert.Add(new Vector3(+ 0.4f, 0, + 0.8f));
+        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, + 0.8f));
+
+        tiVert.Add(new Vector3(- 0.4f, 0, + 0.8f));
+        tiVert.Add(new Vector3(- 0.4f,+ 0.6f,+ 0.8f));
+
+        tiVert.Add(new Vector3(- 0.4f, 0, - 0.8f));
+        tiVert.Add(new Vector3(- 0.4f,+ 0.6f, - 0.8f));
+
+        tiVert.Add(new Vector3(+ 0.4f,0, - 0.8f));
+        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, - 0.8f));
+
+        tiVert.Add(new Vector3(- 0.4f, + 0.6f, - 0.8f));
+        tiVert.Add(new Vector3(- 0.4f, + 0.6f, + 0.8f));
+        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, - 0.8f));
+        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, + 0.8f));
+
 
         timesh = new Mesh();
         timesh.vertices = tiVert.ToArray();
@@ -243,10 +268,10 @@ public class taverne : MonoBehaviour {
 
     void hockermesh(float xpos, float ypos, float zpos, GameObject hocker)
     {
-
+        hocker.transform.position = new Vector3(xpos, ypos, zpos);
         hoVert = new List<Vector3>();
         hoTri = new List<int>();
-
+        /*
         hoVert.Add(new Vector3(xpos + 0.2f, ypos, zpos - 0.2f));
         hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos - 0.2f));
         hoVert.Add(new Vector3(xpos + 0.2f, ypos, zpos + 0.2f));
@@ -265,6 +290,26 @@ public class taverne : MonoBehaviour {
         hoVert.Add(new Vector3(xpos - 0.2f, ypos + 0.4f, zpos + 0.2f));
         hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos - 0.2f));
         hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos + 0.2f));
+        */
+
+        hoVert.Add(new Vector3(+ 0.2f, 0,- 0.2f));
+        hoVert.Add(new Vector3(+ 0.2f, 0.4f,- 0.2f));
+        hoVert.Add(new Vector3(+ 0.2f, 0,+ 0.2f));
+        hoVert.Add(new Vector3(+ 0.2f,+ 0.4f,+ 0.2f));
+
+        hoVert.Add(new Vector3( - 0.2f, 0,+ 0.2f));
+        hoVert.Add(new Vector3( - 0.2f,+ 0.4f,+ 0.2f));
+
+        hoVert.Add(new Vector3(- 0.2f, 0,- 0.2f));
+        hoVert.Add(new Vector3(- 0.2f,+ 0.4f,- 0.2f));
+
+        hoVert.Add(new Vector3(+ 0.2f,0,- 0.2f));
+        hoVert.Add(new Vector3(+ 0.2f,+ 0.4f, - 0.2f));
+
+        hoVert.Add(new Vector3(- 0.2f, + 0.4f, - 0.2f));
+        hoVert.Add(new Vector3(- 0.2f, + 0.4f, + 0.2f));
+        hoVert.Add(new Vector3(+ 0.2f, + 0.4f, - 0.2f));
+        hoVert.Add(new Vector3(+ 0.2f, + 0.4f, + 0.2f));
 
         homesh = new Mesh();
         homesh.vertices = hoVert.ToArray();
@@ -406,52 +451,53 @@ public class taverne : MonoBehaviour {
     //Bargenerierung, Startpunkt am Ansatzpunkt, der nah an der Kamera ist
     void barBuilder(GameObject bar, float xpos, float ypos, float zpos)
     {
+        bar.transform.position = new Vector3(xpos, ypos, zpos);
         barVert = new List<Vector3>();
         barTri = new List<int>();
         //xpos = -7; ypos = 0.1f, zpos = -5
-        barVert.Add(new Vector3(xpos, ypos, zpos));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
-        barVert.Add(new Vector3(xpos + 2, ypos, zpos));
-        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(0, 0, 0));
+        barVert.Add(new Vector3(0, + 0.5f, 0));
+        barVert.Add(new Vector3(+ 2, 0, 0));
+        barVert.Add(new Vector3(+ 2, + 0.5f, 0));
 
-        barVert.Add(new Vector3(xpos + 2, ypos, zpos + 5));
-        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 5));
+        barVert.Add(new Vector3(+ 2, 0, + 5));
+        barVert.Add(new Vector3(+ 2, + 0.5f, + 5));
 
-        barVert.Add(new Vector3(xpos, ypos, zpos + 5));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 5));
+        barVert.Add(new Vector3(0, 0, + 5));
+        barVert.Add(new Vector3(0, + 0.5f, + 5));
 
-        barVert.Add(new Vector3(xpos, ypos, zpos + 4));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(0, 0, + 4));
+        barVert.Add(new Vector3(0, + 0.5f, + 4));
 
-        barVert.Add(new Vector3(xpos + 1, ypos, zpos + 4));
-        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(+ 1, 0, + 4));
+        barVert.Add(new Vector3(+ 1, + 0.5f, + 4));
 
-        barVert.Add(new Vector3(xpos + 1, ypos, zpos + 1));
-        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 1));
+        barVert.Add(new Vector3(+ 1, 0, + 1));
+        barVert.Add(new Vector3(+ 1, + 0.5f,+ 1));
 
-        barVert.Add(new Vector3(xpos, ypos, zpos + 1));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 1));
+        barVert.Add(new Vector3(0, 0, + 1));
+        barVert.Add(new Vector3(0, + 0.5f, + 1));
 
-        barVert.Add(new Vector3(xpos, ypos, zpos));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(0, 0, 0));
+        barVert.Add(new Vector3(0, + 0.5f, 0));
 
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
+        barVert.Add(new Vector3(0, + 0.5f, 0));
 
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 1));
-        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos));
-        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 1));
+        barVert.Add(new Vector3(0, + 0.5f, + 1));
+        barVert.Add(new Vector3(+ 2, + 0.5f, 0));
+        barVert.Add(new Vector3(+ 2, + 0.5f, + 1));
 
-        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 1));
+        barVert.Add(new Vector3(+ 2, + 0.5f, + 1));
 
-        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 1));
-        barVert.Add(new Vector3(xpos + 2, ypos + 0.5f, zpos + 5));
-        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 5));
+        barVert.Add(new Vector3(+ 1, + 0.5f, + 1));
+        barVert.Add(new Vector3(+ 2, + 0.5f, + 5));
+        barVert.Add(new Vector3(+ 1, + 0.5f, + 5));
 
-        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 5));
+        barVert.Add(new Vector3(+ 1, + 0.5f, + 5));
 
-        barVert.Add(new Vector3(xpos + 1, ypos + 0.5f, zpos + 4));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 5));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos + 4));
+        barVert.Add(new Vector3(+ 1, + 0.5f, + 4));
+        barVert.Add(new Vector3(0, + 0.5f, + 5));
+        barVert.Add(new Vector3(0, + 0.5f, + 4));
 
         barmesh = new Mesh();
         barmesh.vertices = barVert.ToArray();
@@ -503,9 +549,11 @@ public class taverne : MonoBehaviour {
     // bar auf der rechten seite, Ansatzpunkt am wietesten weg von der Kamera
     void barBuilder2(GameObject bar, float xpos, float ypos, float zpos)
     {
+        bar.transform.position = new Vector3(xpos, ypos, zpos);
         barVert = new List<Vector3>();
         barTri = new List<int>();
         //xpos = 7; ypos = 0.1f, zpos = 0   -5
+        /*
         barVert.Add(new Vector3(xpos, ypos, zpos));
         barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
         barVert.Add(new Vector3(xpos - 2, ypos, zpos));
@@ -549,6 +597,51 @@ public class taverne : MonoBehaviour {
         barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 4));
         barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 5));
         barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 4));
+        */
+
+        barVert.Add(new Vector3(0, 0, 0));
+        barVert.Add(new Vector3(0, + 0.5f, 0));
+        barVert.Add(new Vector3(- 2, 0, 0));
+        barVert.Add(new Vector3(- 2, + 0.5f, 0));
+
+        barVert.Add(new Vector3(- 2, 0, - 5));
+        barVert.Add(new Vector3(- 2, + 0.5f, - 5));
+
+        barVert.Add(new Vector3(0, 0, - 5));
+        barVert.Add(new Vector3(0, + 0.5f, - 5));
+
+        barVert.Add(new Vector3(0, 0, - 4));
+        barVert.Add(new Vector3(0, + 0.5f, - 4));
+
+        barVert.Add(new Vector3(- 1, 0, - 4));
+        barVert.Add(new Vector3(- 1, + 0.5f, - 4));
+
+        barVert.Add(new Vector3(- 1, 0, - 1));
+        barVert.Add(new Vector3(- 1, + 0.5f, - 1));
+
+        barVert.Add(new Vector3(0, 0, - 1));
+        barVert.Add(new Vector3(0, + 0.5f, - 1));
+
+        barVert.Add(new Vector3(0, 0, 0));
+        barVert.Add(new Vector3(0, + 0.5f, 0));
+
+        barVert.Add(new Vector3(0, + 0.5f, 0));
+
+        barVert.Add(new Vector3(0, + 0.5f, - 1));
+        barVert.Add(new Vector3(- 2, + 0.5f, 0));
+        barVert.Add(new Vector3(- 2, + 0.5f,- 1));
+
+        barVert.Add(new Vector3(- 2, + 0.5f, - 1));
+
+        barVert.Add(new Vector3(- 1, + 0.5f, - 1));
+        barVert.Add(new Vector3(- 2, + 0.5f, - 5));
+        barVert.Add(new Vector3(- 1, + 0.5f, - 5));
+
+        barVert.Add(new Vector3(- 1, + 0.5f, - 5));
+
+        barVert.Add(new Vector3(- 1, + 0.5f, - 4));
+        barVert.Add(new Vector3(0, + 0.5f, - 5));
+        barVert.Add(new Vector3(0,+ 0.5f, - 4));
 
 
 
@@ -621,7 +714,7 @@ public class taverne : MonoBehaviour {
     void randomize() {
         hockerzahl = 0;
         tischzahl = 0;
-        float konfig = Mathf.Floor(Random.Range(1, 4));
+        konfig = Mathf.Floor(Random.Range(1, 4));
         float barpos = Random.Range(-6, -1);
         float barpos2 = Random.Range(-1, 3);
         if (konfig == 1) {
@@ -685,11 +778,11 @@ public class taverne : MonoBehaviour {
             berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
             barBuilder(bar, -7, 0.1f, barpos);
             berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
-            berBuilder(tischbereich, new Vector3(-3, 0.1f, -6), new Vector3(-3, 0.1f, 3), new Vector3(6, 0.1f, -6f), new Vector3(6, 0.1f, 3));
-            tischmeshsenk(3.5f, 0.1f, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
-            tischmeshsenk(3.5f, 0.1f, -3, tisch2, hocker11, hocker12, hocker13, hocker14);
-            tischmeshsenk(-0.5f, 0.1f, -3, tisch3, hocker15, hocker16, hocker17, hocker18);
-            tischmeshsenk(-0.5f, 0.1f, 0, tisch4, hocker19, hocker20, hocker21, hocker22);
+            berBuilder(tischbereich, new Vector3(-3, 0.1f, -5), new Vector3(-3, 0.1f, 1), new Vector3(6, 0.1f, -5), new Vector3(6, 0.1f, 1));
+            tischmeshsenk(3.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
+            tischmeshsenk(3.5f, 0.1f, -4, tisch2, hocker11, hocker12, hocker13, hocker14);
+            tischmeshsenk(-0.5f, 0.1f, -1, tisch3, hocker15, hocker16, hocker17, hocker18);
+            tischmeshsenk(-0.5f, 0.1f, -4, tisch4, hocker19, hocker20, hocker21, hocker22);
         }
         if (hockerzahl != maxhocker) {
             for (int i = hockerzahl + 1; i <= maxhocker; i++)
@@ -886,6 +979,7 @@ public class taverne : MonoBehaviour {
         berBuilder(spawn, new Vector3(4.5f, 0.1f , 4.5f), new Vector3(4.5f, 0.1f , 6.5f), new Vector3(6.5f, 0.1f , 4.5f), new Vector3(6.5f, 0.1f , 6.5f));
         berBuilder(kamerabereich, new Vector3(-7, 0.1f, -9), new Vector3(-7, 0.1f, -7), new Vector3(7, 0.1f, -9), new Vector3(7, 0.1f, -7));
         randomize();
+        
     }
 
     // Update is called once per frame
@@ -1022,4 +1116,13 @@ public class taverne : MonoBehaviour {
         return a;
     }
 
+    public Vector3 getBarkeep() {
+        if (konfig == 2)
+        {
+            return new Vector3(bar.transform.position.x - 0.5f, bar.transform.position.y, bar.transform.position.z - 2.5f);
+        }
+        else {
+            return new Vector3(bar.transform.position.x + 0.5f, bar.transform.position.y, bar.transform.position.z + 2.5f);
+        }
+    }
 }
