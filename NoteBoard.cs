@@ -49,6 +49,9 @@ public class NoteBoard : MonoBehaviour {
     // Time the note stays at Alpha 0f
     float fadeInDelay;
 
+    // Music
+    AudioSource music;
+
     // calling NoteReader (joerg)
     NoteReader noteReader;
 
@@ -73,6 +76,8 @@ public class NoteBoard : MonoBehaviour {
         //stairs.AddComponent<MeshCollider>();
 
         despawningNotes = new GameObject[noteArrSize];
+
+        music = GetComponent<AudioSource>();
 
         bad = 0;
         good = 0;
@@ -366,6 +371,7 @@ public class NoteBoard : MonoBehaviour {
     public void StartNoteGeneration() {
         StartCoroutine(GenerateNotes());
         StartCoroutine(MoveNotes());
+        music.Play();
     }
 
     public void SetFinished(bool fin) {
@@ -639,6 +645,7 @@ public class NoteBoard : MonoBehaviour {
                 control.ModeChange();
                 finished = false;
                 notes.Clear();
+                music.Stop();
                 break;
             }
         }
