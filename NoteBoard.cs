@@ -8,7 +8,7 @@ public class NoteBoard : MonoBehaviour {
     private GameObject stageRef, post1, post2, screen, borderLeft, borderRight, scoreText;
     private Mesh screenMesh;
     // Flag for Score Coroutine, FPS Cap and to initialize note boundaries
-    private bool scoreCRrunning, fpsToLow, initNoteBound;
+    private bool scoreCRrunning, fpsToLow, initNoteBound, finished;
     private float noteWidth, noteHeight, noteDepth;
     private int fpsCap;
     private GameObject[] despawningNotes;
@@ -18,6 +18,8 @@ public class NoteBoard : MonoBehaviour {
     public int bad, good, great;
     public List<GameObject> notes = new List<GameObject>();
     public float deltaTime;
+
+    private Control control;
 
     // Current Position in notes List for FadeOut
     public int curNotePos;
@@ -59,6 +61,8 @@ public class NoteBoard : MonoBehaviour {
         //JOERG REFERENCE
         noteReader = GameObject.Find("NoteReader").GetComponent<NoteReader>();
 
+        control = GameObject.Find("Control").GetComponent<Control>();
+
         // Collider
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
         floor = tavern.getBoden();
@@ -66,7 +70,7 @@ public class NoteBoard : MonoBehaviour {
         stairs = tavern.getTreppe();
         floor.AddComponent<BoxCollider>();
         stageRef.AddComponent<BoxCollider>();
-        stairs.AddComponent<MeshCollider>();
+        //stairs.AddComponent<MeshCollider>();
 
         despawningNotes = new GameObject[noteArrSize];
 
@@ -76,6 +80,7 @@ public class NoteBoard : MonoBehaviour {
         scoreCRrunning = false;
         fpsToLow = false;
         initNoteBound = true;
+        finished = false;
         lastScoreCR = null;
         curNotePos = 0;
         curNoteEndPos = 0;
@@ -358,6 +363,15 @@ public class NoteBoard : MonoBehaviour {
         StartCoroutine(DropNote(curNotePos));
     }
 
+    public void StartNoteGeneration() {
+        StartCoroutine(GenerateNotes());
+        StartCoroutine(MoveNotes());
+    }
+
+    public void SetFinished(bool fin) {
+        finished = fin;
+    }
+
     IEnumerator DropNote(int myPos) {
         //Debug.Log(myPos);
         despawningNotes[myPos] = notes[0];
@@ -583,6 +597,7 @@ public class NoteBoard : MonoBehaviour {
             //yield return new WaitForSeconds(noteReader.readTime(i) * Time.deltaTime * fpsCap);
             yield return new WaitForSeconds(noteReader.readTime(i));
         }
+        finished = true;
     }
 
     // Wait for stage to be initialized
@@ -591,8 +606,8 @@ public class NoteBoard : MonoBehaviour {
             yield return new WaitForSeconds(0.1f);
         }
         BuildBoard();
-        StartCoroutine(GenerateNotes());
-        StartCoroutine(MoveNotes());
+        /*StartCoroutine(GenerateNotes());
+        StartCoroutine(MoveNotes());*/
     }
 
     float fiMoveAlongScreen;
@@ -620,6 +635,12 @@ public class NoteBoard : MonoBehaviour {
                 remove = false;
             }
             yield return new WaitForSeconds(refresh);
+            if (finished && notes.Count == 0) {
+                control.ModeChange();
+                finished = false;
+                notes.Clear();
+                break;
+            }
         }
     }
 
