@@ -271,7 +271,7 @@ public class CandleSpawner : MonoBehaviour {
             valid = true;
             try {
                 posWallLeft = tavern.getWandLinksVert();
-            } catch (NullReferenceException nre) {
+            } catch (NullReferenceException) {
                 valid = false;
             }
             yield return new WaitForSeconds(0.1f);
@@ -285,7 +285,7 @@ public class CandleSpawner : MonoBehaviour {
             valid = true;
             try {
                 posWallRight = tavern.getWandRechtsVert();
-            } catch (NullReferenceException nre) {
+            } catch (NullReferenceException) {
                 valid = false;
             }
             yield return new WaitForSeconds(0.1f);
