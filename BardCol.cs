@@ -142,8 +142,10 @@ public class BardCol : MonoBehaviour {
             if (firstJump) {
                 rb.isKinematic = true;
                 // Get mid-position of stage
-                Vector3[] stageMeshVert = tavern.getBuehne().GetComponent<MeshFilter>().mesh.vertices;
-                stageMid = new Vector3(stageMeshVert[5].x - ((stageMeshVert[5].x - stageMeshVert[9].x) / 2), stageMeshVert[9].y, stageMeshVert[5].z - ((stageMeshVert[5].z - stageMeshVert[9].z) / 2));
+                //Vector3[] stageMeshVert = tavern.getBuehne().GetComponent<MeshFilter>().mesh.vertices;
+                GameObject stage = tavern.getBuehne();
+                //stageMid = new Vector3(stageMeshVert[5].x - ((stageMeshVert[5].x - stageMeshVert[9].x) / 2), stageMeshVert[9].y, stageMeshVert[5].z - ((stageMeshVert[5].z - stageMeshVert[9].z) / 2));
+                stageMid = stage.transform.position;
                 StartCoroutine(Rotate(new Vector3(point.x + 0.8f, stageMid.y, stageMid.z), false, false));
             } else {
                 climbing = false;
