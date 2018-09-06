@@ -6,6 +6,7 @@ public class Control : MonoBehaviour {
     NoteBoard noteBoard;
     taverne tavern;
     BardCol colHandler;
+    Collision col;
     List<GameObject> notes;
     // Exploration Mode (0) or Bard Mode (1)
     private int mode;
@@ -26,6 +27,7 @@ public class Control : MonoBehaviour {
         //StartCoroutine(BuildUp());
         noteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
+        col = GameObject.Find("Collision").GetComponent<Collision>();
         notes = noteBoard.notes;
         initDone = GameObject.FindObjectOfType(typeof(Init)) as Init;
         mode = 0;
@@ -181,7 +183,6 @@ public class Control : MonoBehaviour {
         }
         character = GameObject.Find("Bard");
         StartCoroutine(WaitForTavern());
-        StartCoroutine(WaitForRB());
         colHandler = character.AddComponent<BardCol>();
         colHandler.AddColHandler(character, movement, rotation);
         //character.transform.Translate(-4.23f, 0.606f, 0.98f);
@@ -193,11 +194,14 @@ public class Control : MonoBehaviour {
         }
         // Define Spawn position
         Vector3[] spawnPos = tavern.getSpawnVert();
-        character.transform.position = new Vector3(spawnPos[0].x, 0.4f, spawnPos[0].z);
+        character.transform.position = new Vector3(spawnPos[0].x, 0.6f, spawnPos[0].z);
         character.transform.Translate((spawnPos[3].x - spawnPos[0].x) / 2, 0, (spawnPos[3].z - spawnPos[0].z) / 2);
         // Set LookAt Point
         character.transform.LookAt(new Vector3(0, 0, 0));
         character.transform.Rotate(0, -90, 0);
+        col.SetBardRB();
+        colHandler.SetBardRB();
+        StartCoroutine(WaitForRB());
     }
 
     // Wait for Rigid Body
