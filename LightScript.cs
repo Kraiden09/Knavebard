@@ -42,21 +42,35 @@ public class LightScript : MonoBehaviour {
         Debug.LogWarning(jamSchwabi);
 		switch (jamSchwabi) {
             case 0:
-                Debug.LogWarning("rot");
+                Debug.LogWarning("CASE=rot");
                 StartFadeLight(red);
                 break;
             case 1:
-                Debug.LogWarning("gelb");
+                Debug.LogWarning("CASE=gelb");
                 StartFadeLight(yellow);
                 break;
             case 2:
-                Debug.LogWarning("grün");
+                Debug.LogWarning("CASE=grün");
                 StartFadeLight(green);
                 break;
             default:
                 Debug.LogWarning("Lichtwechsel - Fehler");
                 break;
         }
+
+        /* //Flackern
+        
+        if (Random.value > 0.5f)
+            upordown = true;
+        else
+            upordown = false;
+
+        if (Candle.intensity > 0.1f && upordown)
+            Candle.intensity += (Time.deltaTime+Random.value);
+
+        if (Candle.intensity < 0.8f && !upordown)
+            Candle.intensity -= (Time.deltaTime + Random.value);
+            */
     }
 
     void StartFadeLight(Color Color) {
@@ -64,6 +78,37 @@ public class LightScript : MonoBehaviour {
     }
 
     IEnumerator FadeLightCore(Color Color) {
-		// Farben Fade
+        Color tmp = Candle.color;
+        while (Color != Candle.color) {
+            if (Color == red) {
+                Candle.color = Candle.color + new Color(0, -1, 0);
+                Debug.LogWarning("-grün");
+            } else if (Color == green) {
+                if (Candle.color.g == 255) {
+                    Candle.color = Candle.color + new Color(-1, 0, 0);
+                    Debug.LogWarning("-rot");
+                }
+                else {
+                    Candle.color = Candle.color + new Color(-1, 1, 0);
+                    Debug.LogWarning("-rot|+grün");
+                }
+            } else if (Color == yellow) {
+                if (tmp == red) {
+                    Candle.color = Candle.color + new Color(0, 1, 0);
+                    Debug.LogWarning("+grün");
+                } else if (tmp == green) {
+                    if (Candle.color.g == 222) {
+                        Candle.color = Candle.color + new Color(1, 0, 0);
+                        Debug.LogWarning("+rot");
+                    }
+                    else {
+                        Candle.color = Candle.color + new Color(1, -1, 0);
+                        Debug.LogWarning("+rot|-grün");
+                    }
+                }
+            }
+            yield return new WaitForSeconds(0.5f);
+
+        }
     }
 }
