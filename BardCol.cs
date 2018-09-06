@@ -14,7 +14,6 @@ public class BardCol : MonoBehaviour {
     void Start() {
         control = GameObject.Find("Control").GetComponent<Control>();
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
-        rb = bard.GetComponent<Rigidbody>();
         StartCoroutine(WaitForTavern());
         mode = control.GetMode();
         StartCoroutine(WaitForInit());
@@ -30,12 +29,15 @@ public class BardCol : MonoBehaviour {
         rotation = rotate;
     }
 
+    public void SetBardRB() {
+        rb = bard.GetComponent<Rigidbody>();
+    }
+
     private void OnCollisionEnter(UnityEngine.Collision col) {
         // Stairs
         if (init) {
             try {
                 if (col.gameObject.name == "Quad") {
-                    Debug.Log(mode);
                     if (tavernInit) {
                         // Only in Exploration Mode
                         if (mode == 0) {
