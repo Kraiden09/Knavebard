@@ -8,6 +8,8 @@ public class LightScript : MonoBehaviour {
     private AudienceBehave jam;
 
     private int jamSchwabi;
+    private int tmp = 0;
+    private int tmpAbort = 0;
 
     private Color red;
     private Color yellow;
@@ -21,19 +23,19 @@ public class LightScript : MonoBehaviour {
         jam = FindObjectOfType<AudienceBehave>();
         Candle.intensity = 0.15f;
         Candle.range = 7;
-        red = new Color(255, 0, 0);
-        yellow = new Color(255, 222, 0);
-        green = new Color(0, 255, 0);
+        red = new Color(255, 0, 0, 1);
+        yellow = new Color(255, 255, 0, 1);
+        green = new Color(0, 255, 0, 1);
         Candle.color = yellow;
         upordown = true;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (jam.jam < 0) {
+        if (jam.jam < -10) {
             jamSchwabi = 0;
         }
-        else if (jam.jam >= 0 && jam.jam < 20) {
+        else if (jam.jam >= -10 && jam.jam < 10) {
             jamSchwabi = 1;
         }
         else {
@@ -42,19 +44,22 @@ public class LightScript : MonoBehaviour {
         Debug.LogWarning(jamSchwabi);
 		switch (jamSchwabi) {
             case 0:
-                Debug.LogWarning("CASE=rot");
+                Debug.Log("CASE=rot");
                 StartFadeLight(red);
+                tmp = 0;
                 break;
             case 1:
-                Debug.LogWarning("CASE=gelb");
+                Debug.Log("CASE=gelb");
                 StartFadeLight(yellow);
+                tmp = 0;
                 break;
             case 2:
-                Debug.LogWarning("CASE=grün");
+                Debug.Log("CASE=grün");
                 StartFadeLight(green);
+                tmp = 0;
                 break;
             default:
-                Debug.LogWarning("Lichtwechsel - Fehler");
+                Debug.Log("Lichtwechsel - Fehler");
                 break;
         }
 
@@ -78,31 +83,32 @@ public class LightScript : MonoBehaviour {
     }
 
     IEnumerator FadeLightCore(Color Color) {
-        Color tmp = Candle.color;
+        //Color tmp = Candle.color;
+        /*
         while (Color != Candle.color) {
             if (Color == red) {
-                Candle.color = Candle.color + new Color(0, -1, 0);
+                Candle.color = Candle.color + new Color(0, -1, 0, 0);
                 Debug.LogWarning("-grün");
             } else if (Color == green) {
                 if (Candle.color.g == 255) {
-                    Candle.color = Candle.color + new Color(-1, 0, 0);
+                    Candle.color = Candle.color + new Color(-1, 0, 0, 0);
                     Debug.LogWarning("-rot");
                 }
                 else {
-                    Candle.color = Candle.color + new Color(-1, 1, 0);
+                    Candle.color = Candle.color + new Color(-1, 1, 0, 0);
                     Debug.LogWarning("-rot|+grün");
                 }
             } else if (Color == yellow) {
                 if (tmp == red) {
-                    Candle.color = Candle.color + new Color(0, 1, 0);
+                    Candle.color = Candle.color + new Color(0, 1, 0, 0);
                     Debug.LogWarning("+grün");
                 } else if (tmp == green) {
                     if (Candle.color.g == 222) {
-                        Candle.color = Candle.color + new Color(1, 0, 0);
+                        Candle.color = Candle.color + new Color(1, 0, 0, 0);
                         Debug.LogWarning("+rot");
                     }
                     else {
-                        Candle.color = Candle.color + new Color(1, -1, 0);
+                        Candle.color = Candle.color + new Color(1, -1, 0, 0);
                         Debug.LogWarning("+rot|-grün");
                     }
                 }
@@ -110,5 +116,47 @@ public class LightScript : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
 
         }
+        */
+        if (tmp == 1) {
+            tmp = 0;
+            StopCoroutine(FadeLightCore(Color));
+        }
+        tmp = 1;
+        while (Color != Candle.color) {
+            if (Color == red) {
+                if (Candle.color.r < 255) {
+                    Candle.color = Candle.color + new Color(5, 0, 0, 0);
+                }
+                if (Candle.color.g > 0) {
+                    Candle.color = Candle.color + new Color(0, -5, 0, 0);
+                }
+                Debug.Log("RICHTUNG=rot");
+            }
+            else if (Color == yellow) {
+                if (Candle.color.r < 255) {
+                    Candle.color = Candle.color + new Color(5, 0, 0, 0);
+                }
+                if (Candle.color.g < 255) {
+                    Candle.color = Candle.color + new Color(0, 5, 0, 0);
+                }
+                Debug.Log("RICHTUNG=gelb");
+            }
+            else if (Color == green) {
+                if (Candle.color.r > 0) {
+                    Candle.color = Candle.color + new Color(-5, 0, 0, 0);
+                }
+                if (Candle.color.g < 255) {
+                    Candle.color = Candle.color + new Color(0, 5, 0, 0);
+                }
+                Debug.Log("RICHTUNG=grün");
+            }
+            Debug.Log(Candle.color);
+            Debug.Log(Candle.color.r);
+            Debug.Log(Candle.color.g);
+            Debug.Log(Candle.color.b);
+            yield return new WaitForSeconds(1f);
+        }
+        tmp = 0;
+        yield return null;
     }
 }
