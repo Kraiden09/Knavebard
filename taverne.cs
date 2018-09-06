@@ -116,25 +116,25 @@ public class taverne : MonoBehaviour {
         tiVert = new List<Vector3>();
         tiTri = new List<int>();
 
-        tiVert.Add(new Vector3(+ 0.8f, 0, - 0.4f));
-        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, - 0.4f));
-        tiVert.Add(new Vector3(+ 0.8f, 0, + 0.4f));
-        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, + 0.4f));
+        tiVert.Add(new Vector3(+0.8f, 0, -0.4f));
+        tiVert.Add(new Vector3(+0.8f, +0.6f, -0.4f));
+        tiVert.Add(new Vector3(+0.8f, 0, +0.4f));
+        tiVert.Add(new Vector3(+0.8f, +0.6f, +0.4f));
 
-        tiVert.Add(new Vector3(- 0.8f, 0, + 0.4f));
-        tiVert.Add(new Vector3(- 0.8f, + 0.6f, + 0.4f));
+        tiVert.Add(new Vector3(-0.8f, 0, +0.4f));
+        tiVert.Add(new Vector3(-0.8f, +0.6f, +0.4f));
 
-        tiVert.Add(new Vector3(- 0.8f, 0,- 0.4f));
-        tiVert.Add(new Vector3(- 0.8f, + 0.6f, - 0.4f));
+        tiVert.Add(new Vector3(-0.8f, 0, -0.4f));
+        tiVert.Add(new Vector3(-0.8f, +0.6f, -0.4f));
 
-        tiVert.Add(new Vector3(+ 0.8f, 0, - 0.4f));
-        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, - 0.4f));
+        tiVert.Add(new Vector3(+0.8f, 0, -0.4f));
+        tiVert.Add(new Vector3(+0.8f, +0.6f, -0.4f));
 
-        tiVert.Add(new Vector3(- 0.8f, + 0.6f, - 0.4f));
-        tiVert.Add(new Vector3(- 0.8f, + 0.6f, + 0.4f));
-        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, - 0.4f));
-        tiVert.Add(new Vector3(+ 0.8f, + 0.6f, + 0.4f));
-        
+        tiVert.Add(new Vector3(-0.8f, +0.6f, -0.4f));
+        tiVert.Add(new Vector3(-0.8f, +0.6f, +0.4f));
+        tiVert.Add(new Vector3(+0.8f, +0.6f, -0.4f));
+        tiVert.Add(new Vector3(+0.8f, +0.6f, +0.4f));
+
 
 
         timesh = new Mesh();
@@ -142,31 +142,27 @@ public class taverne : MonoBehaviour {
 
         tisch.GetComponent<MeshFilter>().mesh = timesh;
 
-        for (int i = 0; i < timesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < timesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 tiTri.Add(i);
                 tiTri.Add(i + 1);
                 tiTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 tiTri.Add(i + 1);
                 tiTri.Add(i);
                 tiTri.Add(i + 2);
             }
 
-            if (i == timesh.vertices.Length - 7)
-            {
+            if (i == timesh.vertices.Length - 7) {
                 i = i + 2;
             }
         }
 
         timesh.triangles = tiTri.ToArray();
 
-        tisch.GetComponent<Renderer>().material.color = new Color(0.0f,0.0f,1.0f);
+        tisch.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 1.0f);
 
         //Hocker werden an Tisch angesetzt...Austausch mit Stuehlen?
         hockermesh(xpos - 0.4f, ypos, zpos + 0.8f, hocker1);
@@ -179,8 +175,7 @@ public class taverne : MonoBehaviour {
     }
 
     //senkrechte Tischmethode
-    void tischmeshsenk(float xpos, float ypos, float zpos, GameObject tisch, GameObject hocker1, GameObject hocker2, GameObject hocker3, GameObject hocker4)
-    {
+    void tischmeshsenk(float xpos, float ypos, float zpos, GameObject tisch, GameObject hocker1, GameObject hocker2, GameObject hocker3, GameObject hocker4) {
         tisch.transform.position = new Vector3(xpos, ypos, zpos);
         tiVert = new List<Vector3>();
         tiTri = new List<int>();
@@ -205,24 +200,24 @@ public class taverne : MonoBehaviour {
          tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
          */
 
-        tiVert.Add(new Vector3(+ 0.4f, 0, - 0.8f));
-        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, - 0.8f));
-        tiVert.Add(new Vector3(+ 0.4f, 0, + 0.8f));
-        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, + 0.8f));
+        tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
+        tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
+        tiVert.Add(new Vector3(+0.4f, 0, +0.8f));
+        tiVert.Add(new Vector3(+0.4f, +0.6f, +0.8f));
 
-        tiVert.Add(new Vector3(- 0.4f, 0, + 0.8f));
-        tiVert.Add(new Vector3(- 0.4f,+ 0.6f,+ 0.8f));
+        tiVert.Add(new Vector3(-0.4f, 0, +0.8f));
+        tiVert.Add(new Vector3(-0.4f, +0.6f, +0.8f));
 
-        tiVert.Add(new Vector3(- 0.4f, 0, - 0.8f));
-        tiVert.Add(new Vector3(- 0.4f,+ 0.6f, - 0.8f));
+        tiVert.Add(new Vector3(-0.4f, 0, -0.8f));
+        tiVert.Add(new Vector3(-0.4f, +0.6f, -0.8f));
 
-        tiVert.Add(new Vector3(+ 0.4f,0, - 0.8f));
-        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, - 0.8f));
+        tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
+        tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
 
-        tiVert.Add(new Vector3(- 0.4f, + 0.6f, - 0.8f));
-        tiVert.Add(new Vector3(- 0.4f, + 0.6f, + 0.8f));
-        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, - 0.8f));
-        tiVert.Add(new Vector3(+ 0.4f, + 0.6f, + 0.8f));
+        tiVert.Add(new Vector3(-0.4f, +0.6f, -0.8f));
+        tiVert.Add(new Vector3(-0.4f, +0.6f, +0.8f));
+        tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
+        tiVert.Add(new Vector3(+0.4f, +0.6f, +0.8f));
 
 
         timesh = new Mesh();
@@ -230,24 +225,20 @@ public class taverne : MonoBehaviour {
 
         tisch.GetComponent<MeshFilter>().mesh = timesh;
 
-        for (int i = 0; i < timesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < timesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 tiTri.Add(i);
                 tiTri.Add(i + 1);
                 tiTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 tiTri.Add(i + 1);
                 tiTri.Add(i);
                 tiTri.Add(i + 2);
             }
 
-            if (i == timesh.vertices.Length - 7)
-            {
+            if (i == timesh.vertices.Length - 7) {
                 i = i + 2;
             }
         }
@@ -266,8 +257,7 @@ public class taverne : MonoBehaviour {
         tischzahl = tischzahl + 1;
     }
 
-    void hockermesh(float xpos, float ypos, float zpos, GameObject hocker)
-    {
+    void hockermesh(float xpos, float ypos, float zpos, GameObject hocker) {
         hocker.transform.position = new Vector3(xpos, ypos, zpos);
         hoVert = new List<Vector3>();
         hoTri = new List<int>();
@@ -292,41 +282,38 @@ public class taverne : MonoBehaviour {
         hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos + 0.2f));
         */
 
-        hoVert.Add(new Vector3(+ 0.2f, 0,- 0.2f));
-        hoVert.Add(new Vector3(+ 0.2f, 0.4f,- 0.2f));
-        hoVert.Add(new Vector3(+ 0.2f, 0,+ 0.2f));
-        hoVert.Add(new Vector3(+ 0.2f,+ 0.4f,+ 0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0.4f, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
 
-        hoVert.Add(new Vector3( - 0.2f, 0,+ 0.2f));
-        hoVert.Add(new Vector3( - 0.2f,+ 0.4f,+ 0.2f));
+        hoVert.Add(new Vector3(-0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
 
-        hoVert.Add(new Vector3(- 0.2f, 0,- 0.2f));
-        hoVert.Add(new Vector3(- 0.2f,+ 0.4f,- 0.2f));
+        hoVert.Add(new Vector3(-0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
 
-        hoVert.Add(new Vector3(+ 0.2f,0,- 0.2f));
-        hoVert.Add(new Vector3(+ 0.2f,+ 0.4f, - 0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
 
-        hoVert.Add(new Vector3(- 0.2f, + 0.4f, - 0.2f));
-        hoVert.Add(new Vector3(- 0.2f, + 0.4f, + 0.2f));
-        hoVert.Add(new Vector3(+ 0.2f, + 0.4f, - 0.2f));
-        hoVert.Add(new Vector3(+ 0.2f, + 0.4f, + 0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
 
         homesh = new Mesh();
         homesh.vertices = hoVert.ToArray();
 
         hocker.GetComponent<MeshFilter>().mesh = homesh;
 
-        for (int i = 0; i < homesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < homesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 hoTri.Add(i);
                 hoTri.Add(i + 1);
                 hoTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 hoTri.Add(i + 1);
                 hoTri.Add(i);
                 hoTri.Add(i + 2);
@@ -350,7 +337,7 @@ public class taverne : MonoBehaviour {
         treVert.Add(new Vector3(xpos - 0.6f, 0.1f + (0.5f / 4), zpos - 0.5f));
         treVert.Add(new Vector3(xpos, 0.1f, zpos - 0.5f));
         treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos - 0.5f));
-   
+
         treVert.Add(new Vector3(xpos, 0.1f, zpos + 0.5f));
         treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos + 0.5f));
         treVert.Add(new Vector3(xpos - 0.6f, 0.1f, zpos + 0.5f));
@@ -365,9 +352,9 @@ public class taverne : MonoBehaviour {
         treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4), zpos + 0.5f));
 
         treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f/4) * 2, zpos - 0.5f));
+        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
         treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f/4) * 2, zpos - 0.5f));
+        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
 
         treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos + 0.5f));
         treVert.Add(new Vector3(xpos, 0.1f + ((0.5f / 4) * 2), zpos + 0.5f));
@@ -377,7 +364,7 @@ public class taverne : MonoBehaviour {
 
         treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
         treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4) * 2, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2 , zpos - 0.5f));
+        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
         treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos + 0.5f));
 
         treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
@@ -398,19 +385,16 @@ public class taverne : MonoBehaviour {
         tremesh = new Mesh();
         tremesh.vertices = treVert.ToArray();
 
-        treppe.GetComponent<MeshFilter>().mesh =tremesh;
+        treppe.GetComponent<MeshFilter>().mesh = tremesh;
 
-        for (int i = 0; i < tremesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < tremesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 treTri.Add(i);
                 treTri.Add(i + 1);
                 treTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 treTri.Add(i + 1);
                 treTri.Add(i);
                 treTri.Add(i + 2);
@@ -421,7 +405,7 @@ public class taverne : MonoBehaviour {
 
         treppe.GetComponent<Renderer>().material.color = new Color(0.0f, 1.0f, 1.0f);
     }
-   
+
     //Bereiche werden generiert
     void berBuilder(GameObject bereich, Vector3 vert1, Vector3 vert2, Vector3 vert3, Vector3 vert4) {
 
@@ -449,55 +433,54 @@ public class taverne : MonoBehaviour {
     }
 
     //Bargenerierung, Startpunkt am Ansatzpunkt, der nah an der Kamera ist
-    void barBuilder(GameObject bar, float xpos, float ypos, float zpos)
-    {
+    void barBuilder(GameObject bar, float xpos, float ypos, float zpos) {
         bar.transform.position = new Vector3(xpos, ypos, zpos);
         barVert = new List<Vector3>();
         barTri = new List<int>();
         //xpos = -7; ypos = 0.1f, zpos = -5
         barVert.Add(new Vector3(0, 0, 0));
-        barVert.Add(new Vector3(0, + 0.5f, 0));
-        barVert.Add(new Vector3(+ 2, 0, 0));
-        barVert.Add(new Vector3(+ 2, + 0.5f, 0));
+        barVert.Add(new Vector3(0, +0.5f, 0));
+        barVert.Add(new Vector3(+2, 0, 0));
+        barVert.Add(new Vector3(+2, +0.5f, 0));
 
-        barVert.Add(new Vector3(+ 2, 0, + 5));
-        barVert.Add(new Vector3(+ 2, + 0.5f, + 5));
+        barVert.Add(new Vector3(+2, 0, +5));
+        barVert.Add(new Vector3(+2, +0.5f, +5));
 
-        barVert.Add(new Vector3(0, 0, + 5));
-        barVert.Add(new Vector3(0, + 0.5f, + 5));
+        barVert.Add(new Vector3(0, 0, +5));
+        barVert.Add(new Vector3(0, +0.5f, +5));
 
-        barVert.Add(new Vector3(0, 0, + 4));
-        barVert.Add(new Vector3(0, + 0.5f, + 4));
+        barVert.Add(new Vector3(0, 0, +4));
+        barVert.Add(new Vector3(0, +0.5f, +4));
 
-        barVert.Add(new Vector3(+ 1, 0, + 4));
-        barVert.Add(new Vector3(+ 1, + 0.5f, + 4));
+        barVert.Add(new Vector3(+1, 0, +4));
+        barVert.Add(new Vector3(+1, +0.5f, +4));
 
-        barVert.Add(new Vector3(+ 1, 0, + 1));
-        barVert.Add(new Vector3(+ 1, + 0.5f,+ 1));
+        barVert.Add(new Vector3(+1, 0, +1));
+        barVert.Add(new Vector3(+1, +0.5f, +1));
 
-        barVert.Add(new Vector3(0, 0, + 1));
-        barVert.Add(new Vector3(0, + 0.5f, + 1));
+        barVert.Add(new Vector3(0, 0, +1));
+        barVert.Add(new Vector3(0, +0.5f, +1));
 
         barVert.Add(new Vector3(0, 0, 0));
-        barVert.Add(new Vector3(0, + 0.5f, 0));
+        barVert.Add(new Vector3(0, +0.5f, 0));
 
-        barVert.Add(new Vector3(0, + 0.5f, 0));
+        barVert.Add(new Vector3(0, +0.5f, 0));
 
-        barVert.Add(new Vector3(0, + 0.5f, + 1));
-        barVert.Add(new Vector3(+ 2, + 0.5f, 0));
-        barVert.Add(new Vector3(+ 2, + 0.5f, + 1));
+        barVert.Add(new Vector3(0, +0.5f, +1));
+        barVert.Add(new Vector3(+2, +0.5f, 0));
+        barVert.Add(new Vector3(+2, +0.5f, +1));
 
-        barVert.Add(new Vector3(+ 2, + 0.5f, + 1));
+        barVert.Add(new Vector3(+2, +0.5f, +1));
 
-        barVert.Add(new Vector3(+ 1, + 0.5f, + 1));
-        barVert.Add(new Vector3(+ 2, + 0.5f, + 5));
-        barVert.Add(new Vector3(+ 1, + 0.5f, + 5));
+        barVert.Add(new Vector3(+1, +0.5f, +1));
+        barVert.Add(new Vector3(+2, +0.5f, +5));
+        barVert.Add(new Vector3(+1, +0.5f, +5));
 
-        barVert.Add(new Vector3(+ 1, + 0.5f, + 5));
+        barVert.Add(new Vector3(+1, +0.5f, +5));
 
-        barVert.Add(new Vector3(+ 1, + 0.5f, + 4));
-        barVert.Add(new Vector3(0, + 0.5f, + 5));
-        barVert.Add(new Vector3(0, + 0.5f, + 4));
+        barVert.Add(new Vector3(+1, +0.5f, +4));
+        barVert.Add(new Vector3(0, +0.5f, +5));
+        barVert.Add(new Vector3(0, +0.5f, +4));
 
         barmesh = new Mesh();
         barmesh.vertices = barVert.ToArray();
@@ -507,28 +490,23 @@ public class taverne : MonoBehaviour {
 
         cnt = 0;
 
-        for (int i = 0; i < barmesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < barmesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 barTri.Add(i);
                 barTri.Add(i + 1);
                 barTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 barTri.Add(i + 1);
                 barTri.Add(i);
                 barTri.Add(i + 2);
             }
 
-            if (i > barmesh.vertices.Length - 13)
-            {
+            if (i > barmesh.vertices.Length - 13) {
                 cnt++;
 
-                if (cnt % 2 == 0)
-                {
+                if (cnt % 2 == 0) {
                     i = i + 2;
                 }
             }
@@ -547,8 +525,7 @@ public class taverne : MonoBehaviour {
     }
 
     // bar auf der rechten seite, Ansatzpunkt am wietesten weg von der Kamera
-    void barBuilder2(GameObject bar, float xpos, float ypos, float zpos)
-    {
+    void barBuilder2(GameObject bar, float xpos, float ypos, float zpos) {
         bar.transform.position = new Vector3(xpos, ypos, zpos);
         barVert = new List<Vector3>();
         barTri = new List<int>();
@@ -600,48 +577,48 @@ public class taverne : MonoBehaviour {
         */
 
         barVert.Add(new Vector3(0, 0, 0));
-        barVert.Add(new Vector3(0, + 0.5f, 0));
-        barVert.Add(new Vector3(- 2, 0, 0));
-        barVert.Add(new Vector3(- 2, + 0.5f, 0));
+        barVert.Add(new Vector3(0, +0.5f, 0));
+        barVert.Add(new Vector3(-2, 0, 0));
+        barVert.Add(new Vector3(-2, +0.5f, 0));
 
-        barVert.Add(new Vector3(- 2, 0, - 5));
-        barVert.Add(new Vector3(- 2, + 0.5f, - 5));
+        barVert.Add(new Vector3(-2, 0, -5));
+        barVert.Add(new Vector3(-2, +0.5f, -5));
 
-        barVert.Add(new Vector3(0, 0, - 5));
-        barVert.Add(new Vector3(0, + 0.5f, - 5));
+        barVert.Add(new Vector3(0, 0, -5));
+        barVert.Add(new Vector3(0, +0.5f, -5));
 
-        barVert.Add(new Vector3(0, 0, - 4));
-        barVert.Add(new Vector3(0, + 0.5f, - 4));
+        barVert.Add(new Vector3(0, 0, -4));
+        barVert.Add(new Vector3(0, +0.5f, -4));
 
-        barVert.Add(new Vector3(- 1, 0, - 4));
-        barVert.Add(new Vector3(- 1, + 0.5f, - 4));
+        barVert.Add(new Vector3(-1, 0, -4));
+        barVert.Add(new Vector3(-1, +0.5f, -4));
 
-        barVert.Add(new Vector3(- 1, 0, - 1));
-        barVert.Add(new Vector3(- 1, + 0.5f, - 1));
+        barVert.Add(new Vector3(-1, 0, -1));
+        barVert.Add(new Vector3(-1, +0.5f, -1));
 
-        barVert.Add(new Vector3(0, 0, - 1));
-        barVert.Add(new Vector3(0, + 0.5f, - 1));
+        barVert.Add(new Vector3(0, 0, -1));
+        barVert.Add(new Vector3(0, +0.5f, -1));
 
         barVert.Add(new Vector3(0, 0, 0));
-        barVert.Add(new Vector3(0, + 0.5f, 0));
+        barVert.Add(new Vector3(0, +0.5f, 0));
 
-        barVert.Add(new Vector3(0, + 0.5f, 0));
+        barVert.Add(new Vector3(0, +0.5f, 0));
 
-        barVert.Add(new Vector3(0, + 0.5f, - 1));
-        barVert.Add(new Vector3(- 2, + 0.5f, 0));
-        barVert.Add(new Vector3(- 2, + 0.5f,- 1));
+        barVert.Add(new Vector3(0, +0.5f, -1));
+        barVert.Add(new Vector3(-2, +0.5f, 0));
+        barVert.Add(new Vector3(-2, +0.5f, -1));
 
-        barVert.Add(new Vector3(- 2, + 0.5f, - 1));
+        barVert.Add(new Vector3(-2, +0.5f, -1));
 
-        barVert.Add(new Vector3(- 1, + 0.5f, - 1));
-        barVert.Add(new Vector3(- 2, + 0.5f, - 5));
-        barVert.Add(new Vector3(- 1, + 0.5f, - 5));
+        barVert.Add(new Vector3(-1, +0.5f, -1));
+        barVert.Add(new Vector3(-2, +0.5f, -5));
+        barVert.Add(new Vector3(-1, +0.5f, -5));
 
-        barVert.Add(new Vector3(- 1, + 0.5f, - 5));
+        barVert.Add(new Vector3(-1, +0.5f, -5));
 
-        barVert.Add(new Vector3(- 1, + 0.5f, - 4));
-        barVert.Add(new Vector3(0, + 0.5f, - 5));
-        barVert.Add(new Vector3(0,+ 0.5f, - 4));
+        barVert.Add(new Vector3(-1, +0.5f, -4));
+        barVert.Add(new Vector3(0, +0.5f, -5));
+        barVert.Add(new Vector3(0, +0.5f, -4));
 
 
 
@@ -671,28 +648,23 @@ public class taverne : MonoBehaviour {
 
         cnt = 0;
 
-        for (int i = 0; i < barmesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < barmesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 barTri.Add(i);
                 barTri.Add(i + 1);
                 barTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 barTri.Add(i + 1);
                 barTri.Add(i);
                 barTri.Add(i + 2);
             }
 
-           if (i > barmesh.vertices.Length - 13)
-            {
+            if (i > barmesh.vertices.Length - 13) {
                 cnt++;
 
-                if (cnt % 2 == 0)
-                {
+                if (cnt % 2 == 0) {
                     i = i + 2;
                 }
             }
@@ -726,20 +698,17 @@ public class taverne : MonoBehaviour {
             tischmeshsenk(2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
         }
 
-        if (konfig == 2)
-        {
-            berBuilder(barbereich, new Vector3( 4, 0.1f, barpos2 - 6), new Vector3( 4, 0.1f, barpos2 + 1), new Vector3( 7, 0.1f, barpos2 - 6), new Vector3( 7, 0.1f, barpos2 + 1));
+        if (konfig == 2) {
+            berBuilder(barbereich, new Vector3(4, 0.1f, barpos2 - 6), new Vector3(4, 0.1f, barpos2 + 1), new Vector3(7, 0.1f, barpos2 - 6), new Vector3(7, 0.1f, barpos2 + 1));
             barBuilder2(bar, 7, 0.1f, barpos2);
             berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
-            berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3( 1, 0.1f, -4.5f), new Vector3( 1, 0.1f, 1));
+            berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3(1, 0.1f, -4.5f), new Vector3(1, 0.1f, 1));
             tischmeshwaage(-0.5f, 0.1f, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
             tischmeshsenk(-2.5f, 0.1f, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
         }
 
-        if (konfig == 3)
-        {
-            if (lastkonf != 3)
-            {
+        if (konfig == 3) {
+            if (lastkonf != 3) {
                 tisch3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 tisch4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
@@ -785,8 +754,7 @@ public class taverne : MonoBehaviour {
             tischmeshsenk(-0.5f, 0.1f, -4, tisch4, hocker19, hocker20, hocker21, hocker22);
         }
         if (hockerzahl != maxhocker) {
-            for (int i = hockerzahl + 1; i <= maxhocker; i++)
-            {
+            for (int i = hockerzahl + 1; i <= maxhocker; i++) {
 
                 nr = i.ToString();
                 hock = hock + nr;
@@ -794,10 +762,8 @@ public class taverne : MonoBehaviour {
                 hock = "Hocker";
             }
         }
-        if (tischzahl != maxtisch)
-        {
-            for (int i = tischzahl + 1; i <= maxtisch; i++)
-            {
+        if (tischzahl != maxtisch) {
+            for (int i = tischzahl + 1; i <= maxtisch; i++) {
                 tinr = i.ToString();
                 tis = tis + tinr;
                 Destroy(GameObject.Find(tis));
@@ -807,7 +773,7 @@ public class taverne : MonoBehaviour {
         lastkonf = konfig;
     }
 
-    void Start () {
+    void Start() {
 
         //Instanzierung der Bereiche auf der Plane Boden
         boden = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -895,53 +861,50 @@ public class taverne : MonoBehaviour {
 
         //buehne
 
-        buVert.Add(new Vector3( -3f, 0.1f, 4.5f));
-        buVert.Add(new Vector3( -3f, 0.6f, 4.5f));
-        buVert.Add(new Vector3( 3f, 0.1f, 4.5f));
-        buVert.Add(new Vector3( 3f, 0.6f, 4.5f));
+        buehne.transform.position = new Vector3(0, 0.1f, 5.75f);
 
-        buVert.Add(new Vector3( 3f, 0.1f, 7));
-        buVert.Add(new Vector3( 3f, 0.6f, 7));
+        buVert.Add(new Vector3(-3f, 0f, -1.25f));
+        buVert.Add(new Vector3(-3f, 0.5f, -1.25f));
+        buVert.Add(new Vector3(3f, 0f, -1.25f));
+        buVert.Add(new Vector3(3f, 0.5f, -1.25f));
 
-        buVert.Add(new Vector3(-3f, 0.1f, 7));
-        buVert.Add(new Vector3(-3f, 0.6f, 7));
+        buVert.Add(new Vector3(3f, 0f, 1.25f));
+        buVert.Add(new Vector3(3f, 0.5f, 1.25f));
 
-        buVert.Add(new Vector3(-3f, 0.1f, 4.5f));
-        buVert.Add(new Vector3(-3f, 0.6f, 4.5f));
+        buVert.Add(new Vector3(-3f, 0f, 1.25f));
+        buVert.Add(new Vector3(-3f, 0.5f, 1.25f));
 
-        buVert.Add(new Vector3(-3f, 0.6f, 4.5f));
-        buVert.Add(new Vector3(-3f, 0.6f, 7));
-        buVert.Add(new Vector3( 3f, 0.6f, 4.5f));
-        buVert.Add(new Vector3( 3f, 0.6f, 7));
+        buVert.Add(new Vector3(-3f, 0f, -1.25f));
+        buVert.Add(new Vector3(-3f, 0.5f, -1.25f));
+
+        buVert.Add(new Vector3(-3f, 0.5f, -1.25f));
+        buVert.Add(new Vector3(-3f, 0.5f, 1.25f));
+        buVert.Add(new Vector3(3f, 0.5f, -1.25f));
+        buVert.Add(new Vector3(3f, 0.5f, 1.25f));
 
         bumesh = new Mesh();
         bumesh.vertices = buVert.ToArray();
 
         buehne.GetComponent<MeshFilter>().mesh = bumesh;
 
-        for (int i = 0; i < bumesh.vertices.Length - 2; i++)
-        {
-            if (i % 2 == 0)
-            {
+        for (int i = 0; i < bumesh.vertices.Length - 2; i++) {
+            if (i % 2 == 0) {
                 buTri.Add(i);
                 buTri.Add(i + 1);
                 buTri.Add(i + 2);
             }
 
-            if (i % 2 == 1)
-            {
+            if (i % 2 == 1) {
                 buTri.Add(i + 1);
                 buTri.Add(i);
                 buTri.Add(i + 2);
             }
 
-            if (i > bumesh.vertices.Length - 9)
-            {
+            if (i > bumesh.vertices.Length - 9) {
 
                 cnt++;
 
-                if (cnt % 2 == 0)
-                {
+                if (cnt % 2 == 0) {
                     i = i + 2;
                 }
 
@@ -968,35 +931,32 @@ public class taverne : MonoBehaviour {
         treppenmesh(-3f, 0.6f, 5.75f, treppe);
 
         //wände
-        berBuilder( wand1, new Vector3(-7, 0f, -9f), new Vector3(-7, 5, -9f), new Vector3(-7, 0f, 7f), new Vector3(-7f, 5, 7f));
-        berBuilder( wand2, new Vector3(-7, 0f, 7), new Vector3(-7, 5, 7), new Vector3( 7, 0f, 7), new Vector3(7, 5, 7));
-        berBuilder( wand3, new Vector3( 7, 0, 7), new Vector3( 7, 5, 7), new Vector3(7, 0, -9), new Vector3(7, 5, -9));
-        berBuilder( wand4, new Vector3(7, 0, -7), new Vector3(7, 5, -7), new Vector3(-7, 0, -7), new Vector3(-7, 5, -7));
+        berBuilder(wand1, new Vector3(-7, 0f, -9f), new Vector3(-7, 5, -9f), new Vector3(-7, 0f, 7f), new Vector3(-7f, 5, 7f));
+        berBuilder(wand2, new Vector3(-7, 0f, 7), new Vector3(-7, 5, 7), new Vector3(7, 0f, 7), new Vector3(7, 5, 7));
+        berBuilder(wand3, new Vector3(7, 0, 7), new Vector3(7, 5, 7), new Vector3(7, 0, -9), new Vector3(7, 5, -9));
+        berBuilder(wand4, new Vector3(7, 0, -7), new Vector3(7, 5, -7), new Vector3(-7, 0, -7), new Vector3(-7, 5, -7));
 
-        berBuilder(decke, new Vector3(7, 5, -9), new Vector3(7, 5, 7), new Vector3( -7, 5, -9), new Vector3(-9, 5, 7));
+        berBuilder(decke, new Vector3(7, 5, -9), new Vector3(7, 5, 7), new Vector3(-7, 5, -9), new Vector3(-9, 5, 7));
         berBuilder(boden, new Vector3(-7, 0, -9), new Vector3(-7, 0, 7), new Vector3(7, 0, -9), new Vector3(7, 0, 7));
 
-        berBuilder(spawn, new Vector3(4.5f, 0.1f , 4.5f), new Vector3(4.5f, 0.1f , 6.5f), new Vector3(6.5f, 0.1f , 4.5f), new Vector3(6.5f, 0.1f , 6.5f));
+        berBuilder(spawn, new Vector3(4.5f, 0.1f, 4.5f), new Vector3(4.5f, 0.1f, 6.5f), new Vector3(6.5f, 0.1f, 4.5f), new Vector3(6.5f, 0.1f, 6.5f));
         berBuilder(kamerabereich, new Vector3(-7, 0.1f, -9), new Vector3(-7, 0.1f, -7), new Vector3(7, 0.1f, -9), new Vector3(7, 0.1f, -7));
         randomize();
-        
+
     }
 
     // Update is called once per frame
-    void Update () {
-		if (Input.GetKeyDown(KeyCode.T))
-            {
-                randomize();
-            }
-	}
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.T)) {
+            randomize();
+        }
+    }
 
-    public GameObject getBuehne()
-    {
+    public GameObject getBuehne() {
         return buehne;
     }
 
-    public GameObject[] getHocker()
-    {
+    public GameObject[] getHocker() {
         string str = "Hocker";
         GameObject[] a = new GameObject[hockerzahl];
         for (int i = 1; i <= hockerzahl; i++) {
@@ -1008,26 +968,22 @@ public class taverne : MonoBehaviour {
 
     }
 
-    public GameObject[] getTische()
-    {
+    public GameObject[] getTische() {
         string str = "Tisch";
         GameObject[] a = new GameObject[tischzahl];
-        for (int i = 1; i <= tischzahl; i++)
-        {
+        for (int i = 1; i <= tischzahl; i++) {
             str = str + i;
             a[i - 1] = GameObject.Find(str);
             str = "Tisch";
         }
         return a;
     }
-    public GameObject getWandRechts()
-    {
+    public GameObject getWandRechts() {
         return wand3;
     }
 
     /* Reihenfolge der Vertices von der sichtbaren Seite der Wand: links unten, links oben, rechts unten, rechts oben*/
-    public Vector3[] getWandRechtsVert()
-    {
+    public Vector3[] getWandRechtsVert() {
         Vector3[] a = new Vector3[4];
         a[0] = new Vector3(7, 0, 7);
         a[1] = new Vector3(7, 5, 7);
@@ -1036,13 +992,11 @@ public class taverne : MonoBehaviour {
         return a;
     }
 
-    public GameObject getWandLinks()
-    {
+    public GameObject getWandLinks() {
         return wand1;
     }
 
-    public Vector3[] getWandLinksVert()
-    {
+    public Vector3[] getWandLinksVert() {
         Vector3[] a = new Vector3[4];
         a[0] = new Vector3(-7, 0, -7);
         a[1] = new Vector3(-7, 5, -7);
@@ -1051,13 +1005,11 @@ public class taverne : MonoBehaviour {
         return a;
     }
 
-    public GameObject getWandFern()
-    {
+    public GameObject getWandFern() {
         return wand2;
     }
 
-    public Vector3[] getWandFernVert()
-    {
+    public Vector3[] getWandFernVert() {
         Vector3[] a = new Vector3[4];
         a[0] = new Vector3(-7, 0, 7);
         a[1] = new Vector3(-7, 5, 7);
@@ -1066,13 +1018,11 @@ public class taverne : MonoBehaviour {
         return a;
     }
 
-    public GameObject getWandNah()
-    {
+    public GameObject getWandNah() {
         return wand4;
     }
 
-    public Vector3[] getWandNahVert()
-    {
+    public Vector3[] getWandNahVert() {
         Vector3[] a = new Vector3[4];
         a[0] = new Vector3(7, 0, -7);
         a[1] = new Vector3(7, 5, -7);
@@ -1081,33 +1031,27 @@ public class taverne : MonoBehaviour {
         return a;
     }
 
-    public GameObject getBoden()
-    {
+    public GameObject getBoden() {
         return boden;
     }
 
-    public GameObject getDecke()
-    {
+    public GameObject getDecke() {
         return decke;
     }
 
-    public GameObject getSpawn()
-    {
+    public GameObject getSpawn() {
         return spawn;
     }
 
-    public GameObject getBar()
-    {
+    public GameObject getBar() {
         return bar;
     }
 
-    public GameObject getTreppe()
-    {
+    public GameObject getTreppe() {
         return treppe;
     }
 
-    public Vector3[] getSpawnVert()
-    {
+    public Vector3[] getSpawnVert() {
         Vector3[] a = new Vector3[4];
         a[0] = new Vector3(4.5f, 0.1f, 4.5f);
         a[1] = new Vector3(4.5f, 0.1f, 6.5f);
@@ -1117,11 +1061,9 @@ public class taverne : MonoBehaviour {
     }
 
     public Vector3 getBarkeep() {
-        if (konfig == 2)
-        {
+        if (konfig == 2) {
             return new Vector3(bar.transform.position.x - 0.5f, bar.transform.position.y, bar.transform.position.z - 2.5f);
-        }
-        else {
+        } else {
             return new Vector3(bar.transform.position.x + 0.5f, bar.transform.position.y, bar.transform.position.z + 2.5f);
         }
     }
