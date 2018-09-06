@@ -152,10 +152,12 @@ public class NoteBoard : MonoBehaviour {
 
         post1.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust left post position
-        post1.transform.position = new Vector3(post1Pos.x + (post1Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post1Pos.y + (post1Mesh.bounds.size.y * post1Trans.localScale.y) / 2, post1Pos.z + 0.1f);
+        float stageZPos = stageRef.transform.position.z + ((stageRefMesh.vertices[5].z - stageRefMesh.vertices[3].z) / 2);
+        Debug.Log(stageRefMesh.vertices[5].z - stageRefMesh.vertices[3].z);
+        post1.transform.position = new Vector3(post1Pos.x + (post1Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post1Pos.y + (post1Mesh.bounds.size.y * post1Trans.localScale.y) / 2, stageZPos - 0.03f);
         post2.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust right post position
-        post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, post2Pos.z + 0.1f);
+        post2.transform.position = new Vector3(post2Pos.x - (post2Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post2Pos.y + (post2Mesh.bounds.size.y * post2Trans.localScale.y) / 2, stageZPos - 0.03f);
         // + baseAcceptance Units on X to avoid clipping
         despawn = post1.transform.position + new Vector3(baseAcceptance + 0.2f, 0, 0);
         post1.name = "LeftPost";
