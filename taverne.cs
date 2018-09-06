@@ -330,57 +330,58 @@ public class taverne : MonoBehaviour {
 
     //Treppe an der Buehne
     void treppenmesh(float xpos, float ypos, float zpos, GameObject treppe) {
+        treppe.transform.position = new Vector3(xpos, ypos, zpos);
         treVert = new List<Vector3>();
         treTri = new List<int>();
 
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos - 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f, - 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(0, 0f, - 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), - 0.5f));
 
-        treVert.Add(new Vector3(xpos, 0.1f, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f + (0.5f / 4), zpos + 0.5f));
+        treVert.Add(new Vector3(0, 0f, + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), + 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f, + 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), + 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f + (0.5f / 4), zpos - 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f, - 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), - 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.6f, 0.1f + (0.5f / 4), zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4), zpos + 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), + 0.5f));
+        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4), + 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
+        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4) * 2, - 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, - 0.5f));
 
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4), zpos + 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + ((0.5f / 4) * 2), zpos + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), + 0.5f));
+        treVert.Add(new Vector3(0, 0f + ((0.5f / 4) * 2), + 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4), zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + ((0.5f / 4) * 2), zpos + 0.5f));
+        treVert.Add(new Vector3( - 0.4f, 0f + (0.5f / 4), + 0.5f));
+        treVert.Add(new Vector3( - 0.4f, 0f + ((0.5f / 4) * 2), + 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.4f, 0.1f + (0.5f / 4) * 2, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos + 0.5f));
+        treVert.Add(new Vector3( - 0.4f, 0f + (0.5f / 4) * 2, - 0.5f));
+        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4) * 2, + 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, - 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, + 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 3, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 2, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 3, zpos - 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, - 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, - 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, - 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, - 0.5f));
 
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 2, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 3, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 2, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 3, zpos + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, + 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, + 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, + 0.5f));
 
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 3, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos - 0.2f, 0.1f + (0.5f / 4) * 3, zpos + 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 3, zpos - 0.5f));
-        treVert.Add(new Vector3(xpos, 0.1f + (0.5f / 4) * 3, zpos + 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, - 0.5f));
+        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, - 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, + 0.5f));
 
         tremesh = new Mesh();
         tremesh.vertices = treVert.ToArray();
@@ -769,8 +770,30 @@ public class taverne : MonoBehaviour {
                 Destroy(GameObject.Find(tis));
                 tis = "Tisch";
             }
+
+            GameObject[] tische = getTische();
+            for (int i = 0; i < tische.Length; i++) {
+                tische[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            }
+
+            GameObject[] hockers = getTische();
+            for (int i = 0; i < hockers.Length; i++)
+            {
+                hockers[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                hockers[i].GetComponent<Renderer>().receiveShadows = true;
+            }
+
+            bar.GetComponent<Renderer>().receiveShadows = true;
+            bar.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            buehne.GetComponent<Renderer>().receiveShadows = true;
+            buehne.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         }
         lastkonf = konfig;
+
+        tischbereich.GetComponent<Renderer>().receiveShadows = true;
+        buehnenbereich.GetComponent<Renderer>().receiveShadows = true;
+        barbereich.GetComponent<Renderer>().receiveShadows = true;
+        spawn.GetComponent<Renderer>().receiveShadows = true;
     }
 
     void Start() {
@@ -927,8 +950,17 @@ public class taverne : MonoBehaviour {
         spawn.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
         kamerabereich.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 0.0f);
 
+        wand1.GetComponent<Renderer>().receiveShadows = true;
+        wand2.GetComponent<Renderer>().receiveShadows = true;
+        wand3.GetComponent<Renderer>().receiveShadows = true;
+        wand4.GetComponent<Renderer>().receiveShadows = true;
+        boden.GetComponent<Renderer>().receiveShadows = true;
+        decke.GetComponent<Renderer>().receiveShadows = true;
+
+
+
         //treppe
-        treppenmesh(-3f, 0.6f, 5.75f, treppe);
+        treppenmesh(-3f, 0.1f, 5.75f, treppe);
 
         //wände
         berBuilder(wand1, new Vector3(-7, 0f, -9f), new Vector3(-7, 5, -9f), new Vector3(-7, 0f, 7f), new Vector3(-7f, 5, 7f));
