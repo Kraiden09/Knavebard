@@ -25,6 +25,8 @@ public class CandleSpawner : MonoBehaviour {
     ParticleSystem[] particleSystems;
     GameObject[] candles, wicks, candleHolders;
     Mesh[] candleMeshs;
+    bool[] isLit;
+    Light[] lights;
 
     // Use this for initialization
     void Start() {
@@ -45,6 +47,8 @@ public class CandleSpawner : MonoBehaviour {
         candleMeshs = new Mesh[numberOfCandles];
         newVertices = new Vector3[numberOfCandles][];
         lastLayerIndexStart = new int[numberOfCandles];
+        isLit = new bool[numberOfCandles];
+        lights = new Light[numberOfCandles];
         InitStart();
     }
 
@@ -81,9 +85,12 @@ public class CandleSpawner : MonoBehaviour {
             candleLight.transform.position = new Vector3(0, wickHeight, 0);
             lightComp = candleLight.AddComponent<Light>();
             lightComp.color = new Color(1, 0.8393834f, 0.4009434f);
+            candleLight.AddComponent<LightScript>();
 
             candles[i] = candle;
             wicks[i] = wick;
+            isLit[i] = true;
+            lights[i] = lightComp;
 
             CreateVertices(candles[i], i);
             CreateBurnParticle(candles[i], wicks[i], i);
@@ -255,6 +262,26 @@ public class CandleSpawner : MonoBehaviour {
         }
     }
 
+    public GameObject[] GetCandles() {
+        return candles;
+    }
+
+    public bool IsInit() {
+        return initialized;
+    }
+
+    public bool ToggleOnOff(int index) {
+        bool newState = isLit[index];
+        if (candles[index] != null) {
+            newState = !newState;
+            isLit[index] = newState;
+            lights[index].enabled = newState;
+            if (!newState) particleSystems[index].Stop();
+            else particleSystems[index].Play();
+        }
+        return newState;
+    }
+
     /*IEnumerator WaitForCandles() {
         for (int i = 0; i < numberOfCandles; i++) {
             Debug.Log(candles[i]);
@@ -330,35 +357,37 @@ public class CandleSpawner : MonoBehaviour {
                 left = ((main - 1) % verticesPerLayer) + (verticesPerLayer * layer);
 
                 while (newVertices[index][main].y >= newVertices[index][lastLayerIndexStart[index] - verticesPerLayer].y) {
-                    if (!middleBurnt) {
-                        // Burn Middle Part
-                        newVertices[index][lastIndex] = newVertices[index][lastIndex] + new Vector3(0, -burnValue, 0);
-                    }
-                    // Burn "Main" Outer Part
-                    newVertices[index][main] = newVertices[index][main] + new Vector3(0, -burnValue, 0);
-                    // Burn Part Right of "Main" Part
-                    if ((newVertices[index][right] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
-                        newVertices[index][right] = newVertices[index][right] + new Vector3(0, -(burnValue / 2), 0);
-                    }
-                    // Burn Part Left of "Main" Part
-                    if ((newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
-                        newVertices[index][left] = newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0);
-                    }
-                    /*if (lastLayerIndexStart % verticesPerLayer == 0) {
-                        if ((newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[lastLayerIndexStart - verticesPerLayer].y) {
-                            newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] = newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0);
+                    if (isLit[index]) {
+                        if (!middleBurnt) {
+                            // Burn Middle Part
+                            newVertices[index][lastIndex] = newVertices[index][lastIndex] + new Vector3(0, -burnValue, 0);
                         }
-                    } else {
-                    }*/
+                        // Burn "Main" Outer Part
+                        newVertices[index][main] = newVertices[index][main] + new Vector3(0, -burnValue, 0);
+                        // Burn Part Right of "Main" Part
+                        if ((newVertices[index][right] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
+                            newVertices[index][right] = newVertices[index][right] + new Vector3(0, -(burnValue / 2), 0);
+                        }
+                        // Burn Part Left of "Main" Part
+                        if ((newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
+                            newVertices[index][left] = newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0);
+                        }
+                        /*if (lastLayerIndexStart % verticesPerLayer == 0) {
+                            if ((newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[lastLayerIndexStart - verticesPerLayer].y) {
+                                newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] = newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0);
+                            }
+                        } else {
+                        }*/
 
-                    //Debug.Log((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - (0.05f) + " " + (((candleMesh.bounds.size.y * candle.transform.localScale.y) / (layers - 1)) * (layer - 1)));
-                    if (((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - 0.05f) > ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * (layer - 1)) * candle.transform.localScale.y) {
-                        wickBurnt = ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
-                        wick.transform.localScale -= new Vector3(0, wickBurnt, 0);
-                        wick.transform.Translate(0, -wickBurnt * candle.transform.localScale.y, 0);
+                        //Debug.Log((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - (0.05f) + " " + (((candleMesh.bounds.size.y * candle.transform.localScale.y) / (layers - 1)) * (layer - 1)));
+                        if (((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - 0.05f) > ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * (layer - 1)) * candle.transform.localScale.y) {
+                            wickBurnt = ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
+                            wick.transform.localScale -= new Vector3(0, wickBurnt, 0);
+                            wick.transform.Translate(0, -wickBurnt * candle.transform.localScale.y, 0);
+                        }
+                        candleMeshs[index].vertices = newVertices[index];
+                        candleMeshs[index].RecalculateNormals();
                     }
-                    candleMeshs[index].vertices = newVertices[index];
-                    candleMeshs[index].RecalculateNormals();
                     yield return new WaitForSeconds(burnTimeRate);
                 }
                 middleBurnt = true;
@@ -402,6 +431,9 @@ public class CandleSpawner : MonoBehaviour {
             candleMeshs[index].triangles = faces.ToArray();
             candleMeshs[index].vertices = newVertices[index];
         }
+        isLit[index] = false;
+        // Set Candle Text to "Burned Out"
+        GameObject.Find("TriggerCandle" + (index + 1)).GetComponent<CandleTrigger>().SetIsLit(isLit[index]);
         particleSystems[index].Stop();
         Destroy(candles[index]);
     }
