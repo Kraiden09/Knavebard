@@ -119,23 +119,21 @@ public class taverne : MonoBehaviour {
         tiVert.Add(new Vector3(+0.8f, 0, -0.4f));
         tiVert.Add(new Vector3(+0.8f, +0.6f, -0.4f));
         tiVert.Add(new Vector3(+0.8f, 0, +0.4f));
+        tiVert.Add(new Vector3(+0.8f, +0.6f, +0.4f));
+
         tiVert.Add(new Vector3(+0.8f, 0, +0.4f));
         tiVert.Add(new Vector3(+0.8f, +0.6f, +0.4f));
-        tiVert.Add(new Vector3(+0.8f, +0.6f, +0.4f));
-
-        tiVert.Add(new Vector3(-0.8f, 0, +0.4f));
         tiVert.Add(new Vector3(-0.8f, 0, +0.4f));
         tiVert.Add(new Vector3(-0.8f, +0.6f, +0.4f));
+
+        tiVert.Add(new Vector3(-0.8f, 0, +0.4f));
         tiVert.Add(new Vector3(-0.8f, +0.6f, +0.4f));
-
-        tiVert.Add(new Vector3(-0.8f, 0, -0.4f));
         tiVert.Add(new Vector3(-0.8f, 0, -0.4f));
         tiVert.Add(new Vector3(-0.8f, +0.6f, -0.4f));
-        tiVert.Add(new Vector3(-0.8f, +0.6f, -0.4f));
 
+        tiVert.Add(new Vector3(-0.8f, 0, -0.4f));
+        tiVert.Add(new Vector3(-0.8f, +0.6f, -0.4f));
         tiVert.Add(new Vector3(+0.8f, 0, -0.4f));
-        tiVert.Add(new Vector3(+0.8f, 0, -0.4f));
-        tiVert.Add(new Vector3(+0.8f, +0.6f, -0.4f));
         tiVert.Add(new Vector3(+0.8f, +0.6f, -0.4f));
 
         tiVert.Add(new Vector3(-0.8f, +0.6f, -0.4f));
@@ -152,55 +150,27 @@ public class taverne : MonoBehaviour {
 
         int durchlauf = 0;
 
-        for (int i = 0; i < timesh.vertices.Length - 2; i++)
-        {
+        for (int i = 0; i < timesh.vertices.Length - 2; i++) {
 
-            if (i == 0)
+            if (durchlauf % 2 == 0)
             {
                 tiTri.Add(i);
                 tiTri.Add(i + 1);
                 tiTri.Add(i + 2);
             }
-            if (i >= 2 & i <= timesh.vertices.Length - 5)
-            {
-                i++;
-            }
-            if (i < timesh.vertices.Length - 5 & i > 0)
-            {
-                if (durchlauf % 2 == 0)
-                {
-                    tiTri.Add(i);
-                    tiTri.Add(i + 2);
-                    tiTri.Add(i + 4);
-                }
 
-                if (durchlauf % 2 == 1)
-                {
-                    tiTri.Add(i + 2);
-                    tiTri.Add(i);
-                    tiTri.Add(i + 4);
-                }
-            }
-            if (i >= timesh.vertices.Length - 5)
+            if (durchlauf % 2 == 1)
             {
-                if (durchlauf % 2 == 1)
-                {
-                    tiTri.Add(i);
-                    tiTri.Add(i + 1);
-                    tiTri.Add(i + 2);
-                }
-
-                if (durchlauf % 2 == 0)
-                {
-                    tiTri.Add(i + 1);
-                    tiTri.Add(i);
-                    tiTri.Add(i + 2);
-                }
+                tiTri.Add(i + 1);
+                tiTri.Add(i);
+                tiTri.Add(i + 2);
             }
-            if (i == timesh.vertices.Length - 7)
+
+            if (durchlauf % 2 == 1 & durchlauf != 0)
             {
                 i = i + 2;
             }
+
 
             durchlauf++;
         }
@@ -218,7 +188,7 @@ public class taverne : MonoBehaviour {
         hockerzahl = hockerzahl + 4;
         tischzahl = tischzahl + 1;
 
-        createUVSquares(tisch);
+        createUVHocker(tisch);
     }
 
     //senkrechte Tischmethode
@@ -250,23 +220,21 @@ public class taverne : MonoBehaviour {
         tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
         tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
         tiVert.Add(new Vector3(+0.4f, 0, +0.8f));
+        tiVert.Add(new Vector3(+0.4f, +0.6f, +0.8f));
+
         tiVert.Add(new Vector3(+0.4f, 0, +0.8f));
         tiVert.Add(new Vector3(+0.4f, +0.6f, +0.8f));
-        tiVert.Add(new Vector3(+0.4f, +0.6f, +0.8f));
-
-        tiVert.Add(new Vector3(-0.4f, 0, +0.8f));
         tiVert.Add(new Vector3(-0.4f, 0, +0.8f));
         tiVert.Add(new Vector3(-0.4f, +0.6f, +0.8f));
+
+        tiVert.Add(new Vector3(-0.4f, 0, +0.8f));
         tiVert.Add(new Vector3(-0.4f, +0.6f, +0.8f));
-
-        tiVert.Add(new Vector3(-0.4f, 0, -0.8f));
         tiVert.Add(new Vector3(-0.4f, 0, -0.8f));
         tiVert.Add(new Vector3(-0.4f, +0.6f, -0.8f));
-        tiVert.Add(new Vector3(-0.4f, +0.6f, -0.8f));
 
+        tiVert.Add(new Vector3(-0.4f, 0, -0.8f));
+        tiVert.Add(new Vector3(-0.4f, +0.6f, -0.8f));
         tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
-        tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
-        tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
         tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
 
         tiVert.Add(new Vector3(-0.4f, +0.6f, -0.8f));
@@ -280,75 +248,47 @@ public class taverne : MonoBehaviour {
 
         tisch.GetComponent<MeshFilter>().mesh = timesh;
 
-       /* for (int i = 0; i < timesh.vertices.Length - 2; i++) {
-            if (i % 2 == 0) {
-                tiTri.Add(i);
-                tiTri.Add(i + 1);
-                tiTri.Add(i + 2);
-            }
+        /* for (int i = 0; i < timesh.vertices.Length - 2; i++) {
+             if (i % 2 == 0) {
+                 tiTri.Add(i);
+                 tiTri.Add(i + 1);
+                 tiTri.Add(i + 2);
+             }
 
-            if (i % 2 == 1) {
-                tiTri.Add(i + 1);
-                tiTri.Add(i);
-                tiTri.Add(i + 2);
-            }
+             if (i % 2 == 1) {
+                 tiTri.Add(i + 1);
+                 tiTri.Add(i);
+                 tiTri.Add(i + 2);
+             }
 
-            if (i == timesh.vertices.Length - 7) {
-                i = i + 2;
-            }
-        }*/
+             if (i == timesh.vertices.Length - 7) {
+                 i = i + 2;
+             }
+         }*/
         int durchlauf = 0;
 
-        for (int i = 0; i < timesh.vertices.Length - 2; i++)
-        {
+        for (int i = 0; i < timesh.vertices.Length - 2; i++) {
 
-            if (i == 0)
+            if (durchlauf % 2 == 0)
             {
                 tiTri.Add(i);
                 tiTri.Add(i + 1);
                 tiTri.Add(i + 2);
             }
-            if (i >= 2 & i <= timesh.vertices.Length - 5)
-            {
-                i++;
-            }
-            if (i < timesh.vertices.Length - 5 & i > 0)
-            {
-                if (durchlauf % 2 == 0)
-                {
-                    tiTri.Add(i);
-                    tiTri.Add(i + 2);
-                    tiTri.Add(i + 4);
-                }
 
-                if (durchlauf % 2 == 1)
-                {
-                    tiTri.Add(i + 2);
-                    tiTri.Add(i);
-                    tiTri.Add(i + 4);
-                }
-            }
-            if (i >= timesh.vertices.Length - 5)
+            if (durchlauf % 2 == 1)
             {
-                if (durchlauf % 2 == 1)
-                {
-                    tiTri.Add(i);
-                    tiTri.Add(i + 1);
-                    tiTri.Add(i + 2);
-                }
-
-                if (durchlauf % 2 == 0)
-                {
-                    tiTri.Add(i + 1);
-                    tiTri.Add(i);
-                    tiTri.Add(i + 2);
-                }
+                tiTri.Add(i + 1);
+                tiTri.Add(i);
+                tiTri.Add(i + 2);
             }
-            if (i == timesh.vertices.Length - 7)
+
+            if (durchlauf % 2 == 1 & durchlauf != 0)
             {
                 i = i + 2;
             }
 
+            
             durchlauf++;
         }
 
@@ -365,60 +305,41 @@ public class taverne : MonoBehaviour {
         hockerzahl = hockerzahl + 4;
         tischzahl = tischzahl + 1;
 
-        createUVSquares(tisch);
+        createUVHocker(tisch);
     }
 
     void hockermesh(float xpos, float ypos, float zpos, GameObject hocker) {
         hocker.transform.position = new Vector3(xpos, ypos, zpos);
         hoVert = new List<Vector3>();
         hoTri = new List<int>();
-        /*
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos, zpos - 0.2f));
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos - 0.2f));
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos, zpos + 0.2f));
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos + 0.2f));
+ 
 
-        hoVert.Add(new Vector3(xpos - 0.2f, ypos, zpos + 0.2f));
-        hoVert.Add(new Vector3(xpos - 0.2f, ypos + 0.4f, zpos + 0.2f));
-
-        hoVert.Add(new Vector3(xpos - 0.2f, ypos, zpos - 0.2f));
-        hoVert.Add(new Vector3(xpos - 0.2f, ypos + 0.4f, zpos - 0.2f));
-
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos, zpos - 0.2f));
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos - 0.2f));
-
-        hoVert.Add(new Vector3(xpos - 0.2f, ypos + 0.4f, zpos - 0.2f));
-        hoVert.Add(new Vector3(xpos - 0.2f, ypos + 0.4f, zpos + 0.2f));
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos - 0.2f));
-        hoVert.Add(new Vector3(xpos + 0.2f, ypos + 0.4f, zpos + 0.2f));
-        */
 
         hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
         hoVert.Add(new Vector3(+0.2f, 0.4f, -0.2f));
         hoVert.Add(new Vector3(+0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
+
         hoVert.Add(new Vector3(+0.2f, 0, +0.2f));
         hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
-        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
-
-        hoVert.Add(new Vector3(-0.2f, 0, +0.2f));
         hoVert.Add(new Vector3(-0.2f, 0, +0.2f));
         hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
+
+        hoVert.Add(new Vector3(-0.2f, 0, +0.2f));
         hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
-
-        hoVert.Add(new Vector3(-0.2f, 0, -0.2f));
         hoVert.Add(new Vector3(-0.2f, 0, -0.2f));
         hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
-        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
 
+        hoVert.Add(new Vector3(-0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
         hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
-        hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
-        hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
         hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
 
         hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
         hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
         hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
         hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
+
 
         homesh = new Mesh();
         homesh.vertices = hoVert.ToArray();
@@ -427,48 +348,21 @@ public class taverne : MonoBehaviour {
 
         int durchlauf = 0;
 
-        for (int i = 0; i < homesh.vertices.Length - 2; i++) {
+        for (int i = 0; i < homesh.vertices.Length - 2; i = i + 1) {
 
-            if (i == 0) {
+            if (durchlauf % 2 == 0) {
                 hoTri.Add(i);
                 hoTri.Add(i + 1);
                 hoTri.Add(i + 2);
             }
-            if (i >= 2 & i<= homesh.vertices.Length -5) {
-                i++;
-            }
-            if (i < homesh.vertices.Length - 5 & i > 0)
-            {
-                if (durchlauf % 2 == 0)
-                {
-                    hoTri.Add(i);
-                    hoTri.Add(i + 2);
-                    hoTri.Add(i + 4);
-                }
 
-                if (durchlauf % 2 == 1)
-                {
-                    hoTri.Add(i + 2);
-                    hoTri.Add(i);
-                    hoTri.Add(i + 4);
-                }
+            if (durchlauf % 2 == 1) {
+                hoTri.Add(i + 1);
+                hoTri.Add(i);
+                hoTri.Add(i + 2);
             }
-            if(i >= homesh.vertices.Length - 5) {
-                if (durchlauf % 2 == 1)
-                {
-                    hoTri.Add(i);
-                    hoTri.Add(i + 1);
-                    hoTri.Add(i + 2);
-                }
 
-                if (durchlauf % 2 == 0)
-                {
-                    hoTri.Add(i + 1);
-                    hoTri.Add(i);
-                    hoTri.Add(i + 2);
-                }
-            }
-            if (i == homesh.vertices.Length - 7) {
+            if (durchlauf % 2 == 1 & durchlauf != 0) {
                 i = i + 2;
             }
 
@@ -478,7 +372,7 @@ public class taverne : MonoBehaviour {
         homesh.triangles = hoTri.ToArray();
 
         hocker.GetComponent<Renderer>().material.color = new Color(0.0f, 1.0f, 1.0f);
-        createUVSquares(hocker);
+        createUVHocker(hocker);
     }
 
     //Treppe an der Buehne
@@ -487,54 +381,54 @@ public class taverne : MonoBehaviour {
         treVert = new List<Vector3>();
         treTri = new List<int>();
 
-        treVert.Add(new Vector3(- 0.6f, 0f, - 0.5f));
-        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), - 0.5f));
-        treVert.Add(new Vector3(0, 0f, - 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f, -0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f + (0.5f / 4), -0.5f));
+        treVert.Add(new Vector3(0, 0f, -0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), -0.5f));
 
-        treVert.Add(new Vector3(0, 0f, + 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4), + 0.5f));
-        treVert.Add(new Vector3(- 0.6f, 0f, + 0.5f));
-        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), + 0.5f));
+        treVert.Add(new Vector3(0, 0f, +0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), +0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f, +0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f + (0.5f / 4), +0.5f));
 
-        treVert.Add(new Vector3(- 0.6f, 0f, - 0.5f));
-        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), - 0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f, -0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f + (0.5f / 4), -0.5f));
 
-        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), - 0.5f));
-        treVert.Add(new Vector3(- 0.6f, 0f + (0.5f / 4), + 0.5f));
-        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4), - 0.5f));
-        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4), + 0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f + (0.5f / 4), -0.5f));
+        treVert.Add(new Vector3(-0.6f, 0f + (0.5f / 4), +0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4), -0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4), +0.5f));
 
-        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4), - 0.5f));
-        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4) * 2, - 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4), - 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, - 0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4), -0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4) * 2, -0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), -0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, -0.5f));
 
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4), + 0.5f));
-        treVert.Add(new Vector3(0, 0f + ((0.5f / 4) * 2), + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4), +0.5f));
+        treVert.Add(new Vector3(0, 0f + ((0.5f / 4) * 2), +0.5f));
 
-        treVert.Add(new Vector3( - 0.4f, 0f + (0.5f / 4), + 0.5f));
-        treVert.Add(new Vector3( - 0.4f, 0f + ((0.5f / 4) * 2), + 0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4), +0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + ((0.5f / 4) * 2), +0.5f));
 
-        treVert.Add(new Vector3( - 0.4f, 0f + (0.5f / 4) * 2, - 0.5f));
-        treVert.Add(new Vector3(- 0.4f, 0f + (0.5f / 4) * 2, + 0.5f));
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, - 0.5f));
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, + 0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4) * 2, -0.5f));
+        treVert.Add(new Vector3(-0.4f, 0f + (0.5f / 4) * 2, +0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 2, -0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 2, +0.5f));
 
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, - 0.5f));
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, - 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, - 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, - 0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 2, -0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 3, -0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, -0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, -0.5f));
 
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, + 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, + 0.5f));
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 2, + 0.5f));
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, + 0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 2, +0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, +0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 2, +0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 3, +0.5f));
 
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, - 0.5f));
-        treVert.Add(new Vector3(- 0.2f, 0f + (0.5f / 4) * 3, + 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, - 0.5f));
-        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, + 0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 3, -0.5f));
+        treVert.Add(new Vector3(-0.2f, 0f + (0.5f / 4) * 3, +0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, -0.5f));
+        treVert.Add(new Vector3(0, 0f + (0.5f / 4) * 3, +0.5f));
 
         tremesh = new Mesh();
         tremesh.vertices = treVert.ToArray();
@@ -930,8 +824,7 @@ public class taverne : MonoBehaviour {
             }
 
             GameObject[] hockers = getTische();
-            for (int i = 0; i < hockers.Length; i++)
-            {
+            for (int i = 0; i < hockers.Length; i++) {
                 hockers[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                 hockers[i].GetComponent<Renderer>().receiveShadows = true;
             }
@@ -949,35 +842,31 @@ public class taverne : MonoBehaviour {
         spawn.GetComponent<Renderer>().receiveShadows = true;
     }
 
-    void createUVWand(GameObject Wand)
-    {
+    void createUVWand(GameObject Wand) {
         Renderer rend = Wand.GetComponent<Renderer>();
-        Material wallMat = Resources.Load<Material>("Materials/Wall");
+        Material wallMat = Resources.Load<Material>("Materials/Wall2");
         rend.material = wallMat;
         Mesh mesh = Wand.GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
         Vector2[] uvs = new Vector2[vertices.Length];
-        for (int i = 0; i < uvs.Length; i++)
-        {
+        for (int i = 0; i < uvs.Length; i++) {
             uvs[i] = new Vector2(vertices[i].z, vertices[i].y);
         }
         mesh.uv = uvs;
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
 
-       
+
     }
 
-    void createUVWandHV(GameObject Wand)
-    {
+    void createUVWandHV(GameObject Wand) {
         Renderer rend = Wand.GetComponent<Renderer>();
-        Material wallMat = Resources.Load<Material>("Materials/Wall");
+        Material wallMat = Resources.Load<Material>("Materials/Wall2");
         rend.material = wallMat;
         Mesh mesh = Wand.GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
         Vector2[] uvs = new Vector2[vertices.Length];
-        for (int i = 0; i < uvs.Length; i++)
-        {
+        for (int i = 0; i < uvs.Length; i++) {
             uvs[i] = new Vector2(vertices[i].x, vertices[i].y);
         }
         mesh.uv = uvs;
@@ -985,16 +874,14 @@ public class taverne : MonoBehaviour {
         mesh.RecalculateTangents();
     }
 
-    void createUVWandBD(GameObject Wand)
-    {
+    void createUVWandBD(GameObject Wand) {
         Renderer rend = Wand.GetComponent<Renderer>();
-        Material wallMat = Resources.Load<Material>("Materials/Wall");
+        Material wallMat = Resources.Load<Material>("Materials/Floor");
         rend.material = wallMat;
         Mesh mesh = Wand.GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
         Vector2[] uvs = new Vector2[vertices.Length];
-        for (int i = 0; i < uvs.Length; i++)
-        {
+        for (int i = 0; i < uvs.Length; i++) {
             uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
         }
         mesh.uv = uvs;
@@ -1002,10 +889,9 @@ public class taverne : MonoBehaviour {
         mesh.RecalculateTangents();
     }
 
-    void createUVSquares(GameObject square)
-    {
+    void createUVSquares(GameObject square) {
         Renderer rend = square.GetComponent<Renderer>();
-        Material wallMat = Resources.Load<Material>("Materials/Wall");
+        Material wallMat = Resources.Load<Material>("Materials/Bark");
         rend.material = wallMat;
         Mesh mesh = square.GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
@@ -1061,6 +947,68 @@ public class taverne : MonoBehaviour {
         hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
         hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
         hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));*/
+        mesh.uv = uvs;
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
+    }
+
+    void createUVHocker(GameObject square)
+    {
+        Renderer rend = square.GetComponent<Renderer>();
+        Material wallMat = Resources.Load<Material>("Materials/Bark");
+        rend.material = wallMat;
+        Mesh mesh = square.GetComponent<MeshFilter>().mesh;
+        Vector3[] vertices = mesh.vertices;
+        Vector2[] uvs = new Vector2[vertices.Length];
+
+        uvs[0] = new Vector2(vertices[0].z, vertices[0].y);
+        uvs[1] = new Vector2(vertices[1].z, vertices[1].y);
+        uvs[2] = new Vector2(vertices[2].z, vertices[2].y);
+        uvs[3] = new Vector2(vertices[3].z, vertices[3].y);
+        uvs[4] = new Vector2(vertices[4].x, vertices[4].y);
+        uvs[5] = new Vector2(vertices[5].x, vertices[5].y);
+        uvs[6] = new Vector2(vertices[6].x, vertices[6].y);
+        uvs[7] = new Vector2(vertices[7].x, vertices[7].y);
+        uvs[8] = new Vector2(vertices[8].z, vertices[8].y);
+        uvs[9] = new Vector2(vertices[9].z, vertices[9].y);
+        uvs[10] = new Vector2(vertices[10].z, vertices[10].y);
+        uvs[11] = new Vector2(vertices[11].z, vertices[11].y);
+        uvs[12] = new Vector2(vertices[12].x, vertices[12].y);
+        uvs[13] = new Vector2(vertices[13].x, vertices[13].y);
+        uvs[14] = new Vector2(vertices[14].x, vertices[14].y);
+        uvs[15] = new Vector2(vertices[15].x, vertices[15].y);
+        uvs[16] = new Vector2(vertices[16].x, vertices[16].z);
+        uvs[17] = new Vector2(vertices[17].x, vertices[17].z);
+        uvs[18] = new Vector2(vertices[18].x, vertices[18].z);
+        uvs[19] = new Vector2(vertices[19].x, vertices[19].z);
+
+
+
+        /*hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0.4f, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
+
+        hoVert.Add(new Vector3(+0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
+        hoVert.Add(new Vector3(-0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
+
+        hoVert.Add(new Vector3(-0.2f, 0, +0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
+        hoVert.Add(new Vector3(-0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
+
+        hoVert.Add(new Vector3(-0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, 0, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
+
+        hoVert.Add(new Vector3(-0.2f, +0.4f, -0.2f));
+        hoVert.Add(new Vector3(-0.2f, +0.4f, +0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, -0.2f));
+        hoVert.Add(new Vector3(+0.2f, +0.4f, +0.2f));
+*/
         mesh.uv = uvs;
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
@@ -1243,7 +1191,7 @@ public class taverne : MonoBehaviour {
         berBuilder(wand4, new Vector3(7, 0, -7), new Vector3(7, 5, -7), new Vector3(-7, 0, -7), new Vector3(-7, 5, -7));
         createUVWandHV(wand4);
 
-        berBuilder(decke, new Vector3(7, 5, -9), new Vector3(7, 5, 7), new Vector3(-7, 5, -9), new Vector3(-9, 5, 7));
+        berBuilder(decke, new Vector3(7, 5, -9), new Vector3(7, 5, 7), new Vector3(-7, 5, -9), new Vector3(-7, 5, 7));
         createUVWandBD(decke);
         berBuilder(boden, new Vector3(-7, 0, -9), new Vector3(-7, 0, 7), new Vector3(7, 0, -9), new Vector3(7, 0, 7));
         createUVWandBD(boden);
