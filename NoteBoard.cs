@@ -153,7 +153,6 @@ public class NoteBoard : MonoBehaviour {
         post1.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust left post position
         float stageZPos = stageRef.transform.position.z + ((stageRefMesh.vertices[5].z - stageRefMesh.vertices[3].z) / 2);
-        Debug.Log(stageRefMesh.vertices[5].z - stageRefMesh.vertices[3].z);
         post1.transform.position = new Vector3(post1Pos.x + (post1Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post1Pos.y + (post1Mesh.bounds.size.y * post1Trans.localScale.y) / 2, stageZPos - 0.03f);
         post2.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust right post position
@@ -163,8 +162,20 @@ public class NoteBoard : MonoBehaviour {
         post1.name = "LeftPost";
         post2.name = "RightPost";
 
+        AddMaterialPost(post1);
+        AddMaterialPost(post2);
+
         Destroy(post1.GetComponent<CapsuleCollider>());
         Destroy(post2.GetComponent<CapsuleCollider>());
+    }
+
+    void AddMaterialPost(GameObject go) {
+        Renderer rend = go.GetComponent<Renderer>();
+        Material mat = Resources.Load<Material>("Materials/Bark");
+        rend.material = mat;
+        Mesh mesh = go.GetComponent<MeshFilter>().mesh;
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
     }
 
     void BuildScreen() {
@@ -209,7 +220,9 @@ public class NoteBoard : MonoBehaviour {
 
         screenMesh.triangles = faces.ToArray();
 
-        screen.GetComponent<Renderer>().material.color = Color.white;
+        //screen.GetComponent<Renderer>().material.color = Color.white;
+
+        AddMaterialScreen();
 
         //screenMesh.RecalculateNormals();
 
@@ -224,6 +237,21 @@ public class NoteBoard : MonoBehaviour {
         test2.transform.position = post1.transform.position;
         test2.transform.Translate(post1.transform.localScale.x / 2, -0.1f, -0.01f);
         test2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);*/
+    }
+
+    void AddMaterialScreen() {
+        Renderer rend = screen.GetComponent<Renderer>();
+        Material mat = Resources.Load<Material>("Materials/Paper");
+        rend.material = mat;
+        Mesh mesh = screen.GetComponent<MeshFilter>().mesh;
+        Vector3[] vertices = mesh.vertices;
+        Vector2[] uvs = new Vector2[vertices.Length];
+        for (int i = 0; i < uvs.Length; i++) {
+            uvs[i] = new Vector2(vertices[i].x, vertices[i].y);
+        }
+        mesh.uv = uvs;
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
     }
 
     private float rightBorder, leftBorder;
@@ -248,6 +276,9 @@ public class NoteBoard : MonoBehaviour {
         borderRight.GetComponent<Renderer>().material.color = Color.black;
         rightBorder = borderRight.transform.position.x;
         leftBorder = borderLeft.transform.position.x;
+
+        AddMaterialPost(borderLeft);
+        AddMaterialPost(borderRight);
 
         Destroy(borderLeft.GetComponent<CapsuleCollider>());
         Destroy(borderRight.GetComponent<CapsuleCollider>());

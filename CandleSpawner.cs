@@ -247,8 +247,21 @@ public class CandleSpawner : MonoBehaviour {
             candleHolders[i + numberOfCH].transform.Translate(distanceOfWalls - (correction * 2), 0, 0);
             candleHolders[i + numberOfCH].transform.Rotate(0, 180, 0);
             candleHolders[i + numberOfCH].name = "Candle Holder" + (i + numberOfCH + 1);
+
+            //AddMaterialCH(candleHolders[i]);
+            //AddMaterialCH(candleHolders[i].transform.GetChild(0).gameObject);
+            //AddMaterialCH(candleHolders[i + numberOfCH].transform.GetChild(0).gameObject);
         }
         MoveCandles();
+    }
+
+    void AddMaterialCH(GameObject go) {
+        Renderer rend = go.GetComponent<Renderer>();
+        Material mat = Resources.Load<Material>("Materials/Steel");
+        rend.material = mat;
+        Mesh mesh = go.GetComponent<MeshFilter>().mesh;
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
     }
 
     void MoveCandles() {
@@ -433,6 +446,7 @@ public class CandleSpawner : MonoBehaviour {
         }
         isLit[index] = false;
         // Set Candle Text to "Burned Out"
+        // NRE?
         GameObject.Find("TriggerCandle" + (index + 1)).GetComponent<CandleTrigger>().SetIsLit(isLit[index]);
         particleSystems[index].Stop();
         Destroy(candles[index]);

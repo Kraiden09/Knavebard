@@ -62,10 +62,13 @@ public class BardCol : MonoBehaviour {
     void ClimbStairs() {
         if (!climbing) {
             climbing = true;
+            GameObject stairs = tavern.getTreppe();
             Mesh stairMesh = tavern.getTreppe().GetComponent<MeshFilter>().mesh;
             Vector3[] stairVerts = stairMesh.vertices;
-            Vector3 firstStep = stairVerts[21];
-            firstStep -= new Vector3(-0.06f, 0, (stairVerts[21].z - stairVerts[15].z) / 2);
+            Vector3 firstStep = stairs.transform.position;
+            //firstStep -= new Vector3(-0.06f, 0, (stairVerts[21].z - stairVerts[15].z) / 2);
+            firstStep += stairVerts[21];
+            firstStep -= new Vector3(0, 0, (stairVerts[21].z - stairVerts[15].z) / 2);
             /*GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             temp.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             temp.transform.position = firstStep;
