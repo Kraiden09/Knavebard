@@ -10,19 +10,25 @@ public class CandleTrigger : MonoBehaviour {
     GameObject bard;
     Init bardInit;
     CandleSpawner cs;
+    CandleInteraction ci;
+    String tempText;
     int index;
-    bool isLit, prev, lastChange;
+    bool isLit, prev, lastChange, isHidden, active;
 
     // Use this for initialization
     void Start () {
         interaction = GameObject.Find("InteractionText");
         cs = GameObject.Find("CandleSpawner").GetComponent<CandleSpawner>();
+        ci = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
         text = interaction.GetComponent<Text>();
         bardInit = GameObject.FindObjectOfType(typeof(Init)) as Init;
         index = (Int32.Parse(gameObject.name.Substring(gameObject.name.Length - 1))) - 1;
         isLit = true;
         prev = false;
         lastChange = false;
+        isHidden = false;
+        active = false;
+        tempText = "";
         WaitForBard();
     }
 	
@@ -32,25 +38,64 @@ public class CandleTrigger : MonoBehaviour {
 	}
 
     private void OnTriggerEnter(Collider other) {
-        ShowText();
-    }
-
-    private void OnTriggerStay(Collider other) {
-        if (!lastChange) {
-            if (prev == isLit) {
-                ShowText();
-                lastChange = true;
-            } else if (Input.GetKeyDown(KeyCode.Return)) {
-                prev = isLit;
-                isLit = cs.ToggleOnOff(index);
+        if (other.gameObject.name == "Bard") {
+            active = true;
+            if (!isHidden) {
+                SetActiveScript(this);
                 ShowText();
             }
         }
     }
 
+    private void OnTriggerStay(Collider other) {
+        if (other.gameObject.name == "Bard" && !isHidden) {
+            if (!lastChange) {
+                if (prev == isLit) {
+                    ShowText();
+                    lastChange = true;
+                } else if (Input.GetKeyDown(KeyCode.Return)) {
+                    prev = isLit;
+                    isLit = cs.ToggleOnOff(index);
+                    ShowText();
+                }
+            }
+        }
+    }
+
     private void OnTriggerExit(Collider other) {
-        text.text = "";
+        if (other.gameObject.name == "Bard") {
+            active = false;
+            if (!isHidden) {
+                SetActiveScript(null);
+                text.text = "";
+            }
+        }
         //text.text = "Hello";
+    }
+
+    public void SetActiveScript(CandleTrigger ct) {
+        ci.SetActiveTrigger(ct);
+    }
+
+    public void HideText() {
+        if (active) {
+            tempText = text.text;
+            if (text.text.Equals("")) {
+                // Do nothing
+            } else {
+                text.text = "";
+            }
+        }
+    }
+
+    public void UnhideText() {
+        if (active) {
+            text.text = tempText;
+        }
+    }
+
+    public void IsHidden(bool val) {
+        isHidden = val;
     }
 
     void ShowText() {

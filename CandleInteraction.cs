@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CandleInteraction : MonoBehaviour {
     CandleSpawner cs;
-    GameObject[] candles, triggerAreas;
+    GameObject[] candles, triggerArea;
+    CandleTrigger activeTrigger;
     bool[] isLit;
 
     // Use this for initialization
@@ -18,6 +19,14 @@ public class CandleInteraction : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void SetActiveTrigger(CandleTrigger ct) {
+        activeTrigger = ct;
+    }
+
+    public void HideText(float duration) {
+        StartCoroutine(ChangeText(duration));
+    }
 
     void CreateTriggerArea() {
         GameObject area;
@@ -36,7 +45,29 @@ public class CandleInteraction : MonoBehaviour {
             area.transform.Translate(new Vector3(xAdjust, -2.388f, 0));
             area.transform.parent = gameObject.transform;
             area.AddComponent<CandleTrigger>();
-            triggerAreas[i] = area;
+            triggerArea[i] = area;
+        }
+    }
+
+    IEnumerator ChangeText(float duration) {
+        if (activeTrigger != null) {
+            activeTrigger.IsHidden(true);
+            activeTrigger.HideText();
+            yield return new WaitForSeconds(duration);
+            activeTrigger.UnhideText();
+            activeTrigger.IsHidden(false);
+        } else {
+            CandleTrigger[] candleTrigger = new CandleTrigger[triggerArea.Length];
+            for (int i = 0; i < triggerArea.Length; i++) {
+                candleTrigger[i] = triggerArea[i].GetComponent<CandleTrigger>();
+                candleTrigger[i].IsHidden(true);
+                candleTrigger[i].HideText();
+            }
+            yield return new WaitForSeconds(duration);
+            for (int i = 0; i < candleTrigger.Length; i++) {
+                candleTrigger[i].UnhideText();
+                candleTrigger[i].IsHidden(false);
+            }
         }
     }
 
@@ -45,7 +76,7 @@ public class CandleInteraction : MonoBehaviour {
             yield return new WaitForSeconds(0.1f);
         }
         candles = cs.GetCandles();
-        triggerAreas = new GameObject[candles.Length];
+        triggerArea = new GameObject[candles.Length];
         isLit = new bool[candles.Length];
         for (int i = 0; i < isLit.Length; i++) {
             isLit[i] = true;
