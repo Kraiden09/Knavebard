@@ -15,11 +15,13 @@ using UnityEngine;
  * 
  * 
  */
-public class CameraControl : MonoBehaviour
-{
+public class CameraControl : MonoBehaviour {
     //references to noteboard
     NoteBoard noteBoard;
     GameObject screen;
+
+    //deactivate Canvas
+    CandleInteraction Candle;
 
     //Bewegungsgeschwindigkeit
     float camSpeed;
@@ -27,6 +29,9 @@ public class CameraControl : MonoBehaviour
     bool director;
     bool waiting;
     int random, randomWays, lastPos;
+
+    //cullingMask of camera for reactivation
+    int mask;
 
     //position in CamPos-Array for manual control
     int current;
@@ -64,8 +69,15 @@ public class CameraControl : MonoBehaviour
 
 
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
+        //Blackscreen on startup
+        mask = GetComponent<Camera>().cullingMask;
+        GetComponent<Camera>().cullingMask = 0;
+        GetComponent<Camera>().clearFlags = CameraClearFlags.Depth;
+
+        Candle = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
+
+
         //indirekte Grenzen durch urspruengliche Kameraposition
         borderx = transform.position.x;
         bordery = transform.position.y;
@@ -115,47 +127,43 @@ public class CameraControl : MonoBehaviour
         //standard fixpoint for bard-mode (maybe later changed for free-roam)
         fix = new Vector3(0, 2.7f, 6.15f);
         //transform.Translate(0,2.7f,-8);
+
+        //activate camera after startup
+        StartCoroutine(WaitForIt());
+
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         //switch
-        if (Input.GetKeyDown("1"))
-        {
+        if (Input.GetKeyDown("1")) {
             director = !director;
         }
 
 
         //DIRECTOR-MODE
-        if (director)
-        {
+        if (director) {
             //moving camera from pos to pos
             //waiting in between changes
-            if (!waiting)
-            {
+            if (!waiting) {
                 StartCoroutine(sleeper());
-                while (lastPos == random)
-                {
+                while (lastPos == random) {
                     random = UnityEngine.Random.Range(0, Positions.Length);
                 }
             }
 
             //moving
-            if (waiting && !there)
-            {
+            if (waiting && !there) {
                 CamMoveTo(Positions[random]);
 
-                if (Positions[random].transform.position == transform.position)
-                {
+                if (Positions[random].transform.position == transform.position) {
                     there = true;
 
                     //lastPos to eliminate returning to the last position
                     lastPos = random;
                 }
             }
-            if (there)
-            {
+            if (there) {
                 //slowly moving in random direction
                 //int randomWays used
                 CameraMoveSC();
@@ -165,97 +173,78 @@ public class CameraControl : MonoBehaviour
 
 
         //MANUAL-MODE
-        if (!director)
-        {
+        if (!director) {
             //w-a-s-d
-            if (Input.GetKey(KeyCode.W))
-            {
+            if (Input.GetKey(KeyCode.W)) {
                 //Grenze
-                if (transform.position.y - bordery < 1.5f)
-                {
+                if (transform.position.y - bordery < 1.5f) {
                     transform.Translate(new Vector3(0, camSpeed * Time.deltaTime, 0));
                     transform.LookAt(fix);
                 }
             }
 
-            if (Input.GetKey(KeyCode.A))
-            {
-                if (transform.position.x - borderx > -6)
-                {
+            if (Input.GetKey(KeyCode.A)) {
+                if (transform.position.x - borderx > -6) {
                     transform.Translate(new Vector3(-camSpeed * Time.deltaTime, 0, 0));
                     transform.LookAt(fix);
                 }
             }
 
-            if (Input.GetKey(KeyCode.S))
-            {
-                if (transform.position.y - bordery > -0.5f)
-                {
+            if (Input.GetKey(KeyCode.S)) {
+                if (transform.position.y - bordery > -0.5f) {
                     transform.Translate(new Vector3(0, -camSpeed * Time.deltaTime, 0));
                     transform.LookAt(fix);
                 }
             }
 
-            if (Input.GetKey(KeyCode.D))
-            {
-                if (transform.position.x - borderx < 6)
-                {
+            if (Input.GetKey(KeyCode.D)) {
+                if (transform.position.x - borderx < 6) {
                     transform.Translate(new Vector3(camSpeed * Time.deltaTime, 0, 0));
                     transform.LookAt(fix);
                 }
             }
 
             //Zoom + Zoom out
-            if (Input.GetKey(KeyCode.PageUp))
-            {
-                if (transform.position.z - borderz < 5)
-                {
+            if (Input.GetKey(KeyCode.PageUp)) {
+                if (transform.position.z - borderz < 5) {
                     transform.Translate(new Vector3(0, 0, camSpeed * Time.deltaTime));
                 }
             }
 
-            if (Input.GetKey(KeyCode.PageDown))
-            {
-                if (transform.position.z - borderz > -1)
-                {
+            if (Input.GetKey(KeyCode.PageDown)) {
+                if (transform.position.z - borderz > -1) {
                     transform.Translate(new Vector3(0, 0, -camSpeed * Time.deltaTime));
                 }
             }
 
 
             //manual change of Camera-Position
-            if (Input.GetKeyDown("q"))
-            {
+            if (Input.GetKeyDown("q")) {
                 current--;
                 prev = true;
                 next = false;
             }
 
-            if (Input.GetKeyDown("e"))
-            {
+            if (Input.GetKeyDown("e")) {
                 current++;
                 next = true;
                 prev = false;
             }
 
-            if (prev)
-            {
+            if (prev) {
                 //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
                 CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
 
-                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position)
-                {
+                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position) {
                     prev = false;
                 }
 
             }
-            if (next)
-            {
+            if (next) {
                 CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
                 //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
 
-                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position)
-                {
+                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position) {
                     next = false;
                 }
             }
@@ -265,8 +254,7 @@ public class CameraControl : MonoBehaviour
     }
 
 
-    public struct CamPos
-    {
+    public struct CamPos {
         // Camera-Position
         public float x;
         public float y;
@@ -274,8 +262,7 @@ public class CameraControl : MonoBehaviour
         public float rotX;
         public float rotY;
 
-        public CamPos(float x, float y, float z, float rotX, float rotY)
-        {
+        public CamPos(float x, float y, float z, float rotX, float rotY) {
             //position
             this.x = x;
             this.y = y;
@@ -292,15 +279,12 @@ public class CameraControl : MonoBehaviour
     //moving Camera as Director
     //move cam in random direction (up, down,left, right)
     //maybe
-    public void CameraMoveSC()
-    {
+    public void CameraMoveSC() {
         switch (//UnityEngine.Random.Range(2, 4))
-            randomWays)
-        {
+            randomWays) {
             //UP
             case 0:
-                if (transform.position.y - bordery < 1.5f)
-                {
+                if (transform.position.y - bordery < 1.5f) {
                     transform.Translate(new Vector3(0, (camSpeed / 2) * Time.deltaTime, 0));
                     transform.LookAt(fix);
                 }
@@ -308,8 +292,7 @@ public class CameraControl : MonoBehaviour
 
             //Down
             case 1:
-                if (transform.position.y - bordery > -0.5f)
-                {
+                if (transform.position.y - bordery > -0.5f) {
                     transform.Translate(new Vector3(0, (-camSpeed / 2) * Time.deltaTime, 0));
                     transform.LookAt(fix);
                 }
@@ -317,8 +300,7 @@ public class CameraControl : MonoBehaviour
 
             //Left
             case 2:
-                if (transform.position.x - borderx > -6)
-                {
+                if (transform.position.x - borderx > -6) {
                     transform.Translate(new Vector3((-camSpeed / 2) * Time.deltaTime, 0, 0));
                     transform.LookAt(fix);
                 }
@@ -326,8 +308,7 @@ public class CameraControl : MonoBehaviour
 
             //Right
             case 3:
-                if (transform.position.x - borderx < 6)
-                {
+                if (transform.position.x - borderx < 6) {
                     transform.Translate(new Vector3((camSpeed / 2) * Time.deltaTime, 0, 0));
                     transform.LookAt(fix);
                 }
@@ -335,13 +316,11 @@ public class CameraControl : MonoBehaviour
 
             //UP-right
             case 4:
-                if (transform.position.y - bordery < 1.5f)
-                {
+                if (transform.position.y - bordery < 1.5f) {
                     transform.Translate(new Vector3(0, (camSpeed / 4) * Time.deltaTime, 0));
                 }
 
-                if (transform.position.x - borderx < 6)
-                {
+                if (transform.position.x - borderx < 6) {
                     transform.Translate(new Vector3((camSpeed / 4) * Time.deltaTime, 0, 0));
                 }
 
@@ -350,13 +329,11 @@ public class CameraControl : MonoBehaviour
 
             //Down-right
             case 5:
-                if (transform.position.y - bordery > -0.5f)
-                {
+                if (transform.position.y - bordery > -0.5f) {
                     transform.Translate(new Vector3(0, (-camSpeed / 4) * Time.deltaTime, 0));
                 }
 
-                if (transform.position.x - borderx < 6)
-                {
+                if (transform.position.x - borderx < 6) {
                     transform.Translate(new Vector3((camSpeed / 4) * Time.deltaTime, 0, 0));
                 }
 
@@ -365,12 +342,10 @@ public class CameraControl : MonoBehaviour
 
             //Donw-left
             case 6:
-                if (transform.position.y - bordery > -0.5f)
-                {
+                if (transform.position.y - bordery > -0.5f) {
                     transform.Translate(new Vector3(0, (-camSpeed / 4) * Time.deltaTime, 0));
                 }
-                if (transform.position.x - borderx > -6)
-                {
+                if (transform.position.x - borderx > -6) {
                     transform.Translate(new Vector3((-camSpeed / 4) * Time.deltaTime, 0, 0));
                 }
                 transform.LookAt(fix);
@@ -378,12 +353,10 @@ public class CameraControl : MonoBehaviour
 
             //Up-left
             case 7:
-                if (transform.position.y - bordery < 1.5f)
-                {
+                if (transform.position.y - bordery < 1.5f) {
                     transform.Translate(new Vector3(0, (camSpeed / 4) * Time.deltaTime, 0));
                 }
-                if (transform.position.x - borderx > -6)
-                {
+                if (transform.position.x - borderx > -6) {
                     transform.Translate(new Vector3((-camSpeed / 4) * Time.deltaTime, 0, 0));
                 }
                 transform.LookAt(fix);
@@ -396,8 +369,7 @@ public class CameraControl : MonoBehaviour
     }
 
     //move between set positions
-    public void CamMoveTo(GameObject pos)
-    {
+    public void CamMoveTo(GameObject pos) {
         float step = camSpeed * Time.deltaTime;
         //Vector3 target = pos.transform.position;
         Vector3 targetDir = pos.transform.position - transform.position;
@@ -417,8 +389,7 @@ public class CameraControl : MonoBehaviour
 
 
     // just there for waiting
-    IEnumerator sleeper()
-    {
+    IEnumerator sleeper() {
         waiting = true;
         //randomization for CamMoveSC
         randomWays = UnityEngine.Random.Range(0, 4);
@@ -428,5 +399,13 @@ public class CameraControl : MonoBehaviour
         print("waited");
         waiting = false;
         there = false;
+    }
+
+    IEnumerator WaitForIt()
+    {
+        Candle.enabled = false;
+        yield return new WaitForSeconds(1);
+        Candle.enabled = true;
+        GetComponent<Camera>().cullingMask = mask;
     }
 }
