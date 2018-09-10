@@ -23,7 +23,9 @@ public class AudienceBehave : MonoBehaviour {
     int great, good, bad;
 
     float height;
+    int look;
     bool notInThere;
+    int randSeed;
 
     // Use this for initialization
     void Start() {
@@ -52,14 +54,14 @@ public class AudienceBehave : MonoBehaviour {
     }
     */
 
-    //returns a percentage of good/bad-mooded audiencemembers
+    //returns a percentage of good/bad-mooded audiencemembers PROBABLY NOT NEEDED
     public GameObject[] getAudiencePart(int percentage) {
 
         //returns all Members of the audience
         return crowd;
     }
 
-    //jumping with jam-meter
+    //jumping with jam-meter MAYBE NOT NEEDED
     public void Rave() {
 
         //... jump
@@ -140,20 +142,87 @@ public class AudienceBehave : MonoBehaviour {
         crowd[0].transform.Translate(Vector3.up * 0.25f);
 
 
-        for (int i = 1; i < crowd.Length; i++) {
-            crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, /*allHocker[i].transform.position.y + 0.5f*/ 0.6f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
-            crowd[i].name = "Audience" + i;
+        for (int i = 1; i < crowd.Length; i++)
+        {
 
-            //Looking-Direction
-            if (i > 3) {
-                //crowd[i].transform...
+            //random choosing of seats
+            randSeed = UnityEngine.Random.Range(0, 100);
+            if (randSeed % 2 == 0)
+            {
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 2].transform.position.x, 0.6f, allHocker[i * 2 - 2].transform.position.z), Quaternion.identity);
+                crowd[i].name = "Audience" + i;
+
+                if (i > 3)
+                {
+
+                    //Looking-Direction
+                    look = (int)allHocker[i * 2 - 2].transform.eulerAngles.y;
+                    switch (look)
+                    {
+                        case 0:
+                            crowd[i].transform.Rotate(new Vector3(0, 90, 0));
+                            break;
+                        case 180:
+                            crowd[i].transform.Rotate(new Vector3(0, -90, 0));
+                            break;
+                        case 90:
+                            crowd[i].transform.Rotate(new Vector3(0, 0, 0));
+                            break;
+                        case 270:
+                            crowd[i].transform.Rotate(new Vector3(0, 180, 0));
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
             }
+
+            else
+            {
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.6f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
+                crowd[i].name = "Audience" + i;
+
+                /*
+                //Looking-Direction
+                crowd[i].transform.Rotate(new Vector3(0, allHocker[i * 2 - 1].transform.eulerAngles.y - 90, 0));
+                */
+
+                if (i > 3)
+                {
+
+                    //Looking-Direction
+                    look = (int)allHocker[i * 2 - 1].transform.eulerAngles.y;
+
+
+                    switch (look)
+                    {
+                        case 0:
+                            crowd[i].transform.Rotate(new Vector3(0, 90, 0));
+                            break;
+                        case 180:
+                            crowd[i].transform.Rotate(new Vector3(0, -90, 0));
+                            break;
+                        case 90:
+                            crowd[i].transform.Rotate(new Vector3(0, 0, 0));
+                            break;
+                        case 270:
+                            crowd[i].transform.Rotate(new Vector3(0, +180, 0));
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+            }
+
         }
 
 
         //variable for jumping
         height = crowd[1].transform.position.y;
 
+        
         //rotation for Bartender and people at the bar
         if (crowd[0].transform.position.x > 0) {
             crowd[0].transform.Rotate(new Vector3(0, 180, 0));
@@ -162,6 +231,7 @@ public class AudienceBehave : MonoBehaviour {
             crowd[2].transform.Rotate(new Vector3(0, 180, 0));
             crowd[3].transform.Rotate(new Vector3(0, 180, 0));
         }
+        
 
         //unnecesserily complicated crowd percentages:
         crowd0 = new GameObject[] {crowd[1],crowd[UnityEngine.Random.Range(3,crowd.Length)] };
