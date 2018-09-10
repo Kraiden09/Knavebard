@@ -27,11 +27,11 @@ public class Collision : MonoBehaviour {
         while ((GameObject.Find("Bar") == null)) {
             yield return new WaitForSeconds(0.1f);
         }
-        bar = GameObject.Find("wand1");
+        bar = GameObject.Find("Bar");
         while ((GameObject.Find("wand1") == null)) {
             yield return new WaitForSeconds(0.1f);
         }
-        wand1 = GameObject.Find("Bar");
+        wand1 = GameObject.Find("wand1");
         while ((GameObject.Find("wand2") == null)) {
             yield return new WaitForSeconds(0.1f);
         }
@@ -92,5 +92,7 @@ public class Collision : MonoBehaviour {
         bard.AddComponent<BoxCollider>();
     }
 
-
+    public void SetBardRB() {
+        bard.AddComponent<Rigidbody>();
+    }
 }
