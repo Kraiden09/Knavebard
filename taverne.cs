@@ -179,11 +179,15 @@ public class taverne : MonoBehaviour {
 
         tisch.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 1.0f);
 
-        //Hocker werden an Tisch angesetzt...Austausch mit Stuehlen?
+        //Hocker werden an Tisch angesetzt
         hockermesh(xpos - 0.4f, ypos, zpos + 0.8f, hocker1);
+        hocker1.transform.Rotate(0, -180, 0);
         hockermesh(xpos + 0.4f, ypos, zpos + 0.8f, hocker2);
+        hocker2.transform.Rotate(0, -180, 0);
         hockermesh(xpos - 0.4f, ypos, zpos - 0.8f, hocker3);
+        hocker3.transform.Rotate(0, 180, 0);
         hockermesh(xpos + 0.4f, ypos, zpos - 0.8f, hocker4);
+        hocker4.transform.Rotate(0, 180, 0);
 
         hockerzahl = hockerzahl + 4;
         tischzahl = tischzahl + 1;
@@ -197,25 +201,6 @@ public class taverne : MonoBehaviour {
         tiVert = new List<Vector3>();
         tiTri = new List<int>();
 
-        /* tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos - 0.8f));
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos + 0.8f));
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
-
-         tiVert.Add(new Vector3(xpos - 0.4f, ypos, zpos + 0.8f));
-         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos + 0.8f));
-
-         tiVert.Add(new Vector3(xpos - 0.4f, ypos, zpos - 0.8f));
-         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos - 0.8f));
-
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos, zpos - 0.8f));
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
-
-         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos - 0.8f));
-         tiVert.Add(new Vector3(xpos - 0.4f, ypos + 0.6f, zpos + 0.8f));
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos - 0.8f));
-         tiVert.Add(new Vector3(xpos + 0.4f, ypos + 0.6f, zpos + 0.8f));
-         */
 
         tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
         tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
@@ -248,23 +233,7 @@ public class taverne : MonoBehaviour {
 
         tisch.GetComponent<MeshFilter>().mesh = timesh;
 
-        /* for (int i = 0; i < timesh.vertices.Length - 2; i++) {
-             if (i % 2 == 0) {
-                 tiTri.Add(i);
-                 tiTri.Add(i + 1);
-                 tiTri.Add(i + 2);
-             }
-
-             if (i % 2 == 1) {
-                 tiTri.Add(i + 1);
-                 tiTri.Add(i);
-                 tiTri.Add(i + 2);
-             }
-
-             if (i == timesh.vertices.Length - 7) {
-                 i = i + 2;
-             }
-         }*/
+       
         int durchlauf = 0;
 
         for (int i = 0; i < timesh.vertices.Length - 2; i++) {
@@ -298,9 +267,13 @@ public class taverne : MonoBehaviour {
 
         //Hocker werden an Tisch angesetzt...Austausch mit Stuehlen?
         hockermesh(xpos - 0.8f, ypos, zpos + 0.4f, hocker1);
+        hocker1.transform.Rotate(0, 90, 0);
         hockermesh(xpos + 0.8f, ypos, zpos + 0.4f, hocker2);
+        hocker2.transform.Rotate(0, -90, 0);
         hockermesh(xpos - 0.8f, ypos, zpos - 0.4f, hocker3);
+        hocker3.transform.Rotate(0, 90, 0);
         hockermesh(xpos + 0.8f, ypos, zpos - 0.4f, hocker4);
+        hocker4.transform.Rotate(0, -90, 0);
 
         hockerzahl = hockerzahl + 4;
         tischzahl = tischzahl + 1;
@@ -626,11 +599,17 @@ public class taverne : MonoBehaviour {
         createUVBar(bar);
 
         hockermesh(xpos + 2.6f, ypos, zpos + 0.5f, hocker1);
+        hocker1.transform.Rotate(0, -90, 0);
         hockermesh(xpos + 2.6f, ypos, zpos + 1.3f, hocker2);
+        hocker2.transform.Rotate(0, -90, 0);
         hockermesh(xpos + 2.6f, ypos, zpos + 2.1f, hocker3);
+        hocker3.transform.Rotate(0, -90, 0);
         hockermesh(xpos + 2.6f, ypos, zpos + 2.9f, hocker4);
+        hocker4.transform.Rotate(0, -90, 0);
         hockermesh(xpos + 2.6f, ypos, zpos + 3.7f, hocker5);
+        hocker5.transform.Rotate(0, -90, 0);
         hockermesh(xpos + 2.6f, ypos, zpos + 4.5f, hocker6);
+        hocker6.transform.Rotate(0, -90, 0);
 
         hockerzahl = hockerzahl + 6;
     }
@@ -640,52 +619,7 @@ public class taverne : MonoBehaviour {
         bar.transform.position = new Vector3(xpos, ypos, zpos);
         barVert = new List<Vector3>();
         barTri = new List<int>();
-        //xpos = 7; ypos = 0.1f, zpos = 0   -5
-        /*
-        barVert.Add(new Vector3(xpos, ypos, zpos));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
-        barVert.Add(new Vector3(xpos - 2, ypos, zpos));
-        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos));
-
-        barVert.Add(new Vector3(xpos - 2, ypos, zpos - 5));
-        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 5));
-
-        barVert.Add(new Vector3(xpos, ypos, zpos - 5));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 5));
-
-        barVert.Add(new Vector3(xpos, ypos, zpos - 4));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 4));
-
-        barVert.Add(new Vector3(xpos - 1, ypos, zpos - 4));
-        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 4));
-
-        barVert.Add(new Vector3(xpos - 1, ypos, zpos - 1));
-        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 1));
-
-        barVert.Add(new Vector3(xpos, ypos, zpos - 1));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 1));
-
-        barVert.Add(new Vector3(xpos, ypos, zpos));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
-
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
-
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 1));
-        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos));
-        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 1));
-
-        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 1));
-
-        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 1));
-        barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 5));
-        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 5));
-
-        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 5));
-
-        barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 4));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 5));
-        barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 4));
-        */
+        
 
         barVert.Add(new Vector3(0, 0, 0));
         barVert.Add(new Vector3(0, +0.5f, 0));
@@ -743,26 +677,6 @@ public class taverne : MonoBehaviour {
         barVert.Add(new Vector3(0, +0.5f, -4));
 
 
-
-        /*  barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos));
-          barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 4));
-          barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos));
-          barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 4));
-          barVert.Add(new Vector3(xpos , ypos + 0.5f, zpos - 4));
-          barVert.Add(new Vector3(xpos , ypos + 0.5f, zpos - 5));
-          barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 4));
-          barVert.Add(new Vector3(xpos - 2, ypos + 0.5f, zpos - 5));
-
-          barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 1));
-          barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos));
-          barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 1));
-          barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos));
-
-          barVert.Add(new Vector3(xpos - 1, ypos, zpos - 1));
-          barVert.Add(new Vector3(xpos - 1, ypos + 0.5f, zpos - 1));
-          barVert.Add(new Vector3(xpos, ypos, zpos - 1));
-          barVert.Add(new Vector3(xpos, ypos + 0.5f, zpos - 1));
-          */
         barmesh = new Mesh();
         barmesh.vertices = barVert.ToArray();
         bar.GetComponent<MeshFilter>().mesh = barmesh;
@@ -800,11 +714,17 @@ public class taverne : MonoBehaviour {
         createUVBar(bar);
 
         hockermesh(xpos - 2.6f, ypos, zpos - 4.5f, hocker1);
+        hocker1.transform.Rotate(0, 90, 0);
         hockermesh(xpos - 2.6f, ypos, zpos - 3.7f, hocker2);
+        hocker2.transform.Rotate(0, 90, 0);
         hockermesh(xpos - 2.6f, ypos, zpos - 2.9f, hocker3);
+        hocker3.transform.Rotate(0, 90, 0);
         hockermesh(xpos - 2.6f, ypos, zpos - 2.1f, hocker4);
+        hocker4.transform.Rotate(0, 90, 0);
         hockermesh(xpos - 2.6f, ypos, zpos - 1.3f, hocker5);
+        hocker5.transform.Rotate(0, 90, 0);
         hockermesh(xpos - 2.6f, ypos, zpos - 0.5f, hocker6);
+        hocker6.transform.Rotate(0, 90, 0);
 
         hockerzahl = hockerzahl + 6;
     }
@@ -999,7 +919,6 @@ public class taverne : MonoBehaviour {
 
             if (i >= vertices.Length - 12)
             {
-                Debug.Log("a");
                 uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
                 uvs[i + 1] = new Vector2(vertices[i + 1].x, vertices[i + 1].z);
                 uvs[i + 2] = new Vector2(vertices[i + 2].x, vertices[i + 2].z);
@@ -1009,60 +928,7 @@ public class taverne : MonoBehaviour {
         }
 
 
-        /* barVert.Add(new Vector3(0, 0, 0));
-        barVert.Add(new Vector3(0, +0.5f, 0));
-        barVert.Add(new Vector3(-2, 0, 0));
-        barVert.Add(new Vector3(-2, +0.5f, 0));
-
-        barVert.Add(new Vector3(-2, 0, 0));
-        barVert.Add(new Vector3(-2, +0.5f, 0));
-        barVert.Add(new Vector3(-2, 0, -5));
-        barVert.Add(new Vector3(-2, +0.5f, -5));
-
-        barVert.Add(new Vector3(-2, 0, -5));
-        barVert.Add(new Vector3(-2, +0.5f, -5));
-        barVert.Add(new Vector3(0, 0, -5));
-        barVert.Add(new Vector3(0, +0.5f, -5));
-
-        barVert.Add(new Vector3(0, 0, -5));
-        barVert.Add(new Vector3(0, +0.5f, -5));
-        barVert.Add(new Vector3(0, 0, -4));
-        barVert.Add(new Vector3(0, +0.5f, -4));
-
-        barVert.Add(new Vector3(0, 0, -4));
-        barVert.Add(new Vector3(0, +0.5f, -4));
-        barVert.Add(new Vector3(-1, 0, -4));
-        barVert.Add(new Vector3(-1, +0.5f, -4));
-
-        barVert.Add(new Vector3(-1, 0, -4));
-        barVert.Add(new Vector3(-1, +0.5f, -4));
-        barVert.Add(new Vector3(-1, 0, -1));
-        barVert.Add(new Vector3(-1, +0.5f, -1));
-
-        barVert.Add(new Vector3(-1, 0, -1));
-        barVert.Add(new Vector3(-1, +0.5f, -1));
-        barVert.Add(new Vector3(0, 0, -1));
-        barVert.Add(new Vector3(0, +0.5f, -1));
-
-        barVert.Add(new Vector3(0, 0, -1));
-        barVert.Add(new Vector3(0, +0.5f, -1));
-        barVert.Add(new Vector3(0, 0, 0));
-        barVert.Add(new Vector3(0, +0.5f, 0));
-
-        barVert.Add(new Vector3(0, +0.5f, 0));
-        barVert.Add(new Vector3(0, +0.5f, -1));
-        barVert.Add(new Vector3(-2, +0.5f, 0));
-        barVert.Add(new Vector3(-2, +0.5f, -1));
-
-        barVert.Add(new Vector3(-2, +0.5f, -1));
-        barVert.Add(new Vector3(-1, +0.5f, -1));
-        barVert.Add(new Vector3(-2, +0.5f, -5));
-        barVert.Add(new Vector3(-1, +0.5f, -5));
-
-        barVert.Add(new Vector3(-1, +0.5f, -5));
-        barVert.Add(new Vector3(-1, +0.5f, -4));
-        barVert.Add(new Vector3(0, +0.5f, -5));
-        barVert.Add(new Vector3(0, +0.5f, -4));*/
+        
 
         mesh.uv = uvs;
         mesh.RecalculateNormals();
@@ -1099,7 +965,6 @@ public class taverne : MonoBehaviour {
             }
 
             if (durchlauf % 5 == 0) {
-                Debug.Log("a"); 
                 uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
                 uvs[i + 1] = new Vector2(vertices[i + 1].x, vertices[i + 1].z);
                 uvs[i + 2] = new Vector2(vertices[i + 2].x, vertices[i + 2].z);
@@ -1107,27 +972,7 @@ public class taverne : MonoBehaviour {
                 durchlauf = 0;
             }
         }
-       /* uvs[0] = new Vector2(vertices[0].z, vertices[0].y);
-        uvs[1] = new Vector2(vertices[1].z, vertices[1].y);
-        uvs[2] = new Vector2(vertices[2].z, vertices[2].y);
-        uvs[3] = new Vector2(vertices[3].z, vertices[3].y);
-        uvs[4] = new Vector2(vertices[4].x, vertices[4].y);
-        uvs[5] = new Vector2(vertices[5].x, vertices[5].y);
-        uvs[6] = new Vector2(vertices[6].x, vertices[6].y);
-        uvs[7] = new Vector2(vertices[7].x, vertices[7].y);
-        uvs[8] = new Vector2(vertices[8].z, vertices[8].y);
-        uvs[9] = new Vector2(vertices[9].z, vertices[9].y);
-        uvs[10] = new Vector2(vertices[10].z, vertices[10].y);
-        uvs[11] = new Vector2(vertices[11].z, vertices[11].y);
-        uvs[12] = new Vector2(vertices[12].x, vertices[12].y);
-        uvs[13] = new Vector2(vertices[13].x, vertices[13].y);
-        uvs[14] = new Vector2(vertices[14].x, vertices[14].y);
-        uvs[15] = new Vector2(vertices[15].x, vertices[15].y);
-        uvs[16] = new Vector2(vertices[16].x, vertices[16].z);
-        uvs[17] = new Vector2(vertices[17].x, vertices[17].z);
-        uvs[18] = new Vector2(vertices[18].x, vertices[18].z);
-        uvs[19] = new Vector2(vertices[19].x, vertices[19].z);
-        */
+      
         mesh.uv = uvs;
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
@@ -1289,19 +1134,6 @@ public class taverne : MonoBehaviour {
 
         createUVHocker(buehne);
 
-        //Barbereichobjekte
-
-        //Farben der Objekte
-       /* buehne.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 1.0f);
-        bar.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 1.0f);
-        boden.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
-        decke.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
-        wand1.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
-        wand2.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
-        wand3.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
-        wand4.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
-        spawn.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
-        kamerabereich.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 0.0f);*/
 
         wand1.GetComponent<Renderer>().receiveShadows = true;
         wand2.GetComponent<Renderer>().receiveShadows = true;
@@ -1460,4 +1292,6 @@ public class taverne : MonoBehaviour {
             return new Vector3(bar.transform.position.x + 0.5f, bar.transform.position.y, bar.transform.position.z + 2.5f);
         }
     }
+
+
 }
