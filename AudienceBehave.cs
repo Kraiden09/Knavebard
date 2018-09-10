@@ -8,7 +8,7 @@ using UnityEngine;
 */
 public class AudienceBehave : MonoBehaviour {
     //arrays with all audience-members and hocker
-    GameObject[] crowd;
+    GameObject[] crowd, crowd0, crowd50, crowd75, crowd99;
     GameObject[] allHocker;
     GameObject spawn;
 
@@ -23,6 +23,7 @@ public class AudienceBehave : MonoBehaviour {
     int great, good, bad;
 
     float height;
+    bool notInThere;
 
     // Use this for initialization
     void Start() {
@@ -89,16 +90,33 @@ public class AudienceBehave : MonoBehaviour {
         /*
         StartCoroutine(Jump(crowd[4]));
         */
-        
+
 
         //INSERT SEVERAL IF-CASES LATER ON!!!!!!!!!!!
-        if(jam == 0) //highest mark
+        if (jam > 40) //highest mark => everybody parties
         {
             StartCoroutine(Jump(crowd));
         }
-        //...
-        //...
-        //...
+
+        if (jam > 30) 
+        {
+            //everyone except bartender
+            StartCoroutine(Jump(crowd99));
+        }
+        else if (jam > 20){
+            //75%
+            StartCoroutine(Jump(crowd75));
+        }
+        else if (jam > 10)
+        {
+            //50%
+            StartCoroutine(Jump(crowd50));
+        }
+        else if (jam > 0)
+        {
+            //1 or 2
+            StartCoroutine(Jump(crowd0));
+        }
         //lowest mark => nothing happens
 
     }
@@ -145,8 +163,54 @@ public class AudienceBehave : MonoBehaviour {
             crowd[3].transform.Rotate(new Vector3(0, 180, 0));
         }
 
+        //unnecesserily complicated crowd percentages:
+        crowd0 = new GameObject[] {crowd[1],crowd[UnityEngine.Random.Range(3,crowd.Length)] };
 
+        //make safe there is no object twice
+        do {
 
+            crowd50 = new GameObject[] { crowd0[0], crowd0[1], crowd[UnityEngine.Random.Range(3, crowd.Length)], crowd[UnityEngine.Random.Range(3, crowd.Length)] };
+
+        } while (crowd50[1] == crowd50[2] || crowd50[1] == crowd50[3] || crowd50[2] == crowd50[3]);
+
+        // PROBABLY AN ERROR SOMEWHERE HERE
+        crowd75 = new GameObject[crowd50.Length + 2];
+        for (int j = 0; j < crowd50.Length + 2; j++)
+        {
+            //stuff from crowd50
+            if (j < crowd50.Length)
+            {
+                crowd75[j] = crowd50[j];
+            }
+            else
+            {
+                //check if crowd75[j] = crowd[]
+                for(int k = 1; k < crowd.Length; k++)
+                {
+                    notInThere = true;
+
+                    for(int l = 0; l < crowd75.Length; l++)
+                    {
+                        if (crowd75[l] == crowd[k])
+                        {
+                            notInThere = false;
+                        }
+                    }
+
+                    // if object wasnt already in crowd75
+                    if (notInThere)
+                    {
+                        crowd75[j] = crowd[k];
+                    }
+                }
+            }
+        }
+
+        crowd99 = new GameObject[crowd.Length - 1];
+        for (int anotherInt = 1; anotherInt < crowd.Length; anotherInt++)
+        {
+            crowd99[anotherInt - 1] = crowd[anotherInt];
+        }
     }
 
     /*
