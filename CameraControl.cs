@@ -67,7 +67,7 @@ public class CameraControl : MonoBehaviour {
     GameObject rightrear;
 
 
-
+    //NORMAL CAMERA POSITION IN UNITY: 0, 2.8f, -7
     // Use this for initialization
     void Start() {
         //Blackscreen on startup
@@ -81,7 +81,7 @@ public class CameraControl : MonoBehaviour {
         //indirekte Grenzen durch urspruengliche Kameraposition
         borderx = transform.position.x;
         bordery = transform.position.y;
-        borderz = transform.position.z;
+        borderz = transform.position.z + 4;
         camSpeed = 1.5f;
         current = 0;
         prev = false;
@@ -204,7 +204,8 @@ public class CameraControl : MonoBehaviour {
                 }
             }
 
-            //Zoom + Zoom out
+            //Zoom + Zoom out       OR MAYBE NOT BECAUSE OF UNFORSEEN STUFF
+            /*
             if (Input.GetKey(KeyCode.PageUp)) {
                 if (transform.position.z - borderz < 5) {
                     transform.Translate(new Vector3(0, 0, camSpeed * Time.deltaTime));
@@ -216,7 +217,7 @@ public class CameraControl : MonoBehaviour {
                     transform.Translate(new Vector3(0, 0, -camSpeed * Time.deltaTime));
                 }
             }
-
+            */
 
             //manual change of Camera-Position
             if (Input.GetKeyDown("q")) {
@@ -404,7 +405,7 @@ public class CameraControl : MonoBehaviour {
     IEnumerator WaitForIt()
     {
         Candle.enabled = false;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.5f);
         Candle.enabled = true;
         GetComponent<Camera>().cullingMask = mask;
     }
