@@ -1,4 +1,21 @@
-﻿using System;
+﻿/* Textures and materials used in this project are either self-made or downloaded from www.textures.com 
+ with permission to use in projects according to https://www.textures.com/faq.html */
+/* Used Textures:
+ * https://www.textures.com/download/3dscans0133/132389
+ * https://www.textures.com/download/3dscans0109/128778
+ * https://www.textures.com/download/3dscans0109/128778
+ * https://www.textures.com/download/pbr0166/133201
+ * https://www.textures.com/download/woodplanksbare0460/118543
+ * https://www.textures.com/download/pbr0036/133072
+ * https://www.textures.com/download/3dscans0007/125560
+ * https://www.textures.com/download/coins0016/18659
+ * https://www.textures.com/download/stripes0032/9825
+ * https://www.textures.com/download/brickoldrounded0310/123888
+ * https://www.textures.com/download/woodplanksbeamed0014/35277
+ * https://www.textures.com/download/pbr0139/133174
+ * */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +26,7 @@ public class NoteBoard : MonoBehaviour {
     private Mesh screenMesh;
     // Flag for Score Coroutine, FPS Cap and to initialize note boundaries
     private bool scoreCRrunning, fpsToLow, initNoteBound, finished;
-    private float noteWidth, noteHeight, noteDepth;
+    private float noteWidth, noteHeight, noteDepth, fadeTimeMusic;
     private int fpsCap;
     private GameObject[] despawningNotes;
     private readonly int noteArrSize = 10;
@@ -43,7 +60,7 @@ public class NoteBoard : MonoBehaviour {
     // Time for the note to fade
     float fadeTime;
 
-    // Time for a step of the fade
+    // Time for a fading step
     float fadeInterval;
 
     // Time the note stays at Alpha 0f
@@ -90,6 +107,7 @@ public class NoteBoard : MonoBehaviour {
         curNotePos = 0;
         curNoteEndPos = 0;
         fpsCap = 60;
+        fadeTimeMusic = 3;
 
         // Correct fading
         fadeTime = fadeBaseTime * moveAlongScreenBase / moveAlongScreen; 
@@ -105,7 +123,7 @@ public class NoteBoard : MonoBehaviour {
     void Update() {
         if(ShowFPS() < 50 && !fpsToLow) {
             fpsToLow = true;
-            Debug.Log("FPS to low!");
+            Debug.Log("low FPS!");
         }
     }
 
@@ -119,7 +137,7 @@ public class NoteBoard : MonoBehaviour {
         float stageLenZ = stageRefMesh.bounds.size.z * stageRefTrans.localScale.z;
         Debug.Log(stageLenX + " " + stageLenY + " " + stageLenZ + " ");*/
 
-        BuildPosts(stageRefMesh, stageRefTrans);
+BuildPosts(stageRefMesh, stageRefTrans);
         BuildScreen();
     }
 
@@ -152,7 +170,7 @@ public class NoteBoard : MonoBehaviour {
 
         post1.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust left post position
-        float stageZPos = stageRef.transform.position.z + ((stageRefMesh.vertices[5].z - stageRefMesh.vertices[3].z) / 2);
+        float stageZPos = stageRef.transform.position.z + ((stageRefMesh.vertices[3].z - stageRefMesh.vertices[1].z) / 2);
         post1.transform.position = new Vector3(post1Pos.x + (post1Mesh.bounds.size.x * post1Trans.localScale.x) / 2, post1Pos.y + (post1Mesh.bounds.size.y * post1Trans.localScale.y) / 2, stageZPos - 0.03f);
         post2.transform.localScale = new Vector3(0.5f, 1.2f, 0.5f);
         // Adjust right post position
@@ -319,7 +337,7 @@ public class NoteBoard : MonoBehaviour {
         lastScoreCR = StartCoroutine(ShowScore(0));
     }
 
-    // Checks if Coroutine of ShowScore already running - if it does, kill it
+    // Checks if Coroutine of ShowScore already running - if it is, kill it
     private void ScoreCRrunningCheck() {
         if (scoreCRrunning) {
             StopCoroutine(lastScoreCR);
@@ -404,11 +422,53 @@ public class NoteBoard : MonoBehaviour {
     public void StartNoteGeneration() {
         StartCoroutine(GenerateNotes());
         StartCoroutine(MoveNotes());
-        music.Play();
+        playMusic();
     }
 
     public void SetFinished(bool fin) {
         finished = fin;
+    }
+
+    void playMusic() {
+        music.volume = 0;
+        music.Play();
+        StartCoroutine(FadeInMusic());
+    }
+
+    GameObject guitar;
+
+    public void ShowGuitar(Vector3 bardPos) {
+        // 3D Model by Poedji Prasatya https://free3d.com/3d-model/acoustic-guitar-85235.html
+        guitar = (GameObject)Instantiate(Resources.Load("Prefab/Guitar"));
+        guitar.transform.position = bardPos;
+        guitar.transform.Translate(new Vector3(0.2f, 0, -0.45f));
+        guitar.transform.Rotate(new Vector3(55.089f, 92.465f, -88.12601f));
+        guitar.transform.localScale = new Vector3(5, 5, 5);
+
+        StartCoroutine(MoveHands());
+    }
+
+    IEnumerator MoveHands() {
+        GameObject leftHand = GameObject.Find("LeftHandBard");
+        GameObject rightHand = GameObject.Find("RightHandBard");
+        yield return new WaitForSeconds((fadeTimeMusic / 3) * 2);
+    }
+
+    IEnumerator FadeInMusic() {
+        while (music.volume < 1) {
+            music.volume += Time.deltaTime / fadeTimeMusic;
+            yield return null;
+        }
+    }
+
+    IEnumerator FadeOutMusic() {
+        while (music.volume > 0) {
+            music.volume -= Time.deltaTime / fadeTimeMusic;
+            yield return null;
+        }
+        control.ModeChange();
+        finished = false;
+        music.Stop();
     }
 
     IEnumerator DropNote(int myPos) {
@@ -675,10 +735,8 @@ public class NoteBoard : MonoBehaviour {
             }
             yield return new WaitForSeconds(refresh);
             if (finished && notes.Count == 0) {
-                control.ModeChange();
-                finished = false;
+                StartCoroutine(FadeOutMusic());
                 notes.Clear();
-                music.Stop();
                 break;
             }
         }

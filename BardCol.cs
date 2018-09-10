@@ -6,6 +6,7 @@ using UnityEngine;
 public class BardCol : MonoBehaviour {
     GameObject bard;
     taverne tavern;
+    NoteBoard board;
     float movement, rotation;
     Control control;
     int mode;
@@ -14,6 +15,7 @@ public class BardCol : MonoBehaviour {
     void Start() {
         control = GameObject.Find("Control").GetComponent<Control>();
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
+        board = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
         StartCoroutine(WaitForTavern());
         mode = control.GetMode();
         StartCoroutine(WaitForInit());
@@ -35,6 +37,9 @@ public class BardCol : MonoBehaviour {
 
     private void OnCollisionEnter(UnityEngine.Collision col) {
         // Stairs
+        if (col.gameObject.name == "Hand") {
+            Physics.IgnoreCollision(bard.GetComponent<Collider>(), col.collider);
+        }
         if (init) {
             try {
                 if (col.gameObject.name == "Quad") {
@@ -67,8 +72,8 @@ public class BardCol : MonoBehaviour {
             Vector3[] stairVerts = stairMesh.vertices;
             Vector3 firstStep = stairs.transform.position;
             //firstStep -= new Vector3(-0.06f, 0, (stairVerts[21].z - stairVerts[15].z) / 2);
-            firstStep += stairVerts[21];
-            firstStep -= new Vector3(0, 0, (stairVerts[21].z - stairVerts[15].z) / 2);
+            firstStep += stairVerts[29];
+            firstStep -= new Vector3(0, 0, (stairVerts[29].z - stairVerts[31].z) / 2);
             /*GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             temp.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             temp.transform.position = firstStep;
@@ -85,6 +90,9 @@ public class BardCol : MonoBehaviour {
     }
 
     IEnumerator Rotate(Vector3 point, bool firstRotation, bool stop) {
+        /*GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        temp.transform.position = point;
+        temp.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);*/
         if (!rotating) {
             rotating = true;
             point.y = bard.transform.position.y;
@@ -115,6 +123,7 @@ public class BardCol : MonoBehaviour {
                 rotating = false;
                 climbing = false;
                 control.ModeChange();
+                board.ShowGuitar(bard.transform.position);
             }
         }
     }
@@ -123,6 +132,7 @@ public class BardCol : MonoBehaviour {
     Vector3 stageMid;
 
     IEnumerator MoveOnStage(Vector3 point, bool firstJump) {
+        int distanceCounter = 0;
         rotating = false;
         if (climbing) control.JumpExt();
         rb.isKinematic = false;
@@ -137,7 +147,8 @@ public class BardCol : MonoBehaviour {
             bardPos = new Vector3(bard.transform.position.x, startYBardPos, bard.transform.position.z);
             yield return new WaitForSeconds(0.01f);
             if (prevDis < distance) {
-                break;
+                distanceCounter++;
+                if (distanceCounter >= 2) break;
             }
         }
 

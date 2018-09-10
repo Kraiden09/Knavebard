@@ -143,6 +143,7 @@ public class Control : MonoBehaviour {
             noteBoard.StartNoteGeneration();
         } else { 
             Debug.Log("Changed to Exploration Mode");
+            SetColProt(false);
             mode = 0;
         }
         UpdateMode();
@@ -199,7 +200,8 @@ public class Control : MonoBehaviour {
         // Set LookAt Point
         character.transform.LookAt(new Vector3(0, 0, 0));
         character.transform.Rotate(0, -90, 0);
-        col.SetBardRB();
+        initDone.UpdateJoint();
+        if (character.GetComponent<Rigidbody>() == null) col.SetBardRB();
         colHandler.SetBardRB();
         StartCoroutine(WaitForRB());
     }
