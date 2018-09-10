@@ -181,9 +181,9 @@ public class taverne : MonoBehaviour {
 
         //Hocker werden an Tisch angesetzt
         hockermesh(xpos - 0.4f, ypos, zpos + 0.8f, hocker1);
-        hocker1.transform.Rotate(0, -180, 0);
+        hocker1.transform.Rotate(0, 0, 0);
         hockermesh(xpos + 0.4f, ypos, zpos + 0.8f, hocker2);
-        hocker2.transform.Rotate(0, -180, 0);
+        hocker2.transform.Rotate(0, 0, 0);
         hockermesh(xpos - 0.4f, ypos, zpos - 0.8f, hocker3);
         hocker3.transform.Rotate(0, 180, 0);
         hockermesh(xpos + 0.4f, ypos, zpos - 0.8f, hocker4);
