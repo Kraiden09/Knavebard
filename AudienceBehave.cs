@@ -13,7 +13,7 @@ public class AudienceBehave : MonoBehaviour {
     GameObject spawn;
 
     //is there happy audience?
-    bool  happy;
+    bool  happy, happy0, happy50, happy75, happy99, happy100;
 
     //is everything set?
     bool tavernReady;
@@ -107,30 +107,50 @@ public class AudienceBehave : MonoBehaviour {
         if (jam > 40) //highest mark => everybody parties
         {
             //StartCoroutine(Jump(crowd));
-            
-            guys = crowd;
-            
+
+            //guys = crowd;
+            happy0 = false;
+            happy50 = false;
+            happy75 = false;
+            happy99 = false;
+            happy100 = true;
+
         }
 
         if (jam > 30) 
         {
             //everyone except bartender
             //StartCoroutine(Jump(crowd99));
-            
-            guys = crowd99;
+
+            //guys = crowd99;
+            happy0 = false;
+            happy50 = false;
+            happy75 = false;
+            happy99 = true;
+            happy100 = false;
         }
         else if (jam > 20){
             //75%
             //StartCoroutine(Jump(crowd75));
-            
-            guys = crowd75;
+
+            //guys = crowd75;
+            happy0 = false;
+            happy50 = false;
+            happy75 = true;
+            happy99 = false;
+            happy100 = false;
         }
         else if (jam > 10)
         {
             //50%
             //StartCoroutine(Jump(crowd50));
-            
-            guys = crowd50;
+
+            //guys = crowd50;
+            happy0 = false;
+            happy50 = true;
+            happy75 = false;
+            happy99 = false;
+            happy100 = false;
         }
         else if (jam > 0)
         {
@@ -139,11 +159,19 @@ public class AudienceBehave : MonoBehaviour {
             
             guys = crowd0;
             happy = true;
+            happy0 = false;
+            happy50 = false;
+            happy75 = false;
+            happy100 = false;
         }
         
         else
         {
             happy = false;
+            happy0 = false;
+            happy50 = false;
+            happy75 = false;
+            happy100 = false;
         }
         //lowest mark => nothing happens
         
@@ -382,39 +410,85 @@ public class AudienceBehave : MonoBehaviour {
         
         while (true)
         {
-            //doing an if here produces bugs
-            while (!happy)
+            
+            if (jam > 40) //highest mark => everybody parties
             {
-                yield return new WaitForSeconds(0.98f);
+                //StartCoroutine(Jump(crowd));
+
+                guys = crowd;
+                happy = true;
+
             }
 
-
-            //forced jumps, so they dont get stuck in the chair
-            for (int i = 0; i < guys.Length; i++)
+            if (jam > 30)
             {
-                guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
+                //everyone except bartender
+                //StartCoroutine(Jump(crowd99));
+
+                guys = crowd99;
+                happy = true;
+            }
+            else if (jam > 20)
+            {
+                //75%
+                //StartCoroutine(Jump(crowd75));
+
+                guys = crowd75;
+                happy = true;
+            }
+            else if (jam > 10)
+            {
+                //50%
+                //StartCoroutine(Jump(crowd50));
+
+                guys = crowd50;
+                happy = true;
+            }
+            else if (jam > 0)
+            {
+                //1 or 2
+                //StartCoroutine(Jump(crowd0));
+
+                guys = crowd0;
+                happy = true;
+                
             }
 
-            yield return new WaitForEndOfFrame();
-            for (int i = 0; i < guys.Length; i++)
+            else
             {
-                guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
+                happy = false;
+                
             }
-            yield return new WaitForEndOfFrame();
 
-            while (guys[1].transform.position.y > height)
+            if (happy)
             {
+
+                //forced jumps, so they dont get stuck in the chair
                 for (int i = 0; i < guys.Length; i++)
                 {
                     guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
                 }
 
-                //loop
                 yield return new WaitForEndOfFrame();
-                acceleration = acceleration + 0.12f;
+                for (int i = 0; i < guys.Length; i++)
+                {
+                    guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
+                }
+                yield return new WaitForEndOfFrame();
+
+                while (guys[1].transform.position.y > height)
+                {
+                    for (int i = 0; i < guys.Length; i++)
+                    {
+                        guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
+                    }
+
+                    //loop
+                    yield return new WaitForEndOfFrame();
+                    acceleration = acceleration + 0.12f;
+                }
+                acceleration = 0;
             }
-            acceleration = 0;
-            
             yield return new WaitForSeconds(0.49f);
         }
 
