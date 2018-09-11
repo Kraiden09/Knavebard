@@ -8,9 +8,15 @@ using UnityEngine;
 */
 public class AudienceBehave : MonoBehaviour {
     //arrays with all audience-members and hocker
-    GameObject[] crowd, crowd0, crowd50, crowd75, crowd99;
+    GameObject[] crowd, crowd0, crowd50, crowd75, crowd99, guys, empty;
     GameObject[] allHocker;
     GameObject spawn;
+
+    //is there happy audience?
+    bool  happy;
+
+    //is everything set?
+    bool tavernReady;
 
     //getting the grades
     NoteBoard NoteBoard;
@@ -29,6 +35,9 @@ public class AudienceBehave : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+        GameObject mpty = new GameObject();
+        empty = new GameObject[] {mpty };
+        tavernReady = false;
         //creating Audience
         StartCoroutine(WaitForTavern());
 
@@ -41,6 +50,7 @@ public class AudienceBehave : MonoBehaviour {
         //measure jam after each beat
         StartCoroutine(WaitForNoteBoard());
         StartCoroutine(WaitBeat());
+
 
     }
 
@@ -85,8 +95,7 @@ public class AudienceBehave : MonoBehaviour {
         yield return new WaitForSeconds(0.49180327868f * 2);
         //new Jam
         MeasureJam();
-        //infinite measuremeant
-        StartCoroutine(WaitBeat());
+        
 
         //TESTING
         /*
@@ -97,29 +106,56 @@ public class AudienceBehave : MonoBehaviour {
         //INSERT SEVERAL IF-CASES LATER ON!!!!!!!!!!!
         if (jam > 40) //highest mark => everybody parties
         {
-            StartCoroutine(Jump(crowd));
+            //StartCoroutine(Jump(crowd));
+            
+            guys = crowd;
+            
         }
 
         if (jam > 30) 
         {
             //everyone except bartender
-            StartCoroutine(Jump(crowd99));
+            //StartCoroutine(Jump(crowd99));
+            
+            guys = crowd99;
         }
         else if (jam > 20){
             //75%
-            StartCoroutine(Jump(crowd75));
+            //StartCoroutine(Jump(crowd75));
+            
+            guys = crowd75;
         }
         else if (jam > 10)
         {
             //50%
-            StartCoroutine(Jump(crowd50));
+            //StartCoroutine(Jump(crowd50));
+            
+            guys = crowd50;
         }
         else if (jam > 0)
         {
             //1 or 2
-            StartCoroutine(Jump(crowd0));
+            //StartCoroutine(Jump(crowd0));
+            
+            guys = crowd0;
+            happy = true;
+        }
+        
+        else
+        {
+            happy = false;
         }
         //lowest mark => nothing happens
+        
+
+        if (tavernReady)
+        {
+            StartCoroutine(Jump());
+            tavernReady = false;
+        }
+
+        //infinite measuremeant
+        StartCoroutine(WaitBeat());
 
     }
 
@@ -133,7 +169,7 @@ public class AudienceBehave : MonoBehaviour {
         yield return new WaitForSeconds(0.49180327868f);
         Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
         allHocker = Taverne.getHocker();
-        crowd = new GameObject[(Taverne.getHocker().Length / 2) + 1 /*+1 for Bartender*/];
+        crowd = new GameObject[(Taverne.getHocker().Length / 2) /*+1 for Bartender*/];
         spawn = Taverne.getSpawn();
 
 
@@ -180,7 +216,7 @@ public class AudienceBehave : MonoBehaviour {
 
             else
             {
-                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.6f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.62f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
                 crowd[i].name = "Audience" + i;
 
                 /*
@@ -281,6 +317,7 @@ public class AudienceBehave : MonoBehaviour {
         {
             crowd99[anotherInt - 1] = crowd[anotherInt];
         }
+        tavernReady = true;
     }
 
     /*
@@ -310,10 +347,11 @@ public class AudienceBehave : MonoBehaviour {
         transform.Rotate(Vector3.forward * Time.deltaTime);
     }
 
+    /*
     //little jumps of excitement; probably not needed anymore
     IEnumerator Jump(GameObject guy) {
         float acceleration = 0;
-
+        
 
         //forced jumps, so they dont get stuck in the chair
         guy.transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
@@ -334,40 +372,53 @@ public class AudienceBehave : MonoBehaviour {
         //end
         yield return 0;
     }
+    */
+
 
     //jumping for parts of the crowd
-    IEnumerator Jump(GameObject[] guys)
+    IEnumerator Jump(/*GameObject[] guys*/)
     {
         float acceleration = 0;
-
-
-        //forced jumps, so they dont get stuck in the chair
-        for (int i = 0; i < guys.Length; i++)
+        
+        while (true)
         {
-            guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
-        }
-
-        yield return new WaitForEndOfFrame();
-        for (int i = 0; i < guys.Length; i++)
-        {
-            guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
-        }
-        yield return new WaitForEndOfFrame();
+            //doing an if here produces bugs
+            while (!happy)
+            {
+                yield return new WaitForSeconds(0.98f);
+            }
 
 
-        while (guys[1].transform.position.y > height)
-        {
+            //forced jumps, so they dont get stuck in the chair
             for (int i = 0; i < guys.Length; i++)
             {
                 guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
             }
-            
-            //loop
+
             yield return new WaitForEndOfFrame();
-            acceleration += 0.1f;
+            for (int i = 0; i < guys.Length; i++)
+            {
+                guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
+            }
+            yield return new WaitForEndOfFrame();
+
+            while (guys[1].transform.position.y > height)
+            {
+                for (int i = 0; i < guys.Length; i++)
+                {
+                    guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
+                }
+
+                //loop
+                yield return new WaitForEndOfFrame();
+                acceleration = acceleration + 0.12f;
+            }
+            acceleration = 0;
+            
+            yield return new WaitForSeconds(0.49f);
         }
 
         //end
-        yield return 0;
+        //yield return 0;
     }
 }
