@@ -422,20 +422,21 @@ BuildPosts(stageRefMesh, stageRefTrans);
     public void StartNoteGeneration() {
         StartCoroutine(GenerateNotes());
         StartCoroutine(MoveNotes());
-        playMusic();
+        PlayMusic();
     }
 
     public void SetFinished(bool fin) {
         finished = fin;
     }
 
-    void playMusic() {
+    void PlayMusic() {
         music.volume = 0;
         music.Play();
         StartCoroutine(FadeInMusic());
     }
 
     GameObject guitar;
+    Material[] guitarMaterials;
 
     public void ShowGuitar(Vector3 bardPos) {
         // 3D Model by Poedji Prasatya https://free3d.com/3d-model/acoustic-guitar-85235.html
@@ -445,13 +446,81 @@ BuildPosts(stageRefMesh, stageRefTrans);
         guitar.transform.Rotate(new Vector3(55.089f, 92.465f, -88.12601f));
         guitar.transform.localScale = new Vector3(5, 5, 5);
 
-        StartCoroutine(MoveHands());
+        StartCoroutine(FadeInObject(guitar, fadeTimeMusic, 0));
+
+        control.MoveHands(fadeTimeMusic);
     }
 
-    IEnumerator MoveHands() {
-        GameObject leftHand = GameObject.Find("LeftHandBard");
-        GameObject rightHand = GameObject.Find("RightHandBard");
-        yield return new WaitForSeconds((fadeTimeMusic / 3) * 2);
+    IEnumerator FadeInObject(GameObject obj, float time, float delay) {
+        float increaseVal = 1 / (time * fpsCap);
+        float increaseInterval = time * increaseVal;
+        Renderer[] rendererObjects = obj.GetComponentsInChildren<Renderer>();
+        List<Material> matList = new List<Material>();
+        Color col;
+        float currentAlpha = 0f;
+        // Set Alpha of note after init to 0f
+        foreach (Renderer item in rendererObjects) {
+            matList.AddRange(item.materials);
+            for (int i = 0; i < matList.Count; i++) {
+                matList[i].SetFloat("_Mode", 2);
+                matList[i].SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                matList[i].SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                //matList[i].SetInt("_ZWrite", 0);
+                matList[i].DisableKeyword("_ALPHATEST_ON");
+                matList[i].EnableKeyword("_ALPHABLEND_ON");
+                matList[i].DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                matList[i].renderQueue = 3000;
+                col = matList[i].color;
+                col.a = 0f;
+                matList[i].SetColor("_Color", col);
+            }
+        }
+        guitarMaterials = matList.ToArray();
+        while (currentAlpha < 1f) {
+            if (delay > 0f) {
+                yield return new WaitForSeconds(increaseInterval);
+                delay -= increaseInterval;
+                continue;
+            }
+            // Not Alpha > 1f
+            if (currentAlpha + increaseInterval > 1f) {
+                increaseVal = 1f - currentAlpha;
+            }
+            for (int i = 0; i < guitarMaterials.Length; i++) {
+                col = guitarMaterials[i].color;
+                col.a += increaseVal;
+                guitarMaterials[i].SetColor("_Color", col);
+            }
+            currentAlpha += increaseVal;
+            yield return new WaitForSeconds(increaseInterval);
+        }
+    }
+
+    IEnumerator FadeOutObject(GameObject obj, float time, float delay) {
+        float decreaseVal = 1 / (time * fpsCap);
+        float decreaseInterval = time * decreaseVal;
+        Color col;
+        float currentAlpha = 1f;
+        // Set Alpha of note after init to 0f
+        while (currentAlpha > 0f) {
+            if (delay > 0f) {
+                yield return new WaitForSeconds(decreaseInterval);
+                delay -= decreaseInterval;
+                continue;
+            }
+            // No negative alpha
+            if (currentAlpha - decreaseVal < 0f) {
+                decreaseVal = currentAlpha;
+            }
+            for (int i = 0; i < guitarMaterials.Length; i++) {
+                col = guitarMaterials[i].color;
+                col.a -= decreaseVal;
+                guitarMaterials[i].SetColor("_Color", col);
+            }
+            currentAlpha -= decreaseVal;
+            yield return new WaitForSeconds(decreaseInterval);
+        }
+        Destroy(obj);
     }
 
     IEnumerator FadeInMusic() {
@@ -462,6 +531,8 @@ BuildPosts(stageRefMesh, stageRefTrans);
     }
 
     IEnumerator FadeOutMusic() {
+        StartCoroutine(FadeOutObject(guitar, fadeTimeMusic / 2, 0));
+        control.MoveHandsBack(fadeTimeMusic / 2);
         while (music.volume > 0) {
             music.volume -= Time.deltaTime / fadeTimeMusic;
             yield return null;

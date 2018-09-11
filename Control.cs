@@ -17,6 +17,10 @@ public class Control : MonoBehaviour {
     // Collision Protection stage
     bool colProt = false;
 
+    GameObject leftHand, rightHand;
+    Vector3 handRestingPos;
+    bool usingGuitar, handsInit, allowPlaying;
+
     float movement, rotation;
 
     public Coroutine jumping;
@@ -32,6 +36,9 @@ public class Control : MonoBehaviour {
         initDone = GameObject.FindObjectOfType(typeof(Init)) as Init;
         mode = 0;
         jumping = null;
+        usingGuitar = false;
+        handsInit = false;
+        allowPlaying = false;
         movement = 0.05f;
         rotation = 2.5f;
         // Wait for character to be initialized
@@ -74,15 +81,19 @@ public class Control : MonoBehaviour {
                 // Bard Mode
             } else if (mode == 1) {
                 if (Input.GetKeyDown(KeyCode.UpArrow)) {
+                    StartCoroutine(PlayGuitar());
                     CheckNote("NoteUp");
                 }
                 if (Input.GetKeyDown(KeyCode.DownArrow)) {
+                    StartCoroutine(PlayGuitar());
                     CheckNote("NoteDown");
                 }
                 if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+                    StartCoroutine(PlayGuitar());
                     CheckNote("NoteLeft");
                 }
                 if (Input.GetKeyDown(KeyCode.RightArrow)) {
+                    StartCoroutine(PlayGuitar());
                     CheckNote("NoteRight");
                 }
             } 
@@ -175,6 +186,83 @@ public class Control : MonoBehaviour {
 
     public void UpdateMode() {
         colHandler.SetMode(mode);
+    }
+
+    public void MoveHands(float fadeTimeMusic) {
+        StartCoroutine(MoveHandsCR(fadeTimeMusic));
+    }
+
+    public void MoveHandsBack(float fadeTimeMusic) {
+        StartCoroutine(MoveHandsBackCR(fadeTimeMusic));
+    }
+
+    IEnumerator PlayGuitar() {
+        if (allowPlaying) {
+            if (!usingGuitar) {
+                float speed = 3f;
+                float step = speed * Time.deltaTime;
+                float waitTime = 0.01f;
+                usingGuitar = true;
+                handRestingPos = rightHand.transform.position;
+                Vector3 endPos = handRestingPos + new Vector3(0.3674471f, -0.1562212f, -0.103152f);
+                while (rightHand.transform.position != endPos) {
+                    rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, endPos, step);
+                    yield return new WaitForSeconds(waitTime);
+                }
+                while (rightHand.transform.position != handRestingPos) {
+                    rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, handRestingPos, step);
+                    yield return new WaitForSeconds(waitTime);
+                }
+                usingGuitar = false;
+            }
+        }
+    }
+
+    Vector3 startLeftHand, startRightHand;
+    Rigidbody lhrb, rhrb;
+    float speed, step;
+
+    IEnumerator MoveHandsCR(float fadeTimeMusic) {
+        if (!handsInit) {
+            rightHand = GameObject.Find("RightHandBard");
+            leftHand = GameObject.Find("LeftHandBard");
+            handsInit = true;
+        }
+
+        yield return new WaitForSeconds(fadeTimeMusic);
+
+        lhrb = leftHand.GetComponent<Rigidbody>();
+        rhrb = rightHand.GetComponent<Rigidbody>();
+
+        lhrb.isKinematic = true;
+        rhrb.isKinematic = true;
+
+        startLeftHand = leftHand.transform.position;
+        startRightHand = rightHand.transform.position;
+
+        Vector3 endLeft = startLeftHand + new Vector3(-0.01484f, 0.302f, -0.453464f);
+        Vector3 endRight = startRightHand + new Vector3(0.4039322f, 0.2888983f, -0.547344f);
+
+        speed = 1f;
+        step = speed * Time.deltaTime;
+
+        while (leftHand.transform.position != endLeft && rightHand.transform.position != endRight) {
+            leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, endLeft, step);
+            rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, endRight, step);
+            yield return new WaitForSeconds(0.02f);
+        }
+        allowPlaying = true;
+    }
+
+    IEnumerator MoveHandsBackCR(float fadeTime) {
+        while (leftHand.transform.position != startLeftHand && rightHand.transform.position != startRightHand) {
+            leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, startLeftHand, step);
+            rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, startRightHand, step);
+            yield return new WaitForSeconds(0.02f);
+        }
+        lhrb.isKinematic = false;
+        rhrb.isKinematic = false;
+        allowPlaying = false;
     }
 
     // Wait for character to be initialized

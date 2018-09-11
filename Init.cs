@@ -47,8 +47,8 @@ public class Init : MonoBehaviour {
             hand.GetComponent<MeshRenderer>().material = (Material)Instantiate(Resources.Load("Materials/Body"));
             hands[i] = hand;
 
-            if (i == 0) hands[i].name = "LeftHandBard";
-            else hands[i].name = "RightHandBard";
+            if (i == 0) hands[i].name = "RightHandBard";
+            else hands[i].name = "LeftHandBard";
 
             hands[i].transform.localScale = new Vector3(handSize, handSize, handSize);
 
