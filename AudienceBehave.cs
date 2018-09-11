@@ -102,8 +102,7 @@ public class AudienceBehave : MonoBehaviour {
         StartCoroutine(Jump(crowd[4]));
         */
 
-
-        //INSERT SEVERAL IF-CASES LATER ON!!!!!!!!!!!
+        /*
         if (jam > 40) //highest mark => everybody parties
         {
             //StartCoroutine(Jump(crowd));
@@ -174,7 +173,7 @@ public class AudienceBehave : MonoBehaviour {
             happy100 = false;
         }
         //lowest mark => nothing happens
-        
+        */
 
         if (tavernReady)
         {
@@ -363,17 +362,6 @@ public class AudienceBehave : MonoBehaviour {
     */
 
     //METHODS FOR MOVING AUDIENCE (formerly in AudAI)
-
-    // moving by little hops (be as cute as possible)
-    public void HopTo(Vector3 destination) {
-        transform.Translate(destination);
-    }
-
-
-    //wiggle to the beat from side to side (while sitting)
-    public void Wiggle() {
-        transform.Rotate(Vector3.forward * Time.deltaTime);
-    }
 
     /*
     //little jumps of excitement; probably not needed anymore
