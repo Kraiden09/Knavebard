@@ -402,8 +402,7 @@ public class CameraControl : MonoBehaviour {
         there = false;
     }
 
-    IEnumerator WaitForIt()
-    {
+    IEnumerator WaitForIt() {
         Candle.enabled = false;
         yield return new WaitForSeconds(0.5f);
         Candle.enabled = true;

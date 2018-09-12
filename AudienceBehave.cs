@@ -6,14 +6,14 @@ using UnityEngine;
  * 
  * Manual: simply attach to an GameObject called "AudienceBehave"
 */
-public class AudienceBehave : MonoBehaviour {
+public class AudienceBehave : MonoBehaviour, IObserver {
     //arrays with all audience-members and hocker
     GameObject[] crowd, crowd0, crowd50, crowd75, crowd99, guys, empty;
     GameObject[] allHocker;
     GameObject spawn;
 
     //is there happy audience?
-    bool  happy, happy0, happy50, happy75, happy99, happy100;
+    bool happy, happy0, happy50, happy75, happy99, happy100;
 
     //is everything set?
     bool tavernReady;
@@ -33,13 +33,28 @@ public class AudienceBehave : MonoBehaviour {
     bool notInThere;
     int randSeed;
 
+    public void UpdateObserver(Subject subject) {
+        if (subject is NoteBoard) {
+            //measure jam after each beat
+            StartCoroutine(WaitBeat());
+        } else if (subject is taverne) {
+            WaitForTavern();
+        }
+    }
+
     // Use this for initialization
     void Start() {
+        NoteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
+        NoteBoard.Subscribe(this);
+
+        Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
+        Taverne.Subscribe(this);
+
         GameObject mpty = new GameObject();
-        empty = new GameObject[] {mpty };
+        empty = new GameObject[] { mpty };
         tavernReady = false;
         //creating Audience
-        StartCoroutine(WaitForTavern());
+        //StartCoroutine(WaitForTavern());
 
 
         //inital notes
@@ -48,8 +63,7 @@ public class AudienceBehave : MonoBehaviour {
         bad = 0;
 
         //measure jam after each beat
-        StartCoroutine(WaitForNoteBoard());
-        StartCoroutine(WaitBeat());
+        //StartCoroutine(WaitForNoteBoard());
 
 
     }
@@ -95,7 +109,7 @@ public class AudienceBehave : MonoBehaviour {
         yield return new WaitForSeconds(0.49180327868f * 2);
         //new Jam
         MeasureJam();
-        
+
 
         //TESTING
         /*
@@ -175,8 +189,7 @@ public class AudienceBehave : MonoBehaviour {
         //lowest mark => nothing happens
         */
 
-        if (tavernReady)
-        {
+        if (tavernReady) {
             StartCoroutine(Jump());
             tavernReady = false;
         }
@@ -186,17 +199,15 @@ public class AudienceBehave : MonoBehaviour {
 
     }
 
-    IEnumerator WaitForNoteBoard() {
+    /*IEnumerator WaitForNoteBoard() {
         yield return new WaitForSeconds(0.49180327868f);
         NoteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
-    }
+    }*/
 
     //waiting for Tavern and getting the crowdsize and hocker
-    IEnumerator WaitForTavern() {
-        yield return new WaitForSeconds(0.49180327868f);
-        Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
+    void WaitForTavern() {
         allHocker = Taverne.getHocker();
-        crowd = new GameObject[(Taverne.getHocker().Length / 2) /*+1 for Bartender*/];
+        crowd = new GameObject[(Taverne.getHocker().Length / 2)]; /*+1 for Bartender*/
         spawn = Taverne.getSpawn();
 
 
@@ -205,23 +216,158 @@ public class AudienceBehave : MonoBehaviour {
         crowd[0].transform.Translate(Vector3.up * 0.25f);
 
 
-        for (int i = 1; i < crowd.Length; i++)
-        {
+        for (int i = 1; i < crowd.Length; i++) {
 
             //random choosing of seats
             randSeed = UnityEngine.Random.Range(0, 100);
-            if (randSeed % 2 == 0)
-            {
+            if (randSeed % 2 == 0) {
                 crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 2].transform.position.x, 0.6f, allHocker[i * 2 - 2].transform.position.z), Quaternion.identity);
                 crowd[i].name = "Audience" + i;
 
-                if (i > 3)
-                {
+                if (i > 3) {
 
                     //Looking-Direction
                     look = (int)allHocker[i * 2 - 2].transform.eulerAngles.y;
-                    switch (look)
-                    {
+                    switch (look) {
+                        case 0:
+                            crowd[i].transform.Rotate(new Vector3(0, 90, 0));
+                            break;
+                        case 180:
+                            crowd[i].transform.Rotate(new Vector3(0, -90, 0));
+                            break;
+                        case 90:
+                            crowd[i].transform.Rotate(new Vector3(0, 0, 0));
+                            break;
+                        case 270:
+                            crowd[i].transform.Rotate(new Vector3(0, 180, 0));
+                            break;
+                        default:
+                            break;
+                    }
+                    print(look);
+                    print("rotated" + i + "gerade");
+                }
+            } else {
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.62f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
+                crowd[i].name = "Audience" + i;
+
+                /*
+                //Looking-Direction
+                crowd[i].transform.Rotate(new Vector3(0, allHocker[i * 2 - 1].transform.eulerAngles.y - 90, 0));
+                */
+
+                if (i > 3) {
+
+                    //Looking-Direction
+                    look = (int)allHocker[i * 2 - 1].transform.eulerAngles.y;
+
+
+                    switch (look) {
+                        case 0:
+                            crowd[i].transform.Rotate(new Vector3(0, 90, 0));
+                            break;
+                        case 180:
+                            crowd[i].transform.Rotate(new Vector3(0, -90, 0));
+                            break;
+                        case 90:
+                            crowd[i].transform.Rotate(new Vector3(0, 0, 0));
+                            break;
+                        case 270:
+                            crowd[i].transform.Rotate(new Vector3(0, +180, 0));
+                            break;
+                        default:
+                            break;
+                    }
+                    print(look);
+                    print("rotated" + i + "ungerade");
+                }
+            }
+
+        }
+
+
+        //variable for jumping
+        height = crowd[1].transform.position.y;
+
+
+        //rotation for Bartender and people at the bar
+        if (crowd[0].transform.position.x > 0) {
+            crowd[0].transform.Rotate(new Vector3(0, 180, 0));
+        } else {
+            crowd[1].transform.Rotate(new Vector3(0, 180, 0));
+            crowd[2].transform.Rotate(new Vector3(0, 180, 0));
+            crowd[3].transform.Rotate(new Vector3(0, 180, 0));
+        }
+
+
+        //unnecesserily complicated crowd percentages:
+        crowd0 = new GameObject[] { crowd[1], crowd[UnityEngine.Random.Range(3, crowd.Length)] };
+
+        //make safe there is no object twice
+        do {
+
+            crowd50 = new GameObject[] { crowd0[0], crowd0[1], crowd[UnityEngine.Random.Range(3, crowd.Length)], crowd[UnityEngine.Random.Range(3, crowd.Length)] };
+
+        } while (crowd50[1] == crowd50[2] || crowd50[1] == crowd50[3] || crowd50[2] == crowd50[3]);
+
+        // PROBABLY AN ERROR SOMEWHERE HERE
+        crowd75 = new GameObject[crowd50.Length + 2];
+        for (int j = 0; j < crowd50.Length + 2; j++) {
+            //stuff from crowd50
+            if (j < crowd50.Length) {
+                crowd75[j] = crowd50[j];
+            } else {
+                //check if crowd75[j] = crowd[]
+                for (int k = 1; k < crowd.Length; k++) {
+                    notInThere = true;
+
+                    for (int l = 0; l < crowd75.Length; l++) {
+                        if (crowd75[l] == crowd[k]) {
+                            notInThere = false;
+                        }
+                    }
+
+                    // if object wasnt already in crowd75
+                    if (notInThere) {
+                        crowd75[j] = crowd[k];
+                    }
+                }
+            }
+        }
+
+        crowd99 = new GameObject[crowd.Length - 1];
+        for (int anotherInt = 1; anotherInt < crowd.Length; anotherInt++) {
+            crowd99[anotherInt - 1] = crowd[anotherInt];
+        }
+        tavernReady = true;
+    }
+
+    /*IEnumerator WaitForTavern() {
+        yield return new WaitForSeconds(0.49180327868f);
+        Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
+        allHocker = Taverne.getHocker();
+        crowd = new GameObject[(Taverne.getHocker().Length / 2)]; /*+1 for Bartender*/
+        /*spawn = Taverne.getSpawn();
+
+
+        //Spawn all Peasants
+        crowd[0] = (GameObject)Instantiate(Resources.Load("Prefab/Bartender"), Taverne.getBarkeep(), Quaternion.identity);
+        crowd[0].transform.Translate(Vector3.up * 0.25f);
+
+
+        for (int i = 1; i < crowd.Length; i++) {
+
+            //random choosing of seats
+            randSeed = UnityEngine.Random.Range(0, 100);
+            if (randSeed % 2 == 0) {
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 2].transform.position.x, 0.6f, allHocker[i * 2 - 2].transform.position.z), Quaternion.identity);
+                crowd[i].name = "Audience" + i;
+
+                if (i > 3) {
+
+                    //Looking-Direction
+                    look = (int)allHocker[i * 2 - 2].transform.eulerAngles.y;
+                    switch (look) {
                         case 0:
                             crowd[i].transform.Rotate(new Vector3(0, 90, 0));
                             break;
@@ -239,10 +385,7 @@ public class AudienceBehave : MonoBehaviour {
                     }
 
                 }
-            }
-
-            else
-            {
+            } else {
                 crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.62f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
                 crowd[i].name = "Audience" + i;
 
@@ -251,15 +394,13 @@ public class AudienceBehave : MonoBehaviour {
                 crowd[i].transform.Rotate(new Vector3(0, allHocker[i * 2 - 1].transform.eulerAngles.y - 90, 0));
                 */
 
-                if (i > 3)
-                {
+                /*if (i > 3) {
 
                     //Looking-Direction
                     look = (int)allHocker[i * 2 - 1].transform.eulerAngles.y;
 
 
-                    switch (look)
-                    {
+                    switch (look) {
                         case 0:
                             crowd[i].transform.Rotate(new Vector3(0, 90, 0));
                             break;
@@ -285,7 +426,7 @@ public class AudienceBehave : MonoBehaviour {
         //variable for jumping
         height = crowd[1].transform.position.y;
 
-        
+
         //rotation for Bartender and people at the bar
         if (crowd[0].transform.position.x > 0) {
             crowd[0].transform.Rotate(new Vector3(0, 180, 0));
@@ -294,10 +435,10 @@ public class AudienceBehave : MonoBehaviour {
             crowd[2].transform.Rotate(new Vector3(0, 180, 0));
             crowd[3].transform.Rotate(new Vector3(0, 180, 0));
         }
-        
+
 
         //unnecesserily complicated crowd percentages:
-        crowd0 = new GameObject[] {crowd[1],crowd[UnityEngine.Random.Range(3,crowd.Length)] };
+        crowd0 = new GameObject[] { crowd[1], crowd[UnityEngine.Random.Range(3, crowd.Length)] };
 
         //make safe there is no object twice
         do {
@@ -308,31 +449,23 @@ public class AudienceBehave : MonoBehaviour {
 
         // PROBABLY AN ERROR SOMEWHERE HERE
         crowd75 = new GameObject[crowd50.Length + 2];
-        for (int j = 0; j < crowd50.Length + 2; j++)
-        {
+        for (int j = 0; j < crowd50.Length + 2; j++) {
             //stuff from crowd50
-            if (j < crowd50.Length)
-            {
+            if (j < crowd50.Length) {
                 crowd75[j] = crowd50[j];
-            }
-            else
-            {
+            } else {
                 //check if crowd75[j] = crowd[]
-                for(int k = 1; k < crowd.Length; k++)
-                {
+                for (int k = 1; k < crowd.Length; k++) {
                     notInThere = true;
 
-                    for(int l = 0; l < crowd75.Length; l++)
-                    {
-                        if (crowd75[l] == crowd[k])
-                        {
+                    for (int l = 0; l < crowd75.Length; l++) {
+                        if (crowd75[l] == crowd[k]) {
                             notInThere = false;
                         }
                     }
 
                     // if object wasnt already in crowd75
-                    if (notInThere)
-                    {
+                    if (notInThere) {
                         crowd75[j] = crowd[k];
                     }
                 }
@@ -340,12 +473,11 @@ public class AudienceBehave : MonoBehaviour {
         }
 
         crowd99 = new GameObject[crowd.Length - 1];
-        for (int anotherInt = 1; anotherInt < crowd.Length; anotherInt++)
-        {
+        for (int anotherInt = 1; anotherInt < crowd.Length; anotherInt++) {
             crowd99[anotherInt - 1] = crowd[anotherInt];
         }
         tavernReady = true;
-    }
+    }*/
 
     /*
     public struct Person{
@@ -392,13 +524,11 @@ public class AudienceBehave : MonoBehaviour {
 
 
     //jumping for parts of the crowd
-    IEnumerator Jump(/*GameObject[] guys*/)
-    {
+    IEnumerator Jump(/*GameObject[] guys*/) {
         float acceleration = 0;
-        
-        while (true)
-        {
-            
+
+        while (true) {
+
             if (jam > 40) //highest mark => everybody parties
             {
                 //StartCoroutine(Jump(crowd));
@@ -408,66 +538,51 @@ public class AudienceBehave : MonoBehaviour {
 
             }
 
-            if (jam > 30)
-            {
+            if (jam > 30) {
                 //everyone except bartender
                 //StartCoroutine(Jump(crowd99));
 
                 guys = crowd99;
                 happy = true;
-            }
-            else if (jam > 20)
-            {
+            } else if (jam > 20) {
                 //75%
                 //StartCoroutine(Jump(crowd75));
 
                 guys = crowd75;
                 happy = true;
-            }
-            else if (jam > 10)
-            {
+            } else if (jam > 10) {
                 //50%
                 //StartCoroutine(Jump(crowd50));
 
                 guys = crowd50;
                 happy = true;
-            }
-            else if (jam > 0)
-            {
+            } else if (jam > 0) {
                 //1 or 2
                 //StartCoroutine(Jump(crowd0));
 
                 guys = crowd0;
                 happy = true;
-                
-            }
 
-            else
-            {
+            } else {
                 happy = false;
-                
+
             }
 
-            if (happy)
-            {
+            if (happy) {
 
                 //forced jumps, so they dont get stuck in the chair
-                for (int i = 0; i < guys.Length; i++)
-                {
+                for (int i = 0; i < guys.Length; i++) {
                     guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
                 }
 
                 yield return new WaitForEndOfFrame();
-                for (int i = 0; i < guys.Length; i++)
-                {
+                for (int i = 0; i < guys.Length; i++) {
                     guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
                 }
                 yield return new WaitForEndOfFrame();
 
-                while (guys[1].transform.position.y > height)
-                {
-                    for (int i = 0; i < guys.Length; i++)
-                    {
+                while (guys[1].transform.position.y > height) {
+                    for (int i = 0; i < guys.Length; i++) {
                         guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
                     }
 

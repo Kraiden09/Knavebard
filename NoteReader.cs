@@ -7,8 +7,7 @@ using UnityEngine;
  * 
  * contains Beatmap and return-Methods for it
  */
-public class NoteReader : MonoBehaviour
-{
+public class NoteReader : MonoBehaviour {
     NoteBoard noteBoard;
 
     //errechnet aus den 122bpm
@@ -41,8 +40,7 @@ public class NoteReader : MonoBehaviour
 
 
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
 
 
         /*
@@ -65,22 +63,18 @@ public class NoteReader : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
     }
 
-    public int readNotes(int i)
-    {
+    public int readNotes(int i) {
         return songNotes[i];
     }
 
-    public float readTime(int i)
-    {
+    public float readTime(int i) {
         return noteTiming[i];
     }
 
-    public int songlength()
-    {
+    public int songlength() {
         return songNotes.Length;
     }
 }
