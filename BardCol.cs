@@ -9,7 +9,6 @@ public class BardCol : MonoBehaviour, IObserver {
     NoteBoard board;
 
     GameObject[] Tische;
-    GameObject[] Hocker;
 
     GameObject bard;
     float movement, rotation;
@@ -21,7 +20,6 @@ public class BardCol : MonoBehaviour, IObserver {
             tavernInit = true;
 
             Tische = GameObject.Find("Tavern").GetComponent<taverne>().getTische();
-            Hocker = GameObject.Find("Tavern").GetComponent<taverne>().getHocker();
         }
     }
 
