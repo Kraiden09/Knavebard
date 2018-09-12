@@ -68,6 +68,7 @@ public class Init : Subject, IObserver {
             joints[i].anchor = new Vector3(2f * Mathf.Pow(-1, i), 0.2f, -2f * Mathf.Pow(-1, i));
             joints[i].connectedAnchor = new Vector3(0 * Mathf.Pow(-1, i), 0.5f, 0 * Mathf.Pow(-1, i));
             joints[i].axis = new Vector3(1 * Mathf.Pow(-1, i), 0, -1 * Mathf.Pow(-1, i));
+            joints[i].gameObject.GetComponent<Rigidbody>().angularDrag = 0;
             SoftJointLimit sjl = new SoftJointLimit {
                 limit = 50
             };

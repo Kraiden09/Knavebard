@@ -18,9 +18,18 @@ public class Control : Subject, IObserver {
     bool colProt = false;
     bool allowScore = true;
 
+    Vector3[] spawnPos;
+
+    // 1 = forward, -1 = backward
+    int keyPressed = 1;
+
     GameObject leftHand, rightHand;
     Vector3 handRestingPos;
     bool usingGuitar, handsInit, allowPlaying;
+
+    Rigidbody rb;
+
+    bool debugging = false;
 
     float movement, rotation;
 
@@ -33,7 +42,7 @@ public class Control : Subject, IObserver {
             character = GameObject.Find("Bard");
             colHandler = character.AddComponent<BardCol>();
         } else if (subject is taverne) {
-            Vector3[] spawnPos = tavern.getSpawnVert();
+            spawnPos = tavern.getSpawnVert();
             character.transform.position = new Vector3(spawnPos[0].x, 0.6f, spawnPos[0].z);
             character.transform.Translate((spawnPos[3].x - spawnPos[0].x) / 2, 0, (spawnPos[3].z - spawnPos[0].z) / 2);
             // Set LookAt Point
@@ -45,9 +54,10 @@ public class Control : Subject, IObserver {
             if (character.GetComponent<Rigidbody>() == null) col.SetBardRB();
             colHandler.AddColHandler(character, movement, rotation);
             colHandler.SetBardRB();
-            Rigidbody rb = character.GetComponent<Rigidbody>();
+            rb = character.GetComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.FreezePositionX;
             rb.constraints = RigidbodyConstraints.FreezePositionZ;
+            debugging = true;
         }
     }
 
@@ -66,6 +76,9 @@ public class Control : Subject, IObserver {
         init = GameObject.Find("Init").GetComponent<Init>();
         init.Subscribe(this);
 
+        // null
+        keyPressed = 0;
+
         notes = noteBoard.notes;
         mode = 0;
         jumping = null;
@@ -76,6 +89,14 @@ public class Control : Subject, IObserver {
 	
 	// Update is called once per frame
 	void Update () {
+        if (debugging) {
+            if (rb.velocity.x >= 0) {
+                rb.isKinematic = true;
+                rb.velocity = Vector3.zero;
+                rb.isKinematic = false;
+                debugging = !debugging;
+            }
+        }
         if (character != null) {
             // Exploration Mode
             /*if (Input.GetKeyDown(KeyCode.Keypad0)) {
@@ -87,11 +108,13 @@ public class Control : Subject, IObserver {
             if (mode == 0) {
                 if (Input.GetKey(KeyCode.UpArrow)) {
                     if (!colProt) {
+                        keyPressed = 1;
                         MoveBard("forward");
                     }
                 }
                 if (Input.GetKey(KeyCode.DownArrow)) {
                     if (!colProt) {
+                        keyPressed = -1;
                         MoveBard("backward");
                     }
                 }
@@ -127,6 +150,10 @@ public class Control : Subject, IObserver {
                 }
             } 
         }
+    }
+
+    public int GetButtonPressed() {
+        return keyPressed;
     }
 
     public void MoveBard(string direction) {

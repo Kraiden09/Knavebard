@@ -7,13 +7,16 @@ public class BardCol : MonoBehaviour, IObserver {
     taverne tavern;
     Control control;
     NoteBoard board;
+    Rigidbody rb;
+
+    Vector3 stageMid;
 
     GameObject[] Tische;
 
     GameObject bard;
     float movement, rotation;
     int mode;
-    bool tavernInit = false, rotating = false, climbing = false;
+    bool tavernInit = false, rotating = false, climbing = false, onStage = false;
 
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
@@ -50,12 +53,16 @@ public class BardCol : MonoBehaviour, IObserver {
     }
 
     private void OnCollisionEnter(UnityEngine.Collision col) {
+        if (col.gameObject.name != "Boden" && !onStage) rb.isKinematic = true;
+        rb.velocity = Vector3.zero;
         // Stairs
         if (col.gameObject.name == "Hand") {
+            rb.isKinematic = false;
             Physics.IgnoreCollision(bard.GetComponent<Collider>(), col.collider);
         }
         try {
             if (col.gameObject.name == "Quad") {
+                rb.isKinematic = false;
                 if (tavernInit) {
                     // Only in Exploration Mode
                     if (mode == 0) {
@@ -64,41 +71,35 @@ public class BardCol : MonoBehaviour, IObserver {
                     }
                 }
             }
-            if (col.gameObject.name == "Buehne" && !climbing) {
-                bard.transform.Translate(-movement, 0, 0);
-                control.SetColProt(true);
+            if (col.gameObject.name == "Buehne" && !climbing && !onStage) {
+                CollisionProt();
             }
             if (col.gameObject.name == "Boden") {
+                if (onStage) onStage = false;
                 control.Landed();
             }
 
 
             // By Schwabi ab hier!!!
             if (col.gameObject.name == "wand1") {
-                bard.transform.Translate(-movement, 0, 0);
-                control.SetColProt(true);
+                CollisionProt();
             }
             if (col.gameObject.name == "wand2") {
-                bard.transform.Translate(-movement, 0, 0);
-                control.SetColProt(true);
+                CollisionProt();
             }
             if (col.gameObject.name == "wand3") {
-                bard.transform.Translate(-movement, 0, 0);
-                control.SetColProt(true);
+                CollisionProt();
             }
             if (col.gameObject.name == "wand4") {
-                bard.transform.Translate(-movement, 0, 0);
-                control.SetColProt(true);
+                CollisionProt();
             }
             if (col.gameObject.name == "Bar") {
-                bard.transform.Translate(-movement, 0, 0);
-                control.SetColProt(true);
+                CollisionProt();
             }
-            
+
             for (int i = 0; i < Tische.Length; i++) {
-                if (col.gameObject.name == ("Tisch"+i)) {
-                    bard.transform.Translate(-movement, 0, 0);
-                    control.SetColProt(true);
+                if (col.gameObject.name == ("Tisch" + i)) {
+                    CollisionProt();
                 }
             }
             // By Schwabi bis hier!!!
@@ -107,6 +108,20 @@ public class BardCol : MonoBehaviour, IObserver {
         } catch (NullReferenceException) {
             // Do nothing
         }
+    }
+
+    private void OnCollisionExit(UnityEngine.Collision col) {
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = false;
+    }
+
+    void CollisionProt() {
+        Rigidbody rb = bard.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+        bard.transform.Translate(-movement * control.GetButtonPressed() * 2, 0, 0);
+        rb.isKinematic = false;
+        control.SetColProt(true);
+        rb.velocity = Vector3.zero;
     }
 
     void ClimbStairs() {
@@ -173,9 +188,6 @@ public class BardCol : MonoBehaviour, IObserver {
         }
     }
 
-    Rigidbody rb;
-    Vector3 stageMid;
-
     IEnumerator MoveOnStage(Vector3 point, bool firstJump) {
         int distanceCounter = 0;
         rotating = false;
@@ -185,6 +197,7 @@ public class BardCol : MonoBehaviour, IObserver {
         Vector3 bardPos = bard.transform.position;
         float prevDis;
         float distance = Vector3.Distance(point, bardPos);
+        onStage = true;
         while (distance > movement) {
             prevDis = distance;
             control.MoveBard("forward");
@@ -196,7 +209,7 @@ public class BardCol : MonoBehaviour, IObserver {
                 if (distanceCounter >= 2) break;
             }
         }
-
+        if (distanceCounter >= 2) control.MoveBard("backward");
         if (climbing) {
             if (firstJump) {
                 rb.isKinematic = true;
