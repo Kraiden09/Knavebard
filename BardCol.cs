@@ -8,6 +8,9 @@ public class BardCol : MonoBehaviour, IObserver {
     Control control;
     NoteBoard board;
 
+    GameObject[] Tische;
+    GameObject[] Hocker;
+
     GameObject bard;
     float movement, rotation;
     int mode;
@@ -16,6 +19,9 @@ public class BardCol : MonoBehaviour, IObserver {
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
             tavernInit = true;
+
+            Tische = GameObject.Find("Tavern").GetComponent<taverne>().getTische();
+            Hocker = GameObject.Find("Tavern").GetComponent<taverne>().getHocker();
         }
     }
 
@@ -67,6 +73,39 @@ public class BardCol : MonoBehaviour, IObserver {
             if (col.gameObject.name == "Boden") {
                 control.Landed();
             }
+
+
+            // By Schwabi ab hier!!!
+            if (col.gameObject.name == "wand1") {
+                bard.transform.Translate(-movement, 0, 0);
+                control.SetColProt(true);
+            }
+            if (col.gameObject.name == "wand2") {
+                bard.transform.Translate(-movement, 0, 0);
+                control.SetColProt(true);
+            }
+            if (col.gameObject.name == "wand3") {
+                bard.transform.Translate(-movement, 0, 0);
+                control.SetColProt(true);
+            }
+            if (col.gameObject.name == "wand4") {
+                bard.transform.Translate(-movement, 0, 0);
+                control.SetColProt(true);
+            }
+            if (col.gameObject.name == "Bar") {
+                bard.transform.Translate(-movement, 0, 0);
+                control.SetColProt(true);
+            }
+            
+            for (int i = 0; i < Tische.Length; i++) {
+                if (col.gameObject.name == ("Tisch"+i)) {
+                    bard.transform.Translate(-movement, 0, 0);
+                    control.SetColProt(true);
+                }
+            }
+            // By Schwabi bis hier!!!
+
+
         } catch (NullReferenceException) {
             // Do nothing
         }
