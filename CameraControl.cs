@@ -16,9 +16,11 @@ using UnityEngine;
  * 
  */
 public class CameraControl : MonoBehaviour {
+    /*
     //references to noteboard
     NoteBoard noteBoard;
     GameObject screen;
+    */
 
     //deactivate Canvas
     CandleInteraction Candle;
@@ -62,7 +64,6 @@ public class CameraControl : MonoBehaviour {
     GameObject[] Positions;
 
     //future positions
-    GameObject roof; //maybekn
     GameObject leftrear;
     GameObject rightrear;
 
@@ -82,7 +83,7 @@ public class CameraControl : MonoBehaviour {
         borderx = transform.position.x;
         bordery = transform.position.y;
         borderz = transform.position.z + 4;
-        camSpeed = 1.5f;
+        camSpeed = 1.2f;
         current = 0;
         prev = false;
         next = false;

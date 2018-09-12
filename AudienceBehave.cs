@@ -10,10 +10,9 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     //arrays with all audience-members and hocker
     GameObject[] crowd, crowd0, crowd50, crowd75, crowd99, guys, empty;
     GameObject[] allHocker;
-    GameObject spawn;
 
     //is there happy audience?
-    bool happy, happy0, happy50, happy75, happy99, happy100;
+    bool happy;
 
     //is everything set?
     bool tavernReady;
@@ -109,86 +108,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         yield return new WaitForSeconds(0.49180327868f * 2);
         //new Jam
         MeasureJam();
-
-
-        //TESTING
-        /*
-        StartCoroutine(Jump(crowd[4]));
-        */
-
-        /*
-        if (jam > 40) //highest mark => everybody parties
-        {
-            //StartCoroutine(Jump(crowd));
-
-            //guys = crowd;
-            happy0 = false;
-            happy50 = false;
-            happy75 = false;
-            happy99 = false;
-            happy100 = true;
-
-        }
-
-        if (jam > 30) 
-        {
-            //everyone except bartender
-            //StartCoroutine(Jump(crowd99));
-
-            //guys = crowd99;
-            happy0 = false;
-            happy50 = false;
-            happy75 = false;
-            happy99 = true;
-            happy100 = false;
-        }
-        else if (jam > 20){
-            //75%
-            //StartCoroutine(Jump(crowd75));
-
-            //guys = crowd75;
-            happy0 = false;
-            happy50 = false;
-            happy75 = true;
-            happy99 = false;
-            happy100 = false;
-        }
-        else if (jam > 10)
-        {
-            //50%
-            //StartCoroutine(Jump(crowd50));
-
-            //guys = crowd50;
-            happy0 = false;
-            happy50 = true;
-            happy75 = false;
-            happy99 = false;
-            happy100 = false;
-        }
-        else if (jam > 0)
-        {
-            //1 or 2
-            //StartCoroutine(Jump(crowd0));
-            
-            guys = crowd0;
-            happy = true;
-            happy0 = false;
-            happy50 = false;
-            happy75 = false;
-            happy100 = false;
-        }
         
-        else
-        {
-            happy = false;
-            happy0 = false;
-            happy50 = false;
-            happy75 = false;
-            happy100 = false;
-        }
-        //lowest mark => nothing happens
-        */
-
         if (tavernReady) {
             StartCoroutine(Jump());
             tavernReady = false;
@@ -196,7 +116,6 @@ public class AudienceBehave : MonoBehaviour, IObserver {
 
         //infinite measuremeant
         StartCoroutine(WaitBeat());
-
     }
 
     /*IEnumerator WaitForNoteBoard() {
@@ -208,7 +127,6 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     void WaitForTavern() {
         allHocker = Taverne.getHocker();
         crowd = new GameObject[(Taverne.getHocker().Length / 2)]; /*+1 for Bartender*/
-        spawn = Taverne.getSpawn();
 
 
         //Spawn all Peasants
@@ -221,7 +139,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
             //random choosing of seats
             randSeed = UnityEngine.Random.Range(0, 100);
             if (randSeed % 2 == 0) {
-                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 2].transform.position.x, 0.6f, allHocker[i * 2 - 2].transform.position.z), Quaternion.identity);
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 2].transform.position.x, 0.514f, allHocker[i * 2 - 2].transform.position.z), Quaternion.identity);
                 crowd[i].name = "Audience" + i;
 
                 if (i > 3) {
@@ -244,11 +162,10 @@ public class AudienceBehave : MonoBehaviour, IObserver {
                         default:
                             break;
                     }
-                    print(look);
-                    print("rotated" + i + "gerade");
+
                 }
             } else {
-                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.62f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
+                crowd[i] = (GameObject)Instantiate(Resources.Load("Prefab/Aud"), new Vector3(allHocker[i * 2 - 1].transform.position.x, 0.514f, allHocker[i * 2 - 1].transform.position.z), Quaternion.identity);
                 crowd[i].name = "Audience" + i;
 
                 /*
@@ -278,8 +195,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
                         default:
                             break;
                     }
-                    print(look);
-                    print("rotated" + i + "ungerade");
+
                 }
             }
 
@@ -347,7 +263,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
         allHocker = Taverne.getHocker();
         crowd = new GameObject[(Taverne.getHocker().Length / 2)]; /*+1 for Bartender*/
-        /*spawn = Taverne.getSpawn();
+        /*
 
 
         //Spawn all Peasants
