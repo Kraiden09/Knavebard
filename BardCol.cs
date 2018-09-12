@@ -125,6 +125,7 @@ public class BardCol : MonoBehaviour, IObserver {
     }
 
     void ClimbStairs() {
+        board.CreateGuitar();
         if (!climbing) {
             climbing = true;
             GameObject stairs = tavern.getTreppe();
