@@ -26,7 +26,7 @@ public class CameraControl : MonoBehaviour {
     //Bewegungsgeschwindigkeit
     float camSpeed;
     float borderx, bordery, borderz;
-    bool director;
+    public bool director;
     bool waiting;
     int random, randomWays, lastPos;
 
@@ -135,11 +135,12 @@ public class CameraControl : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        
         //switch
         if (Input.GetKeyDown("1")) {
             director = !director;
         }
-
+        
 
         //DIRECTOR-MODE
         if (director) {
@@ -388,6 +389,10 @@ public class CameraControl : MonoBehaviour {
         transform.LookAt(fix);
     }
 
+    public void ChangeMode()
+    {
+        director = !director;
+    }
 
     // just there for waiting
     IEnumerator sleeper() {
