@@ -16,6 +16,7 @@ public class Control : MonoBehaviour, IObserver {
     bool pressed = false;
     // Collision Protection stage
     bool colProt = false;
+    bool allowScore = true;
 
     GameObject leftHand, rightHand;
     Vector3 handRestingPos;
@@ -165,10 +166,14 @@ public class Control : MonoBehaviour, IObserver {
                 noteBoard.ExtDropCall();
                 noteBoard.BadScoreExtCall();
             }
-        } else {
+        } else if (allowScore) {
             noteBoard.bad++;
             noteBoard.BadScoreExtCall();
         }
+    }
+
+    public void ChangeAllowScore() {
+        allowScore = !allowScore;
     }
 
     public int ModeChange() {
