@@ -3,22 +3,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BardCol : MonoBehaviour {
-    GameObject bard;
+public class BardCol : MonoBehaviour, IObserver {
     taverne tavern;
-    NoteBoard board;
-    float movement, rotation;
     Control control;
+    NoteBoard board;
+
+    GameObject bard;
+    float movement, rotation;
     int mode;
-    bool tavernInit = false, rotating = false, climbing = false, init = false;
+    bool tavernInit = false, rotating = false, climbing = false;
+
+    public void UpdateObserver(Subject subject) {
+        if (subject is taverne) {
+            tavernInit = true;
+        }
+    }
 
     void Start() {
         control = GameObject.Find("Control").GetComponent<Control>();
+
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
+        tavern.Subscribe(this);
+
         board = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
-        StartCoroutine(WaitForTavern());
+
+        //StartCoroutine(WaitForTavern());
         mode = control.GetMode();
-        StartCoroutine(WaitForInit());
     }
 
     void Update() {
@@ -40,27 +50,25 @@ public class BardCol : MonoBehaviour {
         if (col.gameObject.name == "Hand") {
             Physics.IgnoreCollision(bard.GetComponent<Collider>(), col.collider);
         }
-        if (init) {
-            try {
-                if (col.gameObject.name == "Quad") {
-                    if (tavernInit) {
-                        // Only in Exploration Mode
-                        if (mode == 0) {
-                            control.ModeChange();
-                            ClimbStairs();
-                        }
+        try {
+            if (col.gameObject.name == "Quad") {
+                if (tavernInit) {
+                    // Only in Exploration Mode
+                    if (mode == 0) {
+                        control.ModeChange();
+                        ClimbStairs();
                     }
                 }
-                if (col.gameObject.name == "Buehne" && !climbing) {
-                    bard.transform.Translate(-movement, 0, 0);
-                    control.SetColProt(true);
-                }
-                if (col.gameObject.name == "Boden") {
-                    control.Landed();
-                }
-            } catch (NullReferenceException) {
-                // Do nothing
             }
+            if (col.gameObject.name == "Buehne" && !climbing) {
+                bard.transform.Translate(-movement, 0, 0);
+                control.SetColProt(true);
+            }
+            if (col.gameObject.name == "Boden") {
+                control.Landed();
+            }
+        } catch (NullReferenceException) {
+            // Do nothing
         }
     }
 
@@ -170,15 +178,10 @@ public class BardCol : MonoBehaviour {
         }
     }
 
-    IEnumerator WaitForTavern() {
+    /*IEnumerator WaitForTavern() {
         while (tavern.getSpawn() == null) {
             yield return new WaitForSeconds(0.1f);
         }
         tavernInit = true;
-    }
-
-    IEnumerator WaitForInit() {
-        yield return new WaitForSeconds(0.5f);
-        init = true;
-    }
+    }*/
 }

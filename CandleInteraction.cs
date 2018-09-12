@@ -2,17 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CandleInteraction : MonoBehaviour {
+public class CandleInteraction : MonoBehaviour, IObserver {
     CandleSpawner cs;
     GameObject[] candles, triggerArea;
     CandleTrigger activeTrigger;
     bool[] isLit;
 
+    public void UpdateObserver(Subject subject) {
+        if (subject is CandleSpawner) {
+            InitCandles();
+        }
+    }
+
+    void InitCandles() {
+        candles = cs.GetCandles();
+        triggerArea = new GameObject[candles.Length];
+        isLit = new bool[candles.Length];
+        for (int i = 0; i < isLit.Length; i++) {
+            isLit[i] = true;
+        }
+        CreateTriggerArea();
+    }
+
     // Use this for initialization
     void Start () {
+        cs = GameObject.Find("CandleSpawner").GetComponent<CandleSpawner>();
+        cs.Subscribe(this);
+
         transform.Translate(new Vector3(0, 10, 0));
-		cs = GameObject.Find("CandleSpawner").GetComponent<CandleSpawner>();
-        StartCoroutine(GetCandles());
+        //StartCoroutine(GetCandles());
     }
 	
 	// Update is called once per frame
@@ -42,7 +60,7 @@ public class CandleInteraction : MonoBehaviour {
             col.isTrigger = true;
             col.size = new Vector3(xLen, yLen, zLen);
             if (i == (candles.Length / 2)) xAdjust *= -1;
-            area.transform.Translate(new Vector3(xAdjust, -2.388f, 0));
+            area.transform.Translate(new Vector3(xAdjust, -12.388f, 0));
             area.transform.parent = gameObject.transform;
             area.AddComponent<CandleTrigger>();
             triggerArea[i] = area;
@@ -71,7 +89,7 @@ public class CandleInteraction : MonoBehaviour {
         }
     }
 
-    IEnumerator GetCandles() {
+    /*IEnumerator GetCandles() {
         while (!cs.IsInit()) {
             yield return new WaitForSeconds(0.1f);
         }
@@ -82,5 +100,5 @@ public class CandleInteraction : MonoBehaviour {
             isLit[i] = true;
         }
         CreateTriggerArea();
-    }
+    }*/
 }

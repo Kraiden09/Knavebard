@@ -4,24 +4,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CandleTrigger : MonoBehaviour {
+public class CandleTrigger : MonoBehaviour, IObserver {
+    Init init;
+    CandleSpawner cs;
+    CandleInteraction ci;
+
     public Text text;
     GameObject interaction;
     GameObject bard;
-    Init bardInit;
-    CandleSpawner cs;
-    CandleInteraction ci;
     String tempText;
     int index;
     bool isLit, prev, lastChange, isHidden, active;
 
+    public void UpdateObserver(Subject subject) {
+        if (subject is Init) {
+            bard = GameObject.Find("Bard");
+        }
+    }
+
     // Use this for initialization
     void Start () {
         interaction = GameObject.Find("InteractionText");
-        cs = GameObject.Find("CandleSpawner").GetComponent<CandleSpawner>();
-        ci = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
         text = interaction.GetComponent<Text>();
-        bardInit = GameObject.FindObjectOfType(typeof(Init)) as Init;
+
+        cs = GameObject.Find("CandleSpawner").GetComponent<CandleSpawner>();
+
+        ci = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
+
+        init = GameObject.Find("Init").GetComponent<Init>();
+        init.Subscribe(this);
+
         index = (Int32.Parse(gameObject.name.Substring(gameObject.name.Length - 1))) - 1;
         isLit = true;
         prev = false;
@@ -29,7 +41,7 @@ public class CandleTrigger : MonoBehaviour {
         isHidden = false;
         active = false;
         tempText = "";
-        WaitForBard();
+        //WaitForBard();
     }
 	
 	// Update is called once per frame
@@ -114,10 +126,10 @@ public class CandleTrigger : MonoBehaviour {
         isLit = state;
     }
 
-    IEnumerator WaitForBard() {
+    /*IEnumerator WaitForBard() {
         while (!bardInit.initialized) {
             yield return new WaitForSeconds(0.1f);
         }
         bard = GameObject.Find("Bard");
-    }
+    }*/
 }

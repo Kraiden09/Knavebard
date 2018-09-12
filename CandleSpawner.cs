@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CandleSpawner : MonoBehaviour {
+public class CandleSpawner : Subject, IObserver {
     taverne tavern;
+
     GameObject candleLight;
     float height, wickHeight;
-    bool initialized, wallLocated;
+    bool initialized;
     Vector3[][] newVertices;
     //Mesh candleMesh;
 
@@ -28,13 +29,23 @@ public class CandleSpawner : MonoBehaviour {
     bool[] isLit;
     Light[] lights;
 
+    public void UpdateObserver(Subject subject) {
+        if (subject is taverne) {
+            posWallLeft = tavern.getWandLinksVert();
+            posWallRight = tavern.getWandRechtsVert();
+            InitStart();
+        }
+    }
+
     // Use this for initialization
     void Start() {
-        initialized = false;
-        wallLocated = false;
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
-        StartCoroutine(GetWallLeft());
-        StartCoroutine(GetWallRight());
+        tavern.Subscribe(this);
+
+        initialized = false;
+        //wallLocated = false;
+        //StartCoroutine(GetWallLeft());
+        //StartCoroutine(GetWallRight());
         //verticesPerLayer = 20;
         //layers = 5;
         height = 2f;
@@ -49,7 +60,6 @@ public class CandleSpawner : MonoBehaviour {
         lastLayerIndexStart = new int[numberOfCandles];
         isLit = new bool[numberOfCandles];
         lights = new Light[numberOfCandles];
-        InitStart();
     }
 
     // Update is called once per frame
@@ -58,7 +68,7 @@ public class CandleSpawner : MonoBehaviour {
 
     void InitStart() {
         InitCandles();
-        while (!initialized && !wallLocated) {
+        while (!initialized) {
             // Wait until initialized
         }
         for (int i = 0; i < numberOfCandles; i++) {
@@ -190,6 +200,7 @@ public class CandleSpawner : MonoBehaviour {
         candle.transform.localScale = new Vector3(0.359f, 0.359f, 0.359f);
 
         initialized = true;
+        NotifyAll();
     }
 
     void CreateFaces(List<int> faces, int index, int curLayers) {
@@ -279,9 +290,9 @@ public class CandleSpawner : MonoBehaviour {
         return candles;
     }
 
-    public bool IsInit() {
+    /*public bool IsInit() {
         return initialized;
-    }
+    }*/
 
     public bool ToggleOnOff(int index) {
         bool newState = isLit[index];
@@ -305,7 +316,7 @@ public class CandleSpawner : MonoBehaviour {
         candlesCreated = true;
     }*/
 
-    IEnumerator GetWallLeft() {
+    /*IEnumerator GetWallLeft() {
         bool valid = false;
         while (!valid) {
             valid = true;
@@ -331,7 +342,7 @@ public class CandleSpawner : MonoBehaviour {
             yield return new WaitForSeconds(0.1f);
         }
         wallLocated = true;
-    }
+    }*/
 
     IEnumerator BurnDown(GameObject candle, GameObject wick, int index) {
         int lastIndex = newVertices[index].Length - 1;

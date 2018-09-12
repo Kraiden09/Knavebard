@@ -20,7 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoteBoard : MonoBehaviour {
+public class NoteBoard : Subject, IObserver {
     // Reference to stage
     private GameObject stageRef, post1, post2, screen, borderLeft, borderRight, scoreText;
     private Mesh screenMesh;
@@ -36,7 +36,11 @@ public class NoteBoard : MonoBehaviour {
     public List<GameObject> notes = new List<GameObject>();
     public float deltaTime;
 
-    private Control control;
+    Control control;
+    // calling NoteReader (joerg)
+    NoteReader noteReader;
+    // For Colliding (Will be replaced by Marcel's Script)
+    taverne tavern;
 
     // Current Position in notes List for FadeOut
     public int curNotePos;
@@ -69,27 +73,29 @@ public class NoteBoard : MonoBehaviour {
     // Music
     AudioSource music;
 
-    // calling NoteReader (joerg)
-    NoteReader noteReader;
+    //GameObject stairs;
 
-    // For Colliding (Will be replaced by Marcel's Script)
-    taverne tavern;
-    GameObject floor, stairs;
+    public void UpdateObserver(Subject subject) {
+        if (subject is taverne) {
+            stageRef = tavern.getBuehne();
+            //stairs = tavern.getTreppe();
+            //floor.AddComponent<BoxCollider>();
+            //stageRef.AddComponent<BoxCollider>();
+            BuildBoard();
+        }
+    }
 
     // Use this for initialization
     void Start() {
+
         //JOERG REFERENCE
         noteReader = GameObject.Find("NoteReader").GetComponent<NoteReader>();
 
         control = GameObject.Find("Control").GetComponent<Control>();
 
-        // Collider
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
-        floor = tavern.getBoden();
-        stageRef = tavern.getBuehne();
-        stairs = tavern.getTreppe();
-        floor.AddComponent<BoxCollider>();
-        stageRef.AddComponent<BoxCollider>();
+        tavern.Subscribe(this);
+
         //stairs.AddComponent<MeshCollider>();
 
         despawningNotes = new GameObject[noteArrSize];
@@ -115,8 +121,6 @@ public class NoteBoard : MonoBehaviour {
         fadeInDelay = fadeInBaseDelay * moveAlongScreenBase / moveAlongScreen;
         acceptance = baseAcceptance * moveAlongScreenBase / moveAlongScreen;
         scoreTime = baseScoreTime * moveAlongScreenBase / moveAlongScreen;
-
-        StartCoroutine(WaitForStage());
     }
 
     // Update is called once per frame
@@ -137,7 +141,7 @@ public class NoteBoard : MonoBehaviour {
         float stageLenZ = stageRefMesh.bounds.size.z * stageRefTrans.localScale.z;
         Debug.Log(stageLenX + " " + stageLenY + " " + stageLenZ + " ");*/
 
-BuildPosts(stageRefMesh, stageRefTrans);
+        BuildPosts(stageRefMesh, stageRefTrans);
         BuildScreen();
     }
 
@@ -183,8 +187,8 @@ BuildPosts(stageRefMesh, stageRefTrans);
         AddMaterialPost(post1);
         AddMaterialPost(post2);
 
-        Destroy(post1.GetComponent<CapsuleCollider>());
-        Destroy(post2.GetComponent<CapsuleCollider>());
+        //Destroy(post1.GetComponent<CapsuleCollider>());
+        //Destroy(post2.GetComponent<CapsuleCollider>());
     }
 
     void AddMaterialPost(GameObject go) {
@@ -245,6 +249,8 @@ BuildPosts(stageRefMesh, stageRefTrans);
         //screenMesh.RecalculateNormals();
 
         BuildHitArea(upperLimit - lowerLimit, screenMesh.vertices[0]);
+
+        NotifyAll();
 
         /*GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         test.transform.position = post1.transform.position;
@@ -656,13 +662,13 @@ BuildPosts(stageRefMesh, stageRefTrans);
     }
 
     // TBC - Every Particle has another color (optional)
-    IEnumerator Recolor(ParticleSystem ps) {
+    /*IEnumerator Recolor(ParticleSystem ps) {
         ParticleSystem.Particle[] particles;
         particles = new ParticleSystem.Particle[ps.particleCount];
         int num = ps.GetParticles(particles);
         Debug.Log(num);
         yield return new WaitForSeconds(1f);
-    }
+    }*/
 
     private readonly float baseScoreTime = 0.5f;
     private float scoreTime;
@@ -771,14 +777,13 @@ BuildPosts(stageRefMesh, stageRefTrans);
     }
 
     // Wait for stage to be initialized
-    IEnumerator WaitForStage() {
+    /*IEnumerator WaitForStage() {
         while ((GameObject.Find("Buehne") == null)) {
             yield return new WaitForSeconds(0.1f);
         }
-        BuildBoard();
         /*StartCoroutine(GenerateNotes());
         StartCoroutine(MoveNotes());*/
-    }
+    //}
 
     float fiMoveAlongScreen;
 

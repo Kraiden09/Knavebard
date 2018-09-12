@@ -2,21 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Init : MonoBehaviour {
+public class Init : Subject, IObserver {
     GameObject bard;
-    public bool initialized = false;
     GameObject[] hands;
     CharacterJoint[] joints;
     Vector3[] distanceVector;
 
-	// Use this for initialization
-	void Start () {
+    Collision col;
+
+    public void UpdateObserver(Subject subject) {
+
+    }
+
+    // Use this for initialization
+    void Start () {
+        col = GameObject.Find("Collision").GetComponent<Collision>();
+
         bard = (GameObject)Instantiate(Resources.Load("Prefab/Character"));
         hands = new GameObject[2];
         joints = new CharacterJoint[2];
         distanceVector = new Vector3[2];
         bard.name = "Bard";
-        initialized = true;
+        NotifyAll();
     }
 	
 	// Update is called once per frame

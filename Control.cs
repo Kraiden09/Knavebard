@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Control : MonoBehaviour {
+public class Control : MonoBehaviour, IObserver {
     NoteBoard noteBoard;
     taverne tavern;
     BardCol colHandler;
     Collision col;
+    // Reference to Init Script for Character Creation
+    Init init;
     List<GameObject> notes;
     // Exploration Mode (0) or Bard Mode (1)
     private int mode;
     GameObject character = null;
-    // Reference to Init Script for Character Creation
-    Init initDone;
     bool pressed = false;
     // Collision Protection stage
     bool colProt = false;
@@ -25,24 +25,51 @@ public class Control : MonoBehaviour {
 
     public Coroutine jumping;
 
+    public void UpdateObserver(Subject subject) {
+        if (subject is Init) {
+            movement = 0.05f;
+            rotation = 2.5f;
+            character = GameObject.Find("Bard");
+            colHandler = character.AddComponent<BardCol>();
+        } else if (subject is taverne) {
+            Vector3[] spawnPos = tavern.getSpawnVert();
+            character.transform.position = new Vector3(spawnPos[0].x, 0.6f, spawnPos[0].z);
+            character.transform.Translate((spawnPos[3].x - spawnPos[0].x) / 2, 0, (spawnPos[3].z - spawnPos[0].z) / 2);
+            // Set LookAt Point
+            character.transform.LookAt(new Vector3(0, 0, 0));
+            character.transform.Rotate(0, -90, 0);
+            init.UpdateJoint();
+        } else if (subject is Collision) {
+            if (character.GetComponent<Rigidbody>() == null) col.SetBardRB();
+            colHandler.AddColHandler(character, movement, rotation);
+            colHandler.SetBardRB();
+            Rigidbody rb = character.GetComponent<Rigidbody>();
+            rb.constraints = RigidbodyConstraints.FreezePositionX;
+            rb.constraints = RigidbodyConstraints.FreezePositionZ;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         // Get Reference to Init Script
         //StartCoroutine(BuildUp());
         noteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
+
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
+        tavern.Subscribe(this);
+
         col = GameObject.Find("Collision").GetComponent<Collision>();
+        col.Subscribe(this);
+
+        init = GameObject.Find("Init").GetComponent<Init>();
+        init.Subscribe(this);
+
         notes = noteBoard.notes;
-        initDone = GameObject.FindObjectOfType(typeof(Init)) as Init;
         mode = 0;
         jumping = null;
         usingGuitar = false;
         handsInit = false;
         allowPlaying = false;
-        movement = 0.05f;
-        rotation = 2.5f;
-        // Wait for character to be initialized
-        StartCoroutine(WaitForInit());
     }
 	
 	// Update is called once per frame
@@ -266,7 +293,7 @@ public class Control : MonoBehaviour {
     }
 
     // Wait for character to be initialized
-    IEnumerator WaitForInit() {
+    /*IEnumerator WaitForInit() {
         while (!initDone.initialized) {
             yield return new WaitForSeconds(0.1f);
         }
@@ -275,9 +302,9 @@ public class Control : MonoBehaviour {
         colHandler = character.AddComponent<BardCol>();
         colHandler.AddColHandler(character, movement, rotation);
         //character.transform.Translate(-4.23f, 0.606f, 0.98f);
-    }
+    }*/
 
-    IEnumerator WaitForTavern() {
+    /*IEnumerator WaitForTavern() {
         while (tavern.getSpawn() == null) {
             yield return new WaitForSeconds(0.1f);
         }
@@ -292,17 +319,17 @@ public class Control : MonoBehaviour {
         if (character.GetComponent<Rigidbody>() == null) col.SetBardRB();
         colHandler.SetBardRB();
         StartCoroutine(WaitForRB());
-    }
+    }*/
 
     // Wait for Rigid Body
-    IEnumerator WaitForRB() {
+    /*IEnumerator WaitForRB() {
         while (character.GetComponent<Rigidbody>() == null) {
             yield return new WaitForSeconds(0.1f);
         }
         Rigidbody rb = character.GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezePositionX;
         rb.constraints = RigidbodyConstraints.FreezePositionZ;
-    }
+    }*/
 
     /*IEnumerator BuildUp() {
         GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
