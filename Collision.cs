@@ -106,6 +106,8 @@ public class Collision : Subject, IObserver {
 
         Collider RightHandBardCol = RightHandBard.GetComponent<Collider>();
         Destroy(RightHandBardCol);
+        Collider LeftHandBardCol = LeftHandBard.GetComponent<Collider>();
+        Destroy(LeftHandBardCol);
     }
 
     /*
