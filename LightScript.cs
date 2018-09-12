@@ -17,8 +17,8 @@ public class LightScript : MonoBehaviour {
 
     private bool upordown;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         Candle = GetComponent<Light>();
         jam = FindObjectOfType<AudienceBehave>();
         Candle.intensity = 0.15f;
@@ -29,53 +29,58 @@ public class LightScript : MonoBehaviour {
         Candle.color = yellow;
         upordown = true;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
         if (jam.jam < -10) {
             jamSchwabi = 0;
-        }
-        else if (jam.jam >= -10 && jam.jam < 10) {
+        } else if (jam.jam >= -10 && jam.jam < 10) {
             jamSchwabi = 1;
-        }
-        else {
+        } else {
             jamSchwabi = 2;
         }
-        Debug.LogWarning(jamSchwabi);
-		switch (jamSchwabi) {
+        //Debug.LogWarning(jamSchwabi);
+        switch (jamSchwabi) {
             case 0:
-                Debug.Log("CASE=rot");
+                //Debug.Log("CASE=rot");
                 StartFadeLight(red);
                 tmp = 0;
                 break;
             case 1:
-                Debug.Log("CASE=gelb");
+                //Debug.Log("CASE=gelb");
                 StartFadeLight(yellow);
                 tmp = 0;
                 break;
             case 2:
-                Debug.Log("CASE=grün");
+                //Debug.Log("CASE=grün");
                 StartFadeLight(green);
                 tmp = 0;
                 break;
             default:
-                Debug.Log("Lichtwechsel - Fehler");
+                //Debug.Log("Lichtwechsel - Fehler");
                 break;
         }
 
-        /* //Flackern
         
-        if (Random.value > 0.5f)
+        //Flackern
+        if (Random.value > 0.5f) {
             upordown = true;
-        else
+        } else {
             upordown = false;
-
-        if (Candle.intensity > 0.1f && upordown)
-            Candle.intensity += (Time.deltaTime+Random.value);
-
-        if (Candle.intensity < 0.8f && !upordown)
-            Candle.intensity -= (Time.deltaTime + Random.value);
-            */
+        }
+        if (upordown) {
+            if (Candle.intensity > 0.2f) {
+                // Nichts machen
+            } else {
+                Candle.intensity = Candle.intensity + ((Time.deltaTime + Random.value) / 80);
+            }
+        } else {
+            if (Candle.intensity < 0.1f) {
+                // Nichts machen
+            } else {
+                Candle.intensity = Candle.intensity - ((Time.deltaTime + Random.value) / 80);
+            }
+        }
     }
 
     void StartFadeLight(Color Color) {
@@ -130,30 +135,28 @@ public class LightScript : MonoBehaviour {
                 if (Candle.color.g > 0) {
                     Candle.color = Candle.color + new Color(0, -5, 0, 0);
                 }
-                Debug.Log("RICHTUNG=rot");
-            }
-            else if (Color == yellow) {
+                //Debug.Log("RICHTUNG=rot");
+            } else if (Color == yellow) {
                 if (Candle.color.r < 255) {
                     Candle.color = Candle.color + new Color(5, 0, 0, 0);
                 }
                 if (Candle.color.g < 255) {
                     Candle.color = Candle.color + new Color(0, 5, 0, 0);
                 }
-                Debug.Log("RICHTUNG=gelb");
-            }
-            else if (Color == green) {
+                //Debug.Log("RICHTUNG=gelb");
+            } else if (Color == green) {
                 if (Candle.color.r > 0) {
                     Candle.color = Candle.color + new Color(-5, 0, 0, 0);
                 }
                 if (Candle.color.g < 255) {
                     Candle.color = Candle.color + new Color(0, 5, 0, 0);
                 }
-                Debug.Log("RICHTUNG=grün");
+                //Debug.Log("RICHTUNG=grün");
             }
-            Debug.Log(Candle.color);
-            Debug.Log(Candle.color.r);
-            Debug.Log(Candle.color.g);
-            Debug.Log(Candle.color.b);
+            //Debug.Log(Candle.color);
+            //Debug.Log(Candle.color.r);
+            //Debug.Log(Candle.color.g);
+            //Debug.Log(Candle.color.b);
             yield return new WaitForSeconds(1f);
         }
         tmp = 0;
