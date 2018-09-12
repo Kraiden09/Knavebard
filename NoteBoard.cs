@@ -42,6 +42,8 @@ public class NoteBoard : Subject, IObserver {
     // For Colliding (Will be replaced by Marcel's Script)
     taverne tavern;
 
+    CameraControl cc;
+
     // Current Position in notes List for FadeOut
     public int curNotePos;
 
@@ -95,6 +97,8 @@ public class NoteBoard : Subject, IObserver {
 
         tavern = GameObject.Find("Tavern").GetComponent<taverne>();
         tavern.Subscribe(this);
+
+        cc = GameObject.Find("Main Camera").GetComponent<CameraControl>();
 
         //stairs.AddComponent<MeshCollider>();
 
@@ -530,6 +534,9 @@ public class NoteBoard : Subject, IObserver {
     }
 
     IEnumerator FadeInMusic() {
+        if (!cc.director) {
+            cc.ChangeMode();
+        }
         while (music.volume < 1) {
             music.volume += Time.deltaTime / fadeTimeMusic;
             yield return null;
@@ -537,6 +544,10 @@ public class NoteBoard : Subject, IObserver {
     }
 
     IEnumerator FadeOutMusic() {
+        if (cc.director) {
+            cc.ChangeMode();
+        }
+        control.ChangeAllowScore();
         StartCoroutine(FadeOutObject(guitar, fadeTimeMusic / 2, 0));
         control.MoveHandsBack(fadeTimeMusic / 2);
         while (music.volume > 0) {
@@ -546,6 +557,7 @@ public class NoteBoard : Subject, IObserver {
         control.ModeChange();
         finished = false;
         music.Stop();
+        control.ChangeAllowScore();
     }
 
     IEnumerator DropNote(int myPos) {
@@ -557,7 +569,13 @@ public class NoteBoard : Subject, IObserver {
         //notesDespawning++;
         //StartCoroutine(WaitTillFade());
         Rigidbody noteRB = despawningNotes[myPos].AddComponent<Rigidbody>();
-        despawningNotes[myPos].AddComponent<SphereCollider>();
+        Collider noteCol = despawningNotes[myPos].AddComponent<SphereCollider>();
+        Physics.IgnoreCollision(noteCol, post1.GetComponent<Collider>());
+        Physics.IgnoreCollision(noteCol, post2.GetComponent<Collider>());
+        foreach (Collider item in despawningNotes[myPos].GetComponentsInChildren<Collider>()) {
+            Physics.IgnoreCollision(item, post1.GetComponent<Collider>());
+            Physics.IgnoreCollision(item, post2.GetComponent<Collider>());
+        }
         noteRB.AddForce(new Vector3(-fiMoveAlongScreen, 0, 0) * UnityEngine.Random.Range(1, 100), ForceMode.Impulse);
         noteRB.AddForce(new Vector3(0, 0, -fiMoveAlongScreen) * UnityEngine.Random.Range(1, 50), ForceMode.Impulse);
         yield return new WaitForSeconds(1f);
