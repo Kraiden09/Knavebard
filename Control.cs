@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Control : MonoBehaviour, IObserver {
+public class Control : Subject, IObserver {
     NoteBoard noteBoard;
     taverne tavern;
     BardCol colHandler;
@@ -39,7 +39,8 @@ public class Control : MonoBehaviour, IObserver {
             // Set LookAt Point
             character.transform.LookAt(new Vector3(0, 0, 0));
             character.transform.Rotate(0, -90, 0);
-            init.UpdateJoint();
+            //init.UpdateJoint();
+            NotifyAll();
         } else if (subject is Collision) {
             if (character.GetComponent<Rigidbody>() == null) col.SetBardRB();
             colHandler.AddColHandler(character, movement, rotation);
