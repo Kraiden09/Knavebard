@@ -3,7 +3,6 @@
 /* Used Textures:
  * https://www.textures.com/download/3dscans0133/132389
  * https://www.textures.com/download/3dscans0109/128778
- * https://www.textures.com/download/3dscans0109/128778
  * https://www.textures.com/download/pbr0166/133201
  * https://www.textures.com/download/woodplanksbare0460/118543
  * https://www.textures.com/download/pbr0036/133072
@@ -43,6 +42,8 @@ public class NoteBoard : Subject, IObserver {
     taverne tavern;
 
     CameraControl cc;
+
+    Rigidbody bardRB;
 
     // Current Position in notes List for FadeOut
     public int curNotePos;
@@ -448,9 +449,15 @@ public class NoteBoard : Subject, IObserver {
     GameObject guitar;
     Material[] guitarMaterials;
 
+    public void CreateGuitar() {
+        if (guitar == null) {
+            guitar = (GameObject)Instantiate(Resources.Load("Prefab/Guitar"));
+            guitar.transform.position = new Vector3(0, -10, 0);
+        }
+    }
+
     public void ShowGuitar(Vector3 bardPos) {
         // 3D Model by Poedji Prasatya https://free3d.com/3d-model/acoustic-guitar-85235.html
-        guitar = (GameObject)Instantiate(Resources.Load("Prefab/Guitar"));
         guitar.transform.position = bardPos;
         guitar.transform.Translate(new Vector3(0.2f, 0, -0.45f));
         guitar.transform.Rotate(new Vector3(55.089f, 92.465f, -88.12601f));
@@ -533,7 +540,18 @@ public class NoteBoard : Subject, IObserver {
         Destroy(obj);
     }
 
+    Collider rhsc, lhsc;
+
     IEnumerator FadeInMusic() {
+        if (bardRB == null) bardRB = GameObject.Find("Bard").GetComponent<Rigidbody>();
+        bardRB.isKinematic = true;
+        bardRB.useGravity = false;
+        bardRB.detectCollisions = false;
+        // For better positioning
+        rhsc = GameObject.Find("RightHandBard").AddComponent<SphereCollider>();
+        lhsc = GameObject.Find("LeftHandBard").AddComponent<SphereCollider>();
+        Destroy(post1.GetComponent<Collider>());
+        Destroy(post2.GetComponent<Collider>());
         if (!cc.director) {
             cc.ChangeMode();
         }
@@ -544,6 +562,10 @@ public class NoteBoard : Subject, IObserver {
     }
 
     IEnumerator FadeOutMusic() {
+        Destroy(rhsc);
+        Destroy(lhsc);
+        post1.AddComponent<CapsuleCollider>();
+        post2.AddComponent<CapsuleCollider>();
         if (cc.director) {
             cc.ChangeMode();
         }
@@ -554,6 +576,9 @@ public class NoteBoard : Subject, IObserver {
             music.volume -= Time.deltaTime / fadeTimeMusic;
             yield return null;
         }
+        bardRB.isKinematic = false;
+        bardRB.useGravity = true;
+        bardRB.detectCollisions = true;
         control.ModeChange();
         finished = false;
         music.Stop();
@@ -570,6 +595,7 @@ public class NoteBoard : Subject, IObserver {
         //StartCoroutine(WaitTillFade());
         Rigidbody noteRB = despawningNotes[myPos].AddComponent<Rigidbody>();
         Collider noteCol = despawningNotes[myPos].AddComponent<SphereCollider>();
+        //despawningNotes[myPos].AddComponent<NoteCol>();
         Physics.IgnoreCollision(noteCol, post1.GetComponent<Collider>());
         Physics.IgnoreCollision(noteCol, post2.GetComponent<Collider>());
         foreach (Collider item in despawningNotes[myPos].GetComponentsInChildren<Collider>()) {
@@ -714,6 +740,7 @@ public class NoteBoard : Subject, IObserver {
                         Debug.Log("Error - Not a valid case in \"ShowScore()\"");
                         break;
                 }
+                scoreText.transform.Translate(new Vector3(-0.339f, 0.1f, 1.934f));
             } else {
                 Destroy(scoreText);
                 scoreCRrunning = false;
@@ -783,13 +810,14 @@ public class NoteBoard : Subject, IObserver {
             }
 
             //StartCoroutine(fade(fadeMesh, 2f, true));
+            //note.AddComponent<NoteCol>();
             notes.Add(note);
 
             StartCoroutine(FadeIn(curNoteEndPos, fadeInterval, fadeTime, fadeInDelay));
 
             //yield return new WaitForSeconds(noteTiming[i]);
             //yield return new WaitForSeconds(noteReader.readTime(i) * Time.deltaTime * fpsCap);
-            yield return new WaitForSeconds(noteReader.readTime(i));
+            yield return new WaitForSeconds(noteReader.readTime(i) * (fpsCap / ShowFPS()));
         }
         finished = true;
     }
@@ -807,7 +835,7 @@ public class NoteBoard : Subject, IObserver {
 
     IEnumerator MoveNotes() {
         // FI = Framerate Independent
-        fiMoveAlongScreen = moveAlongScreen * Time.deltaTime * fpsCap;
+        fiMoveAlongScreen = moveAlongScreen * (fpsCap / ShowFPS());
         bool remove = false;
         while (true) {
             foreach (GameObject note in notes) {
@@ -827,7 +855,7 @@ public class NoteBoard : Subject, IObserver {
                 bad++;
                 remove = false;
             }
-            yield return new WaitForSeconds(refresh);
+            yield return new WaitForSeconds(refresh * (fpsCap / ShowFPS()));
             if (finished && notes.Count == 0) {
                 StartCoroutine(FadeOutMusic());
                 notes.Clear();

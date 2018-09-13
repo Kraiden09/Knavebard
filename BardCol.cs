@@ -150,6 +150,23 @@ public class BardCol : MonoBehaviour, IObserver {
         mode = newMode;
     }
 
+    public bool GetRotating() {
+        return rotating;
+    }
+
+    public void MoveTo(Vector3 whereToStand, Vector3 lookAt, IMinigame mg) {
+        mg.InAction();
+        scriptInvolvedInMoving = mg;
+        stageMovement = false;
+        moveToOtherPoint = true;
+        lookAtPoint = lookAt;
+        StartCoroutine(Rotate(whereToStand, true, true));
+    }
+
+    IMinigame scriptInvolvedInMoving;
+    bool stageMovement = true, moveToOtherPoint = false;
+    Vector3 lookAtPoint;
+
     IEnumerator Rotate(Vector3 point, bool firstRotation, bool stop) {
         /*GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         temp.transform.position = point;
@@ -180,13 +197,44 @@ public class BardCol : MonoBehaviour, IObserver {
             lineOfSight = rotationQuat * bard.transform.forward;
             if (!stop) {
                 StartCoroutine(MoveOnStage(point, firstRotation));
-            } else {
-                rotating = false;
+            } else if (stageMovement) {
                 climbing = false;
                 control.ModeChange();
                 board.ShowGuitar(bard.transform.position);
+            } else if (moveToOtherPoint) {
+                StartCoroutine(MoveToCR(point, lookAtPoint));
+                moveToOtherPoint = false;
+            } else {
+                if (scriptInvolvedInMoving != null) {
+                    scriptInvolvedInMoving.InAction();
+                    scriptInvolvedInMoving = null;
+                }
+                stageMovement = true;
+            }
+            rotating = false;
+        }
+    }
+
+    IEnumerator MoveToCR(Vector3 point, Vector3 lookTo) {
+        int distanceCounter = 0;
+        rb.isKinematic = false;
+        float startYBardPos = bard.transform.position.y;
+        Vector3 bardPos = bard.transform.position;
+        float prevDis;
+        float distance = Vector3.Distance(point, bardPos);
+        while (distance > movement) {
+            prevDis = distance;
+            control.MoveBard("forward");
+            distance = Vector3.Distance(point, bardPos);
+            bardPos = new Vector3(bard.transform.position.x, startYBardPos, bard.transform.position.z);
+            yield return new WaitForSeconds(0.01f);
+            if (prevDis < distance) {
+                distanceCounter++;
+                if (distanceCounter >= 2) break;
             }
         }
+        if (distanceCounter >= 2) control.MoveBard("backward");
+        StartCoroutine(Rotate(lookTo, false, true));
     }
 
     IEnumerator MoveOnStage(Vector3 point, bool firstJump) {

@@ -221,6 +221,11 @@ public class Control : Subject, IObserver {
         return mode;
     }
 
+    public void SetMinigameMode() {
+        if (mode == 0) mode = 3;
+        else if (mode == 3) mode = 0;
+    }
+
     void ShowScore() {
         Debug.Log("Great: " + noteBoard.great);
         Debug.Log("Good: " + noteBoard.good);
