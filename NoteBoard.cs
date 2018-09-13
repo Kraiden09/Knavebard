@@ -369,6 +369,8 @@ public class NoteBoard : Subject, IObserver {
     private float ShowFPS() {
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
         float fps = 1.0f / deltaTime;
+        if (fps < 1) fps = 1;
+        else if (fps > (fpsCap + 10)) fps = fpsCap + 10;
         return fps;
     }
 
