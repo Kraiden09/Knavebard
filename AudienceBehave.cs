@@ -199,6 +199,12 @@ public class AudienceBehave : MonoBehaviour, IObserver {
                 }
             }
 
+            /*
+            //Collider for Crowd-Interaction
+            crowd[i].GetComponent<BoxCollider>().size = new Vector3(4,4,4);
+            crowd[i].GetComponent<BoxCollider>().isTrigger = true;
+            */
+            crowd[i].GetComponent<AudAI>().id = i;
         }
 
 
@@ -214,7 +220,6 @@ public class AudienceBehave : MonoBehaviour, IObserver {
             crowd[2].transform.Rotate(new Vector3(0, 180, 0));
             crowd[3].transform.Rotate(new Vector3(0, 180, 0));
         }
-
 
         //unnecesserily complicated crowd percentages:
         crowd0 = new GameObject[] { crowd[1], crowd[UnityEngine.Random.Range(3, crowd.Length)] };
@@ -257,6 +262,8 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         }
         tavernReady = true;
     }
+
+    //Old IEnumerator
 
     /*IEnumerator WaitForTavern() {
         yield return new WaitForSeconds(0.49180327868f);
@@ -410,12 +417,10 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     */
 
     //METHODS FOR MOVING AUDIENCE (formerly in AudAI)
-
-    /*
-    //little jumps of excitement; probably not needed anymore
-    IEnumerator Jump(GameObject guy) {
+    
+    //little jumps of excitement
+    public IEnumerator Jump(GameObject guy) {
         float acceleration = 0;
-        
 
         //forced jumps, so they dont get stuck in the chair
         guy.transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
@@ -436,7 +441,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         //end
         yield return 0;
     }
-    */
+    
 
 
     //jumping for parts of the crowd
@@ -510,8 +515,9 @@ public class AudienceBehave : MonoBehaviour, IObserver {
             }
             yield return new WaitForSeconds(0.49f);
         }
-
+        
         //end
         //yield return 0;
     }
+
 }
