@@ -253,12 +253,12 @@ public class Control : Subject, IObserver {
         colHandler.SetMode(mode);
     }
 
-    public void MoveHands(float fadeTimeMusic) {
-        StartCoroutine(MoveHandsCR(fadeTimeMusic));
+    public void MoveHands(float fadeTimeMusic, float speed, float refreshRate, Vector3 positionLeft, Vector3 positionRight, bool setNewStartPos) {
+        StartCoroutine(MoveHandsCR(fadeTimeMusic, speed, refreshRate, positionLeft, positionRight, setNewStartPos));
     }
 
-    public void MoveHandsBack(float fadeTimeMusic) {
-        StartCoroutine(MoveHandsBackCR(fadeTimeMusic));
+    public void MoveHandsBack(float fadeTime, float speed, float refreshRate) {
+        StartCoroutine(MoveHandsBackCR(fadeTime, speed, refreshRate));
     }
 
     IEnumerator PlayGuitar() {
@@ -285,9 +285,9 @@ public class Control : Subject, IObserver {
 
     Vector3 startLeftHand, startRightHand;
     Rigidbody lhrb, rhrb;
-    float speed, step;
+    float step;
 
-    IEnumerator MoveHandsCR(float fadeTimeMusic) {
+    IEnumerator MoveHandsCR(float fadeTimeMusic, float speed, float refreshRate, Vector3 positionLeft, Vector3 positionRight, bool setNewStartPos) {
         if (!handsInit) {
             rightHand = GameObject.Find("RightHandBard");
             leftHand = GameObject.Find("LeftHandBard");
@@ -302,32 +302,37 @@ public class Control : Subject, IObserver {
         lhrb.isKinematic = true;
         rhrb.isKinematic = true;
 
-        startLeftHand = leftHand.transform.position;
-        startRightHand = rightHand.transform.position;
+        if (setNewStartPos) {
+            startLeftHand = leftHand.transform.position;
+            startRightHand = rightHand.transform.position;
+        }
 
-        Vector3 endLeft = startLeftHand + new Vector3(-0.01484f, 0.302f, -0.453464f);
-        Vector3 endRight = startRightHand + new Vector3(0.4039322f, 0.2888983f, -0.547344f);
+        /*Vector3 endLeft = startLeftHand + new Vector3(-0.01484f, 0.302f, -0.453464f);
+        Vector3 endRight = startRightHand + new Vector3(0.4039322f, 0.2888983f, -0.547344f);*/
 
-        speed = 1f;
         step = speed * Time.deltaTime;
 
-        while (leftHand.transform.position != endLeft && rightHand.transform.position != endRight) {
-            leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, endLeft, step);
-            rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, endRight, step);
-            yield return new WaitForSeconds(0.02f);
+        while (leftHand.transform.position != positionLeft && rightHand.transform.position != positionRight) {
+            leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, positionLeft, step);
+            rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, positionRight, step);
+            //yield return new WaitForSeconds(0.02f);
+            yield return new WaitForSeconds(refreshRate);
         }
         allowPlaying = true;
     }
 
-    IEnumerator MoveHandsBackCR(float fadeTime) {
-        while (leftHand.transform.position != startLeftHand && rightHand.transform.position != startRightHand) {
-            leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, startLeftHand, step);
-            rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, startRightHand, step);
-            yield return new WaitForSeconds(0.02f);
+    IEnumerator MoveHandsBackCR(float fadeTime, float speed, float refreshRate) {
+        step = speed * Time.deltaTime;
+        if (startLeftHand != null && startRightHand != null) {
+            while (leftHand.transform.position != startLeftHand && rightHand.transform.position != startRightHand) {
+                leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, startLeftHand, step);
+                rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, startRightHand, step);
+                yield return new WaitForSeconds(refreshRate);
+            }
+            lhrb.isKinematic = false;
+            rhrb.isKinematic = false;
+            allowPlaying = false;
         }
-        lhrb.isKinematic = false;
-        rhrb.isKinematic = false;
-        allowPlaying = false;
     }
 
     // Wait for character to be initialized

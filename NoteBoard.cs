@@ -459,7 +459,7 @@ public class NoteBoard : Subject, IObserver {
     }
 
     public void ShowGuitar(Vector3 bardPos) {
-        // 3D Model by Poedji Prasatya https://free3d.com/3d-model/acoustic-guitar-85235.html
+        // Acoustic Guitar 3d model by Poedji Prasatya https://free3d.com/3d-model/acoustic-guitar-85235.html
         guitar.transform.position = bardPos;
         guitar.transform.Translate(new Vector3(0.2f, 0, -0.45f));
         guitar.transform.Rotate(new Vector3(55.089f, 92.465f, -88.12601f));
@@ -467,7 +467,10 @@ public class NoteBoard : Subject, IObserver {
 
         StartCoroutine(FadeInObject(guitar, fadeTimeMusic, 0));
 
-        control.MoveHands(fadeTimeMusic);
+        Vector3 posLeft = GameObject.Find("LeftHandBard").transform.position + new Vector3(-0.01484f, 0.302f, -0.453464f);
+        Vector3 posRight = GameObject.Find("RightHandBard").transform.position + new Vector3(0.4039322f, 0.2888983f, -0.547344f);
+
+        control.MoveHands(fadeTimeMusic, 1, 0.02f, posLeft, posRight, true);
     }
 
     IEnumerator FadeInObject(GameObject obj, float time, float delay) {
@@ -573,7 +576,7 @@ public class NoteBoard : Subject, IObserver {
         }
         control.ChangeAllowScore();
         StartCoroutine(FadeOutObject(guitar, fadeTimeMusic / 2, 0));
-        control.MoveHandsBack(fadeTimeMusic / 2);
+        control.MoveHandsBack((fadeTimeMusic / 2), 1, 0.02f);
         while (music.volume > 0) {
             music.volume -= Time.deltaTime / fadeTimeMusic;
             yield return null;
