@@ -29,15 +29,20 @@ public class Hut : MonoBehaviour {
 
         LightHut.transform.Translate(6.45f, 0, 3.8f);
 
-        Debug.Log(jam.jam);
+        LightHut.GetComponent<CapsuleCollider>().isTrigger = true;
+        HutZylinder.GetComponent<CapsuleCollider>().isTrigger = true;
+
+        LightHut.AddComponent<HutTriggerScript>();
+
+        //LightHut.AddComponent<CandleTrigger>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (jam.jam < -15) {
+        if (jam.jam < -20) {
             jamSchwabi = 0;
         }
-        else if (jam.jam >= -15 && jam.jam < 15) {
+        else if (jam.jam >= -20 && jam.jam < 20) {
             jamSchwabi = 1;
         }
         else {
