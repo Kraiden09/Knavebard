@@ -32,6 +32,9 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     bool notInThere;
     int randSeed;
 
+    //for use of AudAI too
+    public bool jumping;
+
     public void UpdateObserver(Subject subject) {
         if (subject is NoteBoard) {
             //measure jam after each beat
@@ -77,6 +80,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     }
     */
 
+        /*NOT NEEDED
     //returns a percentage of good/bad-mooded audiencemembers PROBABLY NOT NEEDED
     public GameObject[] getAudiencePart(int percentage) {
 
@@ -90,7 +94,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         //... jump
 
     }
-
+    */
 
     //formula for jam-meter
     public void MeasureJam() {
@@ -438,6 +442,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
             acceleration += 0.1f;
         }
 
+        jumping = false;
         //end
         yield return 0;
     }

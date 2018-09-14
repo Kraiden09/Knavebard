@@ -60,9 +60,13 @@ public class AudAI : MonoBehaviour {
 
     public void OnTriggerStay(Collider other)
     {
-        if (Input.GetKeyDown("return"))
+        if (!audienceBehave.jumping)
         {
-            StartCoroutine(audienceBehave.Jump(iam));
+            if (Input.GetKeyDown("return"))
+            {
+                StartCoroutine(audienceBehave.Jump(iam));
+                audienceBehave.jumping = true;
+            }
         }
     }
 }
