@@ -23,6 +23,7 @@ public class HutTriggerScript : MonoBehaviour {
         }
     }
 
+    // Bard zieht Hut an! 
     private void OnTriggerStay(Collider other) {
         if (other.gameObject.name == "Bard") {
             if (Input.GetKeyDown(KeyCode.H)) {
