@@ -62,19 +62,19 @@ public class Hut : MonoBehaviour {
         switch (jamSchwabi) {
             case 0:
                 //Debug.Log("CASE=rot");
-                StartFadeHut(red);
+                StartFadeHut(red); // Sanfter Übergang
                 //LightHut.GetComponent<Renderer>().material.color = new Color(1, 0, 0);
                 //HutZylinder.GetComponent<Renderer>().material.color = new Color(1, 0, 0);
                 break;
             case 1:
                 //Debug.Log("CASE=gelb");
-                StartFadeHut(yellow);
+                StartFadeHut(yellow); // Sanfter Übergang
                 //LightHut.GetComponent<Renderer>().material.color = new Color(1, 1, 0);
                 //HutZylinder.GetComponent<Renderer>().material.color = new Color(1, 1, 0);
                 break;
             case 2:
                 //Debug.Log("CASE=grün");
-                StartFadeHut(green);
+                StartFadeHut(green); // Sanfter Übergang
                 //LightHut.GetComponent<Renderer>().material.color = new Color(0, 1, 0);
                 //HutZylinder.GetComponent<Renderer>().material.color = new Color(0, 1, 0);
                 break;
