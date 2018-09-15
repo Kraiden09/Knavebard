@@ -28,6 +28,9 @@ public class DartBoard : MonoBehaviour, IObserver {
         dartBoard.name = "DartBoard";
         dartBoard.transform.position = nb.getPosts()[1].transform.position;
         dartBoard.transform.Translate(new Vector3(1.3f, 0, 0));
+        Destroy(dartBoard.GetComponent<CapsuleCollider>());
+        dartBoard.AddComponent<MeshCollider>();
+        dartBoard.AddComponent<DartBoardCol>();
         CreateTriggerArea();
     }
 

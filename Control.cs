@@ -261,6 +261,14 @@ public class Control : Subject, IObserver {
         StartCoroutine(MoveHandsBackCR(fadeTime, speed, refreshRate));
     }
 
+    public bool GetAllowPlaying() {
+        return allowPlaying;
+    }
+
+    public void SetAllowPlaying(bool val) {
+        allowPlaying = val;
+    }
+
     IEnumerator PlayGuitar() {
         if (allowPlaying) {
             if (!usingGuitar) {
@@ -288,6 +296,7 @@ public class Control : Subject, IObserver {
     float step;
 
     IEnumerator MoveHandsCR(float fadeTimeMusic, float speed, float refreshRate, Vector3 positionLeft, Vector3 positionRight, bool setNewStartPos) {
+        allowPlaying = false;
         if (!handsInit) {
             rightHand = GameObject.Find("RightHandBard");
             leftHand = GameObject.Find("LeftHandBard");
@@ -312,7 +321,7 @@ public class Control : Subject, IObserver {
 
         step = speed * Time.deltaTime;
 
-        while (leftHand.transform.position != positionLeft && rightHand.transform.position != positionRight) {
+        while (leftHand.transform.position != positionLeft || rightHand.transform.position != positionRight) {
             leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, positionLeft, step);
             rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, positionRight, step);
             //yield return new WaitForSeconds(0.02f);
