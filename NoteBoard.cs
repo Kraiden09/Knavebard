@@ -466,12 +466,9 @@ public class NoteBoard : Subject, IObserver {
         guitar.transform.localScale = new Vector3(5, 5, 5);
 
         StartCoroutine(FadeInObject(guitar, fadeTimeMusic, 0));
-
-        Vector3 posLeft = GameObject.Find("LeftHandBard").transform.position + new Vector3(-0.01484f, 0.302f, -0.453464f);
-        Vector3 posRight = GameObject.Find("RightHandBard").transform.position + new Vector3(0.4039322f, 0.2888983f, -0.547344f);
-
-        control.MoveHands(fadeTimeMusic, 1, 0.02f, posLeft, posRight, true);
     }
+
+    bool movedHands = false;
 
     IEnumerator FadeInObject(GameObject obj, float time, float delay) {
         float increaseVal = 1 / (time * fpsCap);
@@ -499,6 +496,13 @@ public class NoteBoard : Subject, IObserver {
         }
         guitarMaterials = matList.ToArray();
         while (currentAlpha < 1f) {
+            if (currentAlpha > 0.5f && !movedHands) {
+                Vector3 posLeft = GameObject.Find("LeftHandBard").transform.position + new Vector3(-0.01484f, 0.302f, -0.453464f);
+                Vector3 posRight = GameObject.Find("RightHandBard").transform.position + new Vector3(0.4039322f, 0.2888983f, -0.547344f);
+
+                control.MoveHands(fadeTimeMusic / 2, 1, 0.02f, posLeft, posRight, true);
+                movedHands = true;
+            }
             if (delay > 0f) {
                 yield return new WaitForSeconds(increaseInterval);
                 delay -= increaseInterval;
@@ -516,6 +520,7 @@ public class NoteBoard : Subject, IObserver {
             currentAlpha += increaseVal;
             yield return new WaitForSeconds(increaseInterval);
         }
+        movedHands = false;
     }
 
     IEnumerator FadeOutObject(GameObject obj, float time, float delay) {
