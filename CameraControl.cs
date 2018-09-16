@@ -46,6 +46,8 @@ public class CameraControl : MonoBehaviour {
     //Fixpunkt
     Vector3 fix;
 
+    // for rotation
+    Vector3 targetDir, newDir;
     /*
     // used structs
     CamPos[] Positions;
@@ -151,14 +153,14 @@ public class CameraControl : MonoBehaviour {
             GoDarting();
         }
 
-        if (std)
+        else if (std)
         {
             ReturnToSTD();
         }
 
 
         //DIRECTOR-MODE
-        if (director) {
+        else if (director) {
             //moving camera from pos to pos
             //waiting in between changes
             if (!waiting) {
@@ -189,7 +191,7 @@ public class CameraControl : MonoBehaviour {
 
 
         //MANUAL-MODE
-        if (!director) {
+        else if(!director) {
             //w-a-s-d
             if (Input.GetKey(KeyCode.W)) {
                 //Grenze
@@ -410,12 +412,16 @@ public class CameraControl : MonoBehaviour {
 
     public void GoDarting()
     {
-        //while (transform.position.x != 3.5f && transform.position.y != 1.8f && transform.position.z != -0.7f)
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(3.5f, 1.8f, 0.7f), camSpeed * 2 * Time.deltaTime);
-        transform.LookAt(new Vector3(5, 2f, 7));
+
+        //rotation
+        targetDir = new Vector3(3.5f, 1.8f, 0.7f) - transform.position;
+        newDir = Vector3.RotateTowards(transform.forward, targetDir, camSpeed * Time.deltaTime * 0.1f, 0.0f);
+        transform.rotation = Quaternion.LookRotation(newDir);
+
 
         //end
-        if (transform.position.x == 3.5f && transform.position.y == 1.8f && transform.position.z == 0.7f)
+        if (transform.position.x == 3.5f && transform.position.y == 1.8f && transform.position.z == 0.7f /*&& transform.rotation.x == 0 && transform.rotation.y == 0 && transform.rotation.z == 0*/)
         {
             darting = false;
         }
@@ -425,12 +431,17 @@ public class CameraControl : MonoBehaviour {
     public void ReturnToSTD()
     {
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(0, 2.8f, -7), camSpeed * 2 * Time.deltaTime);
-        transform.LookAt(fix);
+        
+        //rotation
+        targetDir = fix - transform.position;
+        newDir = Vector3.RotateTowards(transform.forward, targetDir, camSpeed * Time.deltaTime * 0.1f, 0.0f);
+        transform.rotation = Quaternion.LookRotation(newDir);
+
 
         //end
         if (transform.position.x == 0 && transform.position.y == 2.8f && transform.position.z == -7)
         {
-            std = false;
+           std = false;
         }
     }
     
