@@ -122,7 +122,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
         }
         if (Input.GetKeyDown(KeyCode.Return) && !isPlaying) {
             EnterPlayMode();
-        } else if (Input.GetKeyDown(KeyCode.Escape) && isPlaying && !moving && !handsInMotion) {
+        } else if (Input.GetKeyDown(KeyCode.Escape) && isPlaying && !moving && !handsInMotion && !throwing) {
             StopPlaying();
         } else if (Input.GetKeyDown(KeyCode.Return) && isPlaying && !moving && dartInHand && !throwing && !handsInMotion) {
             ThrowDart();
@@ -217,6 +217,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
         handsInThrowingPosition = false;
         dartInHand = false;
         samePosition = bard.transform.position;
+        cam.darting = false;
         cam.std = true;
         text.transform.localPosition = new Vector3(25, 50, 0);
         ShowText();
@@ -240,6 +241,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
         finished = false;
         control.SetMinigameMode();
         isPlaying = true;
+        cam.std = false;
         cam.darting = true;
         ShowText();
         MoveToStartPoint();
