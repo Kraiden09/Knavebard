@@ -15,12 +15,9 @@ public class DartCol : MonoBehaviour {
     }
 
     private void OnCollisionEnter(UnityEngine.Collision col) {
-        Debug.Log(col.gameObject);
         if (col.gameObject.name.Contains("DartBoard")) {
-            Debug.Log("Destroyed1");
             dbt.AllowSpawn();
         } else {
-            Debug.Log("Destroyed2");
             dbt.AllowSpawn();
             Destroy(gameObject);
             dbt.SetSecondThrowMove();

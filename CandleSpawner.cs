@@ -17,6 +17,8 @@ public class CandleSpawner : Subject, IObserver {
     // Needs to be an even number
     readonly int numberOfCandles = 6;
 
+    AudioSource fire;
+
     Light lightComp;
 
     Vector3[] posWallLeft;
@@ -101,6 +103,13 @@ public class CandleSpawner : Subject, IObserver {
             wicks[i] = wick;
             isLit[i] = true;
             lights[i] = lightComp;
+
+            fire = candles[i].AddComponent<AudioSource>();
+            // Audio from Asset Store -> Universal Sound FX by imphenzia
+            fire.clip = Resources.Load<AudioClip>("Universal Sound FX/Elements/Fire/FIRE_Campfire_Active_Smooth_01_loop_mono");
+            fire.loop = true;
+            fire.volume = 0.003f;
+            fire.Play();
 
             CreateVertices(candles[i], i);
             CreateBurnParticle(candles[i], wicks[i], i);
@@ -300,8 +309,13 @@ public class CandleSpawner : Subject, IObserver {
             newState = !newState;
             isLit[index] = newState;
             lights[index].enabled = newState;
-            if (!newState) particleSystems[index].Stop();
-            else particleSystems[index].Play();
+            if (!newState) {
+                particleSystems[index].Stop();
+                candles[index].GetComponent<AudioSource>().Stop();
+            } else {
+                particleSystems[index].Play();
+                candles[index].GetComponent<AudioSource>().Play();
+            }
         }
         return newState;
     }
@@ -460,6 +474,7 @@ public class CandleSpawner : Subject, IObserver {
         // NRE?
         GameObject.Find("TriggerCandle" + (index + 1)).GetComponent<CandleTrigger>().SetIsLit(isLit[index]);
         particleSystems[index].Stop();
+        candles[index].GetComponent<AudioSource>().Stop();
         Destroy(candles[index]);
     }
 }

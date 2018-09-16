@@ -21,17 +21,16 @@ public class DartBoardCol : MonoBehaviour {
 
     private void OnCollisionEnter(UnityEngine.Collision col) {
         if (col.gameObject.name.Contains("Dart")) {
-            Debug.Log("Col");
             dart = (GameObject)Instantiate(Resources.Load("Prefab/DartArrow"));
             if (correctZ == 0) CorrectContactPoint();
             contactPos = new Vector3(col.contacts[0].point.x, col.contacts[0].point.y, correctZ);
             dart.transform.Rotate(new Vector3(0, -90, 0));
             dart.transform.position = contactPos;
-            if (col.contacts.Length > 0) dbt.SetDartInBoard(dart);
-            else dbt.SetDartInBoard(null);
+            if (col.contacts.Length > 0) {
+                dbt.SetDartInBoard(dart);                
+            } else dbt.SetDartInBoard(null);
             dbt.SetHandsInMotion();
             dart.name = "DartArrowBoard";
-            Debug.Log("Destr");
             Destroy(col.gameObject);
             dbt.SetSecondThrowMove();
         }

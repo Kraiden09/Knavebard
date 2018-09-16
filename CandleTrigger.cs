@@ -4,23 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CandleTrigger : MonoBehaviour, IObserver {
-    Init init;
+public class CandleTrigger : MonoBehaviour {
     CandleSpawner cs;
     CandleInteraction ci;
 
     public Text text;
     GameObject interaction;
-    GameObject bard;
     String tempText;
     int index;
     bool isLit, prev, lastChange, isHidden, active;
-
-    public void UpdateObserver(Subject subject) {
-        if (subject is Init) {
-            bard = GameObject.Find("Bard");
-        }
-    }
 
     // Use this for initialization
     void Start () {
@@ -30,9 +22,6 @@ public class CandleTrigger : MonoBehaviour, IObserver {
         cs = GameObject.Find("CandleSpawner").GetComponent<CandleSpawner>();
 
         ci = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
-
-        init = GameObject.Find("Init").GetComponent<Init>();
-        init.Subscribe(this);
 
         index = (Int32.Parse(gameObject.name.Substring(gameObject.name.Length - 1))) - 1;
         isLit = true;

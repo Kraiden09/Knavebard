@@ -6,7 +6,6 @@ public class Init : Subject, IObserver {
     GameObject bard;
     GameObject[] hands;
     CharacterJoint[] joints;
-    Vector3[] distanceVector;
     GameObject hand;
 
     Collision col;
@@ -25,7 +24,6 @@ public class Init : Subject, IObserver {
         bard = (GameObject)Instantiate(Resources.Load("Prefab/Character"));
         hands = new GameObject[2];
         joints = new CharacterJoint[2];
-        distanceVector = new Vector3[2];
         bard.name = "Bard";
         NotifyAll();
     }
@@ -37,6 +35,7 @@ public class Init : Subject, IObserver {
 
     void Awake() {
         Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
     }
 
     /*public void UpdateJoint() {

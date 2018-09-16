@@ -35,6 +35,9 @@ public class Control : Subject, IObserver {
 
     public Coroutine jumping;
 
+    AudioClip[] steps;
+    AudioSource walking;
+
     public void UpdateObserver(Subject subject) {
         if (subject is Init) {
             movement = 0.05f;
@@ -85,6 +88,15 @@ public class Control : Subject, IObserver {
         usingGuitar = false;
         handsInit = false;
         allowPlaying = false;
+
+        steps = new AudioClip[3];
+
+        // Audio from Asset Store -> Universal Sound FX by imphenzia
+        walking = gameObject.AddComponent<AudioSource>();
+        steps[0] = Resources.Load<AudioClip>("Universal Sound FX/HUMAN/Footsteps/Leather_Wood_Hollow_Jog/FOOTSTEP_Leather_Wood_Hollow_Jog_RR3_mono");
+        steps[1] = Resources.Load<AudioClip>("Universal Sound FX/HUMAN/Footsteps/Leather_Wood_Hollow_Jog/FOOTSTEP_Leather_Wood_Hollow_Jog_RR5_mono");
+        steps[2] = Resources.Load<AudioClip>("Universal Sound FX/HUMAN/Footsteps/Leather_Wood_Hollow_Jog/FOOTSTEP_Leather_Wood_Hollow_Jog_RR6_mono");
+        walking.volume = 0.40f;
     }
 	
 	// Update is called once per frame
@@ -157,6 +169,10 @@ public class Control : Subject, IObserver {
     }
 
     public void MoveBard(string direction) {
+        if (!walking.isPlaying) {
+            walking.clip = steps[Random.Range(0, steps.Length)];
+            walking.Play();
+        }
         if (direction.Equals("forward")) {
             character.transform.Translate(movement, 0, 0);
         } else {
@@ -332,7 +348,7 @@ public class Control : Subject, IObserver {
 
     IEnumerator MoveHandsBackCR(float fadeTime, float speed, float refreshRate) {
         step = speed * Time.deltaTime;
-        if (startLeftHand != null && startRightHand != null) {
+        if (startLeftHand != Vector3.zero && startRightHand != Vector3.zero) {
             while (leftHand.transform.position != startLeftHand && rightHand.transform.position != startRightHand) {
                 leftHand.transform.position = Vector3.MoveTowards(leftHand.transform.position, startLeftHand, step);
                 rightHand.transform.position = Vector3.MoveTowards(rightHand.transform.position, startRightHand, step);

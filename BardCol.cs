@@ -18,6 +18,8 @@ public class BardCol : MonoBehaviour, IObserver {
     int mode;
     bool tavernInit = false, rotating = false, climbing = false, onStage = false;
 
+    AudioSource start;
+
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
             tavernInit = true;
@@ -35,6 +37,12 @@ public class BardCol : MonoBehaviour, IObserver {
         board = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
 
         //StartCoroutine(WaitForTavern());
+
+        // Audio from Asset Store -> Universal Sound FX by imphenzia
+        start = gameObject.AddComponent<AudioSource>();
+        start.clip = Resources.Load<AudioClip>("Universal Sound FX/Voices/Exclamations/EXCLAMATION_Male_B_Horray_01_mono");
+        start.volume = 0.2f;
+
         mode = control.GetMode();
     }
 
@@ -125,6 +133,7 @@ public class BardCol : MonoBehaviour, IObserver {
     }
 
     void ClimbStairs() {
+        board.SetMurmur(0.02f);
         board.CreateGuitar();
         if (!climbing) {
             climbing = true;
@@ -201,6 +210,7 @@ public class BardCol : MonoBehaviour, IObserver {
                 climbing = false;
                 control.ModeChange();
                 board.ShowGuitar(bard.transform.position);
+                start.Play();
             } else if (moveToOtherPoint) {
                 StartCoroutine(MoveToCR(point, lookAtPoint));
                 moveToOtherPoint = false;

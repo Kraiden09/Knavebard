@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
+public class DartBoardTrigger : MonoBehaviour, IMinigame {
+    AudioSource hit;
+
     Control control;
 
     GameObject interaction, bard, dart, rightHand, dartBoard;
@@ -16,19 +18,14 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
 
     Vector3 startPoint, samePosition, newPosLeft, newPosRight, handToBoard, throwVector;
 
-    bool isPlaying = false, moving = false, controlInit = false, handsInThrowingPosition = false, finished = true, dartInHand = false, handsInMotion = false, throwing = false, secondsThrowMove = false, flying = false, allowSpawn = true;
+    bool isPlaying = false, moving = false, handsInThrowingPosition = false, finished = true, dartInHand = false, handsInMotion = false, throwing = false, secondsThrowMove = false, flying = false, allowSpawn = true;
 
     public Text text;
-
-    public void UpdateObserver(Subject subject) {
-        if (subject is Control) controlInit = true;
-    }
 
     // Use this for initialization
     void Start () {
         counter = 0;
         control = GameObject.Find("Control").GetComponent<Control>();
-        control.Subscribe(this);
 
         interaction = GameObject.Find("InteractionText");
         text = interaction.GetComponent<Text>();
@@ -39,9 +36,16 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
 
         bard = GameObject.Find("Bard");
 
+        handRB = GameObject.Find("RightHandBard").GetComponent<Rigidbody>();
+
         samePosition = new Vector3(0, 0, 0);
 
         dartBoard = GameObject.Find("DartBoard");
+
+        // Audio from Asset Store -> Universal Sound FX by imphenzia
+        hit = dartBoard.AddComponent<AudioSource>();
+        hit.clip = Resources.Load<AudioClip>("Universal Sound FX/IMPACTS/Wood/IMPACT_Wood_Stick_On_Wood_Post_01_mono");
+        hit.volume = 0.07f;
 
         //GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //temp.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
@@ -56,6 +60,7 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
     public void SetDartInBoard(GameObject obj) {
         if (dartInBoard[counter] != null) Destroy(dartInBoard[counter]);
         dartInBoard[counter] = obj;
+        hit.Play();
         counter = (counter + 1) % dartInBoard.Length;
     }
 
@@ -74,7 +79,6 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
 
     public void InAction() {
         moving = !moving;
-        Debug.Log("Moving" + moving);
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -86,56 +90,43 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
     }
 
     private void OnTriggerStay(Collider other) {
+        if (rightHand == null) rightHand = GameObject.Find("RightHandBard");
+        if (handRB == null) {
+            if (rightHand.GetComponent<Rigidbody>() == null) handRB = rightHand.AddComponent<Rigidbody>();
+        }
         if (control.GetAllowPlaying() && handsInMotion) {
             handsInMotion = false;
         }
         if (secondsThrowMove && flying && control.GetAllowPlaying()) {
-            Debug.Log("1");
             secondsThrowMove = false;
             DartInAir();
             HandsToThrowingPosition();
         } else if (secondsThrowMove && control.GetAllowPlaying()) {
-            Debug.Log("2");
             ThrowDart();
         }
         if (isPlaying && !moving && !handsInThrowingPosition && control.GetAllowPlaying()) {
-            Debug.Log("4");
             handsInThrowingPosition = true;
             handsInMotion = false;
         }
         else if (isPlaying && !moving && !handsInThrowingPosition && !handsInMotion) {
-            Debug.Log("3");
             HandsToThrowingPosition();
         }
         if (isPlaying && !moving && handsInThrowingPosition && !dartInHand && allowSpawn) {
-            Debug.Log("5");
             SpawnDart();
             handsInMotion = false;
             allowSpawn = false;
         }
         if (Input.GetKeyDown(KeyCode.Return) && !isPlaying) {
-            Debug.Log("6");
             EnterPlayMode();
         } else if (Input.GetKeyDown(KeyCode.Escape) && isPlaying && !moving && !handsInMotion) {
-            Debug.Log("7");
             StopPlaying();
         } else if (Input.GetKeyDown(KeyCode.Return) && isPlaying && !moving && dartInHand && !throwing && !handsInMotion) {
-            Debug.Log("8");
             ThrowDart();
         }
         if (!isPlaying && !handsInThrowingPosition && !moving && !handRB.isKinematic && !finished) {
-            Debug.Log("9");
+            // If no Rigidbody
             control.SetMinigameMode();
             finished = true;
-        }
-        if (Input.GetKeyDown(KeyCode.K)) {
-            Debug.Log(isPlaying);
-            Debug.Log(moving);
-            Debug.Log(dartInHand);
-            Debug.Log(throwing);
-            Debug.Log(handsInMotion);
-            Debug.Log(handsInThrowingPosition);
-            Debug.Log(control.GetAllowPlaying());
         }
     }
 
@@ -153,7 +144,6 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
     }
 
     void SpawnDart() {
-        Debug.Log("Spawn");
         dart = (GameObject)Instantiate(Resources.Load("Prefab/DartArrow"));
         dart.name = "DartArrowHand";
         dart.transform.position = rightHand.transform.position;
@@ -166,7 +156,6 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
     }
 
     void ThrowDart() {
-        Debug.Log("Throwing");
         if (handToBoard == Vector3.zero) {
             handToBoard = dartBoard.transform.position - rightHand.transform.position;
         }
@@ -235,7 +224,6 @@ public class DartBoardTrigger : MonoBehaviour, IObserver, IMinigame {
             control.MoveBard("Forward");
         }
         moving = false;
-        controlInit = false;
         handsInThrowingPosition = false;
         dartInHand = false;
         handsInMotion = false;

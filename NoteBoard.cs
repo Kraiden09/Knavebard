@@ -12,6 +12,12 @@
  * https://www.textures.com/download/brickoldrounded0310/123888
  * https://www.textures.com/download/woodplanksbeamed0014/35277
  * https://www.textures.com/download/pbr0139/133174
+ * 
+ * Music:
+ * License: "Master of the Feast"
+ * Kevin MacLeod (incompetech.com)
+ * Licensed under Creative Commons: By Attribution 3.0
+ * http://creativecommons.org/licenses/by/3.0/
  * */
 
 using System;
@@ -74,7 +80,7 @@ public class NoteBoard : Subject, IObserver {
     float fadeInDelay;
 
     // Music
-    AudioSource music;
+    AudioSource music, murmur;
 
     //GameObject stairs;
 
@@ -120,12 +126,22 @@ public class NoteBoard : Subject, IObserver {
         fpsCap = 60;
         fadeTimeMusic = 3;
 
+        murmur = gameObject.AddComponent<AudioSource>();
+        murmur.clip = Resources.Load<AudioClip>("Universal Sound FX/AMBIENCES/Crowds/AMBIENCE_Public_Hall_Chatter_01_loop_stereo");
+        murmur.loop = true;
+        murmur.volume = 0.05f;
+        murmur.Play();
+
         // Correct fading
         fadeTime = fadeBaseTime * moveAlongScreenBase / moveAlongScreen; 
         fadeInterval = fadeBaseInterval * moveAlongScreenBase / moveAlongScreen;
         fadeInDelay = fadeInBaseDelay * moveAlongScreenBase / moveAlongScreen;
         acceptance = baseAcceptance * moveAlongScreenBase / moveAlongScreen;
         scoreTime = baseScoreTime * moveAlongScreenBase / moveAlongScreen;
+    }
+
+    public void SetMurmur(float volume) {
+        murmur.volume = volume;
     }
 
     // Update is called once per frame
@@ -565,7 +581,7 @@ public class NoteBoard : Subject, IObserver {
         if (!cc.director) {
             cc.ChangeMode();
         }
-        while (music.volume < 1) {
+        while (music.volume < 0.5f) {
             music.volume += Time.deltaTime / fadeTimeMusic;
             yield return null;
         }
