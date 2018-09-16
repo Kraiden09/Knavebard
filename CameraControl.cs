@@ -67,6 +67,9 @@ public class CameraControl : MonoBehaviour {
     GameObject leftrear;
     GameObject rightrear;
 
+    //stuff for others
+    public bool darting;
+    public bool std;
 
     //NORMAL CAMERA POSITION IN UNITY: 0, 2.8f, -7
     // Use this for initialization
@@ -91,6 +94,8 @@ public class CameraControl : MonoBehaviour {
         //"Flags"
         director = false;
         waiting = false;
+        darting = false;
+        std = false;
 
         /*
         //Structs
@@ -131,17 +136,26 @@ public class CameraControl : MonoBehaviour {
 
         //activate camera after startup
         StartCoroutine(WaitForIt());
-
     }
 
     // Update is called once per frame
     void Update() {
-        
+
         //switch
         if (Input.GetKeyDown("1")) {
             director = !director;
         }
-        
+
+        if (darting)
+        {
+            GoDarting();
+        }
+
+        if (std)
+        {
+            ReturnToSTD();
+        }
+
 
         //DIRECTOR-MODE
         if (director) {
@@ -390,10 +404,36 @@ public class CameraControl : MonoBehaviour {
         transform.LookAt(fix);
     }
 
-    public void ChangeMode()
-    {
+    public void ChangeMode() {
         director = !director;
     }
+
+    public void GoDarting()
+    {
+        //while (transform.position.x != 3.5f && transform.position.y != 1.8f && transform.position.z != -0.7f)
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(3.5f, 1.8f, 0.7f), camSpeed * 2 * Time.deltaTime);
+        transform.LookAt(new Vector3(5, 2f, 7));
+
+        //end
+        if (transform.position.x == 3.5f && transform.position.y == 1.8f && transform.position.z == 0.7f)
+        {
+            darting = false;
+        }
+    }
+
+    
+    public void ReturnToSTD()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(0, 2.8f, -7), camSpeed * 2 * Time.deltaTime);
+        transform.LookAt(fix);
+
+        //end
+        if (transform.position.x == 0 && transform.position.y == 2.8f && transform.position.z == -7)
+        {
+            std = false;
+        }
+    }
+    
 
     // just there for waiting
     IEnumerator sleeper() {

@@ -74,9 +74,11 @@ public class NoteReader : MonoBehaviour {
         }*/
     }
 
+    /*no update needed
     // Update is called once per frame
     void Update() {
     }
+    */
 
     public int readNotes(int i) {
         return songNotes[i];
