@@ -8,6 +8,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
     AudioSource hit;
 
     Control control;
+    CameraControl cam;
 
     GameObject interaction, bard, dart, rightHand, dartBoard;
     GameObject[] dartInBoard;
@@ -26,6 +27,8 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
     void Start () {
         counter = 0;
         control = GameObject.Find("Control").GetComponent<Control>();
+
+        cam = GameObject.Find("Main Camera").GetComponent<CameraControl>();
 
         interaction = GameObject.Find("InteractionText");
         text = interaction.GetComponent<Text>();
@@ -69,6 +72,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
             text.text = "Press \"Return\" to start Playing.";
         } else {
             text.text = "Press \"Return\" to throw Dart or \"Esc\" to stop.";
+            text.transform.localPosition = new Vector3(-300, 170, 0);
         }
     }
 
@@ -213,6 +217,8 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
         handsInThrowingPosition = false;
         dartInHand = false;
         samePosition = bard.transform.position;
+        cam.std = true;
+        text.transform.localPosition = new Vector3(25, 50, 0);
         ShowText();
         for (int i = 0; i < dartInBoard.Length; i++) {
             if (dart != dartInBoard[i]) Destroy(dart);
@@ -234,6 +240,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
         finished = false;
         control.SetMinigameMode();
         isPlaying = true;
+        cam.darting = true;
         ShowText();
         MoveToStartPoint();
     }

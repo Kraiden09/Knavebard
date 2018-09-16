@@ -595,6 +595,7 @@ public class NoteBoard : Subject, IObserver {
         if (cc.director) {
             cc.ChangeMode();
         }
+        cc.std = true;
         control.ChangeAllowScore();
         StartCoroutine(FadeOutObject(guitar, fadeTimeMusic / 2, 0));
         control.MoveHandsBack((fadeTimeMusic / 2), 1, 0.02f);
