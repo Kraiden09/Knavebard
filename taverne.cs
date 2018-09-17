@@ -196,7 +196,7 @@ public class taverne : Subject {
         tiVert = new List<Vector3>();
         tiTri = new List<int>();
 
-        
+
 
         tiVert.Add(new Vector3(+0.4f, 0, -0.8f));
         tiVert.Add(new Vector3(+0.4f, +0.6f, -0.8f));
@@ -229,7 +229,7 @@ public class taverne : Subject {
 
         tisch.GetComponent<MeshFilter>().mesh = timesh;
 
-        
+
         int durchlauf = 0;
 
         for (int i = 0; i < timesh.vertices.Length - 2; i++) {
@@ -605,7 +605,7 @@ public class taverne : Subject {
         barVert = new List<Vector3>();
         barTri = new List<int>();
         //xpos = 7; ypos = 0.1f, zpos = 0   -5
-        
+
 
         barVert.Add(new Vector3(0, 0, 0));
         barVert.Add(new Vector3(0, +0.5f, 0));
@@ -661,7 +661,7 @@ public class taverne : Subject {
         barVert.Add(new Vector3(-1, +0.5f, -4));
         barVert.Add(new Vector3(0, +0.5f, -5));
         barVert.Add(new Vector3(0, +0.5f, -4));
-      
+
         barmesh = new Mesh();
         barmesh.vertices = barVert.ToArray();
         bar.GetComponent<MeshFilter>().mesh = barmesh;
@@ -712,6 +712,28 @@ public class taverne : Subject {
 
     //Zufällige Generierung
     void randomize() {
+        if (hockerzahl != 0) {
+            UpdateObserver();
+            GameObject[] hocks = getHocker();
+            for (int i = 1; i <= hockerzahl; i++) {
+                hock = hock + i;
+               
+                if (GameObject.Find(hock).transform.eulerAngles.y == 90) {
+                    GameObject.Find(hock).transform.Rotate(0, -90, 0);
+                }
+                if (GameObject.Find(hock).transform.eulerAngles.y == 270)
+                {
+                    GameObject.Find(hock).transform.Rotate(0, 90, 0);
+                }
+                if (GameObject.Find(hock).transform.eulerAngles.y == 180)
+                {
+                    GameObject.Find(hock).transform.Rotate(0, -180, 0);
+                }
+
+                hock = "Hocker";
+            }
+        }
+
         hockerzahl = 0;
         tischzahl = 0;
         konfig = Mathf.Floor(Random.Range(1, 4));
@@ -722,8 +744,8 @@ public class taverne : Subject {
             barBuilder(bar, -7, 0, barpos);
             //berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
             //berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
-            tischmeshwaage(0.5f, 0, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
-            tischmeshsenk(2.5f, 0, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+            tischmeshwaage(-0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
+            tischmeshsenk(2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
         }
 
         if (konfig == 2) {
@@ -731,8 +753,8 @@ public class taverne : Subject {
             barBuilder2(bar, 7, 0, barpos2);
             //berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
             //berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3(1, 0.1f, -4.5f), new Vector3(1, 0.1f, 1));
-            tischmeshwaage(-0.5f, 0, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
-            tischmeshsenk(-2.5f, 0, -2.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+            tischmeshwaage(0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
+            tischmeshsenk(-2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
         }
 
         if (konfig == 3) {
@@ -815,7 +837,7 @@ public class taverne : Subject {
             buehne.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         }
         lastkonf = konfig;
-
+        GameObject.Find("AudienceBehave").GetComponent<AudienceBehave>().Reassemble();
         /*tischbereich.GetComponent<Renderer>().receiveShadows = true;
         buehnenbereich.GetComponent<Renderer>().receiveShadows = true;
         barbereich.GetComponent<Renderer>().receiveShadows = true;
@@ -945,7 +967,7 @@ public class taverne : Subject {
                 durchlauf = 0;
             }
         }
-        
+
         mesh.uv = uvs;
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
@@ -1031,9 +1053,9 @@ public class taverne : Subject {
 
 
         //Farben der einzelnen Bereiche
-       /* barbereich.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
-        buehnenbereich.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 1.0f);
-        tischbereich.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 0.0f);*/
+        /* barbereich.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.0f);
+         buehnenbereich.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 1.0f);
+         tischbereich.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 0.0f);*/
 
 
         //Objekte verschieben/skalieren/rotieren
@@ -1102,7 +1124,7 @@ public class taverne : Subject {
         bumesh.triangles = buTri.ToArray();
 
         createUVHocker(buehne);
-       
+
 
         wand1.GetComponent<Renderer>().receiveShadows = true;
         wand2.GetComponent<Renderer>().receiveShadows = true;
@@ -1261,5 +1283,22 @@ public class taverne : Subject {
         } else {
             return new Vector3(bar.transform.position.x + 0.5f, bar.transform.position.y, bar.transform.position.z + 2.5f);
         }
+    }
+
+    public void UpdateObserver()
+    {
+        
+            GameObject character = GameObject.Find("Bard");
+            character.GetComponent<Rigidbody>().isKinematic = false;
+            Vector3[] spawnPos = getSpawnVert();
+            character.transform.position = new Vector3(spawnPos[0].x, 0.6f, spawnPos[0].z);
+            character.transform.Translate((spawnPos[3].x - spawnPos[0].x) / 2, 0, (spawnPos[3].z - spawnPos[0].z) / 2);
+            // Set LookAt Point
+            character.transform.LookAt(new Vector3(0, 0, 0));
+            character.transform.Rotate(0, -90, 0);
+            character.GetComponent<Rigidbody>().isKinematic = true;
+            //init.UpdateJoint();
+            NotifyAll();
+        
     }
 }
