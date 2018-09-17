@@ -12,4 +12,4 @@ H: Aufheben des Hutes, falls Barde in der Nähe
 
 T: neues Tavernenlayout generieren (hauptsächlich für Testzwecke / zum Angeben)
 
-Starten des Rhytmusspiels: Laufe auf die Treppe an der linken Seite der Bühne
+Starten des Rhythmusspiels: Laufe auf die Treppe an der linken Seite der Bühne
