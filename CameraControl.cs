@@ -442,6 +442,8 @@ public class CameraControl : MonoBehaviour {
         if (transform.position.x == 0 && transform.position.y == 2.8f && transform.position.z == -7)
         {
            std = false;
+            //if rotation is too slow
+            transform.LookAt(fix);
         }
     }
     

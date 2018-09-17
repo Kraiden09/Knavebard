@@ -13,7 +13,7 @@ public class AudAI : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        GetComponent<BoxCollider>().size = new Vector3(6, 4, 6);
+        GetComponent<BoxCollider>().size = new Vector3(5, 4, 5);
         GetComponent<BoxCollider>().isTrigger = true;
         audienceBehave = GameObject.Find("AudienceBehave").GetComponent<AudienceBehave>();
         iam = transform.gameObject;

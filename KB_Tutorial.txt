@@ -1,0 +1,15 @@
+Steuerung für Knavebard:
+
+Pfeiltasten: Bewegung des Barden / Spielen der Noten
+
+WASD: Bewegen der Kamera in Manual-Mode
+
+1: Wechseln zwischen Manual- und Director-Mode (hauptsächlich für Testzwecke)
+
+Return: Dart spielen / Zuschauer ansprechen / Kerzen ausmachen und anzünden
+
+H: Aufheben des Hutes, falls Barde in der Nähe
+
+T: neues Tavernenlayout generieren (hauptsächlich für Testzwecke / zum Angeben)
+
+Starten des Rhytmusspiels: Laufe auf die Treppe an der linken Seite der Bühne
