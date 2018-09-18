@@ -27,6 +27,11 @@ public class taverne : Subject {
     GameObject kamerabereich;*/
 
     //Deklaration der Objekte in den Bereichen
+
+    GameObject cup1;
+    GameObject cup2;
+    GameObject cup3;
+    GameObject cup4;
     GameObject buehne;
     GameObject tisch1;
     GameObject tisch2;
@@ -745,7 +750,11 @@ public class taverne : Subject {
             //berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
             //berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
             tischmeshwaage(-0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
+            cup1.transform.position = new Vector3((Random.Range(-1.2f, 0.2f)), 0.61f,(Random.Range(-0.3f, 0.3f)));
             tischmeshsenk(2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+            cup2.transform.position = new Vector3((Random.Range(2.2f, 2.8f)), 0.61f, (Random.Range(-2.2f, -0.8f)));
+            cup3.transform.position = new Vector3((Random.Range( - 5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 0.2f, barpos + 2.2f)));
+            cup4.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 2.7f, barpos + 4.8f)));
         }
 
         if (konfig == 2) {
@@ -755,6 +764,11 @@ public class taverne : Subject {
             //berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3(1, 0.1f, -4.5f), new Vector3(1, 0.1f, 1));
             tischmeshwaage(0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
             tischmeshsenk(-2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+
+            cup1.transform.position = new Vector3((Random.Range(-0.2f, 1.2f)), 0.61f, (Random.Range(-0.3f, 0.3f)));
+            cup2.transform.position = new Vector3((Random.Range(-2.8f, -2.2f)), 0.61f, (Random.Range(-2.2f, -0.8f)));
+            cup3.transform.position = new Vector3((Random.Range(5.2f, 5.8f)), 0.51f, (Random.Range(barpos2 - 2.2f, barpos2 - 0.2f)));
+            cup4.transform.position = new Vector3((Random.Range(5.2f, 5.8f)), 0.51f, (Random.Range(barpos2 - 4.8f, barpos2 - 2.7f)));
         }
 
         if (konfig == 3) {
@@ -802,6 +816,11 @@ public class taverne : Subject {
             tischmeshsenk(3.5f, 0, -4, tisch2, hocker11, hocker12, hocker13, hocker14);
             tischmeshsenk(-0.5f, 0, -1, tisch3, hocker15, hocker16, hocker17, hocker18);
             tischmeshsenk(-0.5f, 0, -4, tisch4, hocker19, hocker20, hocker21, hocker22);
+
+            cup1.transform.position = new Vector3((Random.Range(3.2f, 3.8f)), 0.61f,(Random.Range(-1.6f, -0.4f)));
+            cup2.transform.position = new Vector3((Random.Range(-0.8f, 0.2f)), 0.61f, (Random.Range(-4.6f, -3.4f)));
+            cup3.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 0.2f, barpos + 2.2f)));
+            cup4.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 2.7f, barpos + 4.8f)));
         }
         if (hockerzahl != maxhocker) {
             for (int i = hockerzahl + 1; i <= maxhocker; i++) {
@@ -831,10 +850,13 @@ public class taverne : Subject {
                 hockers[i].GetComponent<Renderer>().receiveShadows = true;
             }
 
-            bar.GetComponent<Renderer>().receiveShadows = true;
-            bar.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-            buehne.GetComponent<Renderer>().receiveShadows = true;
-            buehne.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+
+                bar.GetComponent<Renderer>().receiveShadows = true;
+                bar.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                buehne.GetComponent<Renderer>().receiveShadows = true;
+                buehne.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+
+            
         }
         lastkonf = konfig;
         GameObject.Find("AudienceBehave").GetComponent<AudienceBehave>().Reassemble();
@@ -1008,6 +1030,17 @@ public class taverne : Subject {
         wand3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
         wand4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
         decke = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+        cup1 = (GameObject)Instantiate(Resources.Load("Prefab/cup new"));
+        cup2 = (GameObject)Instantiate(Resources.Load("Prefab/cup new"));
+        cup3 = (GameObject)Instantiate(Resources.Load("Prefab/cup new"));
+        cup4 = (GameObject)Instantiate(Resources.Load("Prefab/cup new"));
+
+        cup1.GetComponentInChildren<MeshRenderer>().material = (Material)Instantiate(Resources.Load("Materials/Bark"));
+        cup2.GetComponentInChildren<MeshRenderer>().material = (Material)Instantiate(Resources.Load("Materials/Bark"));
+        cup3.GetComponentInChildren<MeshRenderer>().material = (Material)Instantiate(Resources.Load("Materials/Bark"));
+        cup4.GetComponentInChildren<MeshRenderer>().material = (Material)Instantiate(Resources.Load("Materials/Bark"));
+
         //spawn = GameObject.CreatePrimitive(PrimitiveType.Quad);
 
         //Instanzierung der Hilfslisten der Objekte
@@ -1046,6 +1079,10 @@ public class taverne : Subject {
         wand3.name = "wand3";
         wand4.name = "wand4";
         decke.name = "decke";
+        cup1.name = "cup1";
+        cup2.name = "cup2";
+        cup3.name = "cup3";
+        cup4.name = "cup4";
         //spawn.name = "spawn";
 
         //Bereiche der Taverne einteilen
@@ -1157,6 +1194,7 @@ public class taverne : Subject {
 
         //berBuilder(spawn, new Vector3(4.5f, 0.1f, 4.5f), new Vector3(4.5f, 0.1f, 6.5f), new Vector3(6.5f, 0.1f, 4.5f), new Vector3(6.5f, 0.1f, 6.5f));
         //berBuilder(kamerabereich, new Vector3(-7, 0.1f, -9), new Vector3(-7, 0.1f, -7), new Vector3(7, 0.1f, -9), new Vector3(7, 0.1f, -7));
+
         randomize();
 
         NotifyAll();
