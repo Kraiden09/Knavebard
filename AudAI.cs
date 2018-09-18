@@ -6,8 +6,9 @@ public class AudAI : MonoBehaviour {
     public int id;
     AudienceBehave audienceBehave;
     GameObject iam;
-    bool inZone;
-
+    //bool inZone;
+    
+    //sound
     AudioClip[] shouts;
     AudioSource exclamation;
 
@@ -17,7 +18,7 @@ public class AudAI : MonoBehaviour {
         GetComponent<BoxCollider>().isTrigger = true;
         audienceBehave = GameObject.Find("AudienceBehave").GetComponent<AudienceBehave>();
         iam = transform.gameObject;
-        inZone = false;
+        //inZone = false;
 
         shouts = new AudioClip[4];
 
@@ -70,6 +71,7 @@ public void Wiggle()
     }
     */
 
+    // activate talking
     public void OnTriggerStay(Collider other) {
         if (!audienceBehave.jumping) {
             if (Input.GetKeyDown("return")) {

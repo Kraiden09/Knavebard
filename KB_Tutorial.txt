@@ -4,6 +4,8 @@ Pfeiltasten: Bewegung des Barden / Spielen der Noten
 
 WASD: Bewegen der Kamera in Manual-Mode
 
+Q und E: Wechseln zwischen vorgegebenen Kamerapositionen (Manual-Mode)
+
 1: Wechseln zwischen Manual- und Director-Mode (hauptsächlich für Testzwecke)
 
 Return: Dart spielen / Zuschauer ansprechen / Kerzen ausmachen und anzünden

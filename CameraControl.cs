@@ -42,7 +42,6 @@ public class CameraControl : MonoBehaviour {
     //camera reached target
     bool there;
 
-
     //Fixpunkt
     Vector3 fix;
 
@@ -62,12 +61,9 @@ public class CameraControl : MonoBehaviour {
     GameObject front;
     GameObject leftfront;
     GameObject rightfront;
-
-    GameObject[] Positions;
-
-    //future positions
     GameObject leftrear;
     GameObject rightrear;
+    GameObject[] Positions;
 
     //stuff for others
     public bool darting;
@@ -80,11 +76,9 @@ public class CameraControl : MonoBehaviour {
         mask = GetComponent<Camera>().cullingMask;
         GetComponent<Camera>().cullingMask = 0;
         GetComponent<Camera>().clearFlags = CameraClearFlags.Depth;
-
         Candle = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
-
-
-        //indirekte Grenzen durch urspruengliche Kameraposition
+        
+        //borders defined by normal camera-position
         borderx = transform.position.x;
         bordery = transform.position.y;
         borderz = transform.position.z + 4;
@@ -99,17 +93,7 @@ public class CameraControl : MonoBehaviour {
         darting = false;
         std = false;
 
-        /*
-        //Structs
-        standard = new CamPos(0, 1, -8, 0, 0);
-        front = new CamPos(0, 1.8f, -2.5f,0,0);
-        left = new CamPos(-4.4f, 2f, -0.5f, 0, 25);
-
-        //Order to switch between Positions
-        Positions = new CamPos[] { standard,front, left};
-        */
-
-
+        //posotions
         standard = new GameObject("StandardPos");
         standard.transform.Translate(0, 2.7f, -8);
         front = new GameObject("FrontPos");
@@ -122,15 +106,7 @@ public class CameraControl : MonoBehaviour {
         leftrear.transform.Translate(-4.5f, 4, -7);
         rightrear = new GameObject("RightRearPos");
         rightrear.transform.Translate(4.5f, 4, -7);
-
-
         Positions = new GameObject[] { standard, front, leftfront, rightfront, rightrear, leftrear };
-
-        /*
-        //References (not necessary)
-        noteBoard = GameObject.Find("NoteBoard").GetComponent<NoteBoard>();
-        screen = noteBoard.getScreen();
-        */
 
         //standard fixpoint for bard-mode (maybe later changed for free-roam)
         fix = new Vector3(0, 2.7f, 6.15f);
@@ -142,22 +118,18 @@ public class CameraControl : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-
         //switch
         if (Input.GetKeyDown("1")) {
             director = !director;
         }
-
         if (darting)
         {
             GoDarting();
         }
-
         else if (std)
         {
             ReturnToSTD();
         }
-
 
         //DIRECTOR-MODE
         else if (director) {
@@ -173,7 +145,6 @@ public class CameraControl : MonoBehaviour {
             //moving
             if (waiting && !there) {
                 CamMoveTo(Positions[random]);
-
                 if (Positions[random].transform.position == transform.position) {
                     there = true;
 
@@ -186,9 +157,7 @@ public class CameraControl : MonoBehaviour {
                 //int randomWays used
                 CameraMoveSC();
             }
-
         }
-
 
         //MANUAL-MODE
         else if(!director) {
@@ -267,12 +236,10 @@ public class CameraControl : MonoBehaviour {
                     next = false;
                 }
             }
-
         }
-
     }
 
-
+    /*NOT NEEDED
     public struct CamPos {
         // Camera-Position
         public float x;
@@ -293,11 +260,10 @@ public class CameraControl : MonoBehaviour {
         }
 
     }
-
+    */
 
     //moving Camera as Director
     //move cam in random direction (up, down,left, right)
-    //maybe
     public void CameraMoveSC() {
         switch (//UnityEngine.Random.Range(2, 4))
             randomWays) {
@@ -392,17 +358,9 @@ public class CameraControl : MonoBehaviour {
         float step = camSpeed * Time.deltaTime;
         //Vector3 target = pos.transform.position;
         Vector3 targetDir = pos.transform.position - transform.position;
-
-
+        
         //moving itself towards pos
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(pos.transform.position.x, pos.transform.position.y, pos.transform.position.z), camSpeed * 2 * Time.deltaTime);
-
-
-        //IMPLEMENT ROTATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        //Vector3 rotat = Vector3.RotateTowards(transform.forward, targetDir, step, 1.0f);    //(pos.rotX, pos.rotY, 0);
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, new Quaternion(pos.rotX,pos.rotY,0,0), 0.1f);
-
         transform.LookAt(fix);
     }
 
@@ -436,8 +394,7 @@ public class CameraControl : MonoBehaviour {
         targetDir = fix - transform.position;
         newDir = Vector3.RotateTowards(transform.forward, targetDir, camSpeed * Time.deltaTime * 0.1f, 0.0f);
         transform.rotation = Quaternion.LookRotation(newDir);
-
-
+        
         //end
         if (transform.position.x == 0 && transform.position.y == 2.8f && transform.position.z == -7)
         {
@@ -452,10 +409,10 @@ public class CameraControl : MonoBehaviour {
     IEnumerator sleeper() {
         waiting = true;
         //randomization for CamMoveSC
-        randomWays = UnityEngine.Random.Range(0, 4);
+        randomWays = UnityEngine.Random.Range(0, 8);
 
         //short time for testing
-        yield return new WaitForSeconds(UnityEngine.Random.Range(5, 7));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(7, 10));
         print("waited");
         waiting = false;
         there = false;

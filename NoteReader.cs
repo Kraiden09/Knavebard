@@ -17,10 +17,10 @@ public class NoteReader : MonoBehaviour {
     //songinfo (spaeter auslagern)
     //0 = up, 1 = right, 2 = down, 3 = left
     int[] songNotes = {1, 0, 2, 1,
-        1, 1, 1, 1,
-        1, 1, 1, 1, //bad timing somwhere here or
-        2, 2, 2, 2, // here
-    2, 2, 2, 1,
+        1, 0, 3, 0,
+        3, 0, 3, 0, 
+        3, 0, 3, 03, 
+    0, 3, 0, 1,
 
     //part 2
         2, 1, 2, 1,
@@ -29,9 +29,7 @@ public class NoteReader : MonoBehaviour {
     2, 1,
         //part 3
     };
-
-
-
+    
 
     float[] noteTiming = { 0.49180327868f,0.49180327868f, 0.49180327868f,      0.49180327868f,
         0.95560655737f, 0.97960655737f, 0.97960655737f, 0.97960655737f,
@@ -53,8 +51,6 @@ public class NoteReader : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-
-
         /*
         float[] noteTiming = { beat,beat,beat,      0.5f,
         1, 1, 1, 1,
@@ -79,7 +75,7 @@ public class NoteReader : MonoBehaviour {
     void Update() {
     }
     */
-
+    // stuff for giving notes to others
     public int readNotes(int i) {
         return songNotes[i];
     }
