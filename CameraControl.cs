@@ -41,6 +41,7 @@ public class CameraControl : MonoBehaviour {
 
     //camera reached target
     bool there;
+    bool blocked;
 
     //Fixpunkt
     Vector3 fix;
@@ -92,6 +93,7 @@ public class CameraControl : MonoBehaviour {
         waiting = false;
         darting = false;
         std = false;
+        blocked = false;
 
         //posotions
         standard = new GameObject("StandardPos");
@@ -130,9 +132,11 @@ public class CameraControl : MonoBehaviour {
         {
             ReturnToSTD();
         }
-
+        
+        //blocking while darting and so on
+        if (!blocked) { 
         //DIRECTOR-MODE
-        else if (director) {
+        if (director) {
             //moving camera from pos to pos
             //waiting in between changes
             if (!waiting) {
@@ -159,81 +163,97 @@ public class CameraControl : MonoBehaviour {
             }
         }
 
-        //MANUAL-MODE
-        else if(!director) {
-            //w-a-s-d
-            if (Input.GetKey(KeyCode.W)) {
-                //Grenze
-                if (transform.position.y - bordery < 1.5f) {
-                    transform.Translate(new Vector3(0, camSpeed * Time.deltaTime, 0));
-                    transform.LookAt(fix);
+            //MANUAL-MODE
+            if (!director)
+            {
+                //w-a-s-d
+                if (Input.GetKey(KeyCode.W))
+                {
+                    //Grenze
+                    if (transform.position.y - bordery < 1.5f)
+                    {
+                        transform.Translate(new Vector3(0, camSpeed * Time.deltaTime, 0));
+                        transform.LookAt(fix);
+                    }
                 }
-            }
 
-            if (Input.GetKey(KeyCode.A)) {
-                if (transform.position.x - borderx > -6) {
-                    transform.Translate(new Vector3(-camSpeed * Time.deltaTime, 0, 0));
-                    transform.LookAt(fix);
+                if (Input.GetKey(KeyCode.A))
+                {
+                    if (transform.position.x - borderx > -6)
+                    {
+                        transform.Translate(new Vector3(-camSpeed * Time.deltaTime, 0, 0));
+                        transform.LookAt(fix);
+                    }
                 }
-            }
 
-            if (Input.GetKey(KeyCode.S)) {
-                if (transform.position.y - bordery > -0.5f) {
-                    transform.Translate(new Vector3(0, -camSpeed * Time.deltaTime, 0));
-                    transform.LookAt(fix);
+                if (Input.GetKey(KeyCode.S))
+                {
+                    if (transform.position.y - bordery > -0.5f)
+                    {
+                        transform.Translate(new Vector3(0, -camSpeed * Time.deltaTime, 0));
+                        transform.LookAt(fix);
+                    }
                 }
-            }
 
-            if (Input.GetKey(KeyCode.D)) {
-                if (transform.position.x - borderx < 6) {
-                    transform.Translate(new Vector3(camSpeed * Time.deltaTime, 0, 0));
-                    transform.LookAt(fix);
+                if (Input.GetKey(KeyCode.D))
+                {
+                    if (transform.position.x - borderx < 6)
+                    {
+                        transform.Translate(new Vector3(camSpeed * Time.deltaTime, 0, 0));
+                        transform.LookAt(fix);
+                    }
                 }
-            }
 
-            //Zoom + Zoom out       OR MAYBE NOT BECAUSE OF UNFORSEEN STUFF
-            /*
-            if (Input.GetKey(KeyCode.PageUp)) {
-                if (transform.position.z - borderz < 5) {
-                    transform.Translate(new Vector3(0, 0, camSpeed * Time.deltaTime));
+                //Zoom + Zoom out       OR MAYBE NOT BECAUSE OF UNFORSEEN STUFF
+                /*
+                if (Input.GetKey(KeyCode.PageUp)) {
+                    if (transform.position.z - borderz < 5) {
+                        transform.Translate(new Vector3(0, 0, camSpeed * Time.deltaTime));
+                    }
                 }
-            }
 
-            if (Input.GetKey(KeyCode.PageDown)) {
-                if (transform.position.z - borderz > -1) {
-                    transform.Translate(new Vector3(0, 0, -camSpeed * Time.deltaTime));
+                if (Input.GetKey(KeyCode.PageDown)) {
+                    if (transform.position.z - borderz > -1) {
+                        transform.Translate(new Vector3(0, 0, -camSpeed * Time.deltaTime));
+                    }
                 }
-            }
-            */
+                */
 
-            //manual change of Camera-Position
-            if (Input.GetKeyDown("q")) {
-                current--;
-                prev = true;
-                next = false;
-            }
+                //manual change of Camera-Position
+                if (Input.GetKeyDown("q"))
+                {
+                    current--;
+                    prev = true;
+                    next = false;
+                }
 
-            if (Input.GetKeyDown("e")) {
-                current++;
-                next = true;
-                prev = false;
-            }
-
-            if (prev) {
-                //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
-                CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
-
-                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position) {
+                if (Input.GetKeyDown("e"))
+                {
+                    current++;
+                    next = true;
                     prev = false;
                 }
 
-            }
-            if (next) {
-                CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
-                //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
+                if (prev)
+                {
+                    //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
+                    CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
 
-                if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position) {
-                    next = false;
+                    if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position)
+                    {
+                        prev = false;
+                    }
+
+                }
+                if (next)
+                {
+                    CamMoveTo(Positions[Mathf.Abs(current % (Positions.Length))]);
+                    //CamMoveTo(Positions[(Positions.Length - 1) - Mathf.Abs(current % (Positions.Length - 1))]);
+
+                    if (Positions[Mathf.Abs(current % (Positions.Length))].transform.position == transform.position)
+                    {
+                        next = false;
+                    }
                 }
             }
         }
@@ -302,11 +322,11 @@ public class CameraControl : MonoBehaviour {
             //UP-right
             case 4:
                 if (transform.position.y - bordery < 1.5f) {
-                    transform.Translate(new Vector3(0, (camSpeed / 4) * Time.deltaTime, 0));
+                    transform.Translate(new Vector3(0, (camSpeed / 3) * Time.deltaTime, 0));
                 }
 
                 if (transform.position.x - borderx < 6) {
-                    transform.Translate(new Vector3((camSpeed / 4) * Time.deltaTime, 0, 0));
+                    transform.Translate(new Vector3((camSpeed / 3) * Time.deltaTime, 0, 0));
                 }
 
                 transform.LookAt(fix);
@@ -315,11 +335,11 @@ public class CameraControl : MonoBehaviour {
             //Down-right
             case 5:
                 if (transform.position.y - bordery > -0.5f) {
-                    transform.Translate(new Vector3(0, (-camSpeed / 4) * Time.deltaTime, 0));
+                    transform.Translate(new Vector3(0, (-camSpeed / 3) * Time.deltaTime, 0));
                 }
 
                 if (transform.position.x - borderx < 6) {
-                    transform.Translate(new Vector3((camSpeed / 4) * Time.deltaTime, 0, 0));
+                    transform.Translate(new Vector3((camSpeed / 3) * Time.deltaTime, 0, 0));
                 }
 
                 transform.LookAt(fix);
@@ -328,10 +348,10 @@ public class CameraControl : MonoBehaviour {
             //Donw-left
             case 6:
                 if (transform.position.y - bordery > -0.5f) {
-                    transform.Translate(new Vector3(0, (-camSpeed / 4) * Time.deltaTime, 0));
+                    transform.Translate(new Vector3(0, (-camSpeed / 3) * Time.deltaTime, 0));
                 }
                 if (transform.position.x - borderx > -6) {
-                    transform.Translate(new Vector3((-camSpeed / 4) * Time.deltaTime, 0, 0));
+                    transform.Translate(new Vector3((-camSpeed / 3) * Time.deltaTime, 0, 0));
                 }
                 transform.LookAt(fix);
                 break;
@@ -339,10 +359,10 @@ public class CameraControl : MonoBehaviour {
             //Up-left
             case 7:
                 if (transform.position.y - bordery < 1.5f) {
-                    transform.Translate(new Vector3(0, (camSpeed / 4) * Time.deltaTime, 0));
+                    transform.Translate(new Vector3(0, (camSpeed / 3) * Time.deltaTime, 0));
                 }
                 if (transform.position.x - borderx > -6) {
-                    transform.Translate(new Vector3((-camSpeed / 4) * Time.deltaTime, 0, 0));
+                    transform.Translate(new Vector3((-camSpeed / 3) * Time.deltaTime, 0, 0));
                 }
                 transform.LookAt(fix);
                 break;
@@ -370,6 +390,7 @@ public class CameraControl : MonoBehaviour {
 
     public void GoDarting()
     {
+        blocked = true;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(3.5f, 1.8f, 0.7f), camSpeed * 2 * Time.deltaTime);
 
         //rotation
@@ -388,6 +409,7 @@ public class CameraControl : MonoBehaviour {
     
     public void ReturnToSTD()
     {
+        blocked = true;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(0, 2.8f, -7), camSpeed * 2 * Time.deltaTime);
         
         //rotation
@@ -401,6 +423,7 @@ public class CameraControl : MonoBehaviour {
            std = false;
             //if rotation is too slow
             transform.LookAt(fix);
+            blocked = false;
         }
     }
     
