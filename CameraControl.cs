@@ -434,8 +434,7 @@ public class CameraControl : MonoBehaviour {
 
             //deblocking some stuff
             blocked = false;
-            taverne.IsDarting = true;
-
+            taverne.IsDarting = false;
         }
     }
     

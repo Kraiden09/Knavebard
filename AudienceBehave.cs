@@ -371,10 +371,13 @@ public void Rave() {
     }
 
     //jumping for parts of the crowd
-    IEnumerator Jump(/*GameObject[] guys*/) {
+    IEnumerator Jump() {
         float acceleration = 0;
-        Taverne.IsJumping = true;
-
+        //Taverne.IsJumping = true;
+        if (!happy)
+        {
+            Taverne.IsJumping = false;
+        }
 
         while (true) {
 
@@ -407,6 +410,8 @@ public void Rave() {
             }
 
             if (happy) {
+                Taverne.IsJumping = true;
+
                 //forced jumps, so they dont get stuck in the chair
                 for (int i = 0; i < guys.Length; i++) {
                     guys[i].transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));
@@ -429,7 +434,7 @@ public void Rave() {
                 }
                 acceleration = 0;
             }
-            Taverne.IsJumping = false;
+            //Taverne.IsJumping = false;
             yield return new WaitForSeconds(0.49f);
         }
         //end
