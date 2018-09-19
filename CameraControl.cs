@@ -25,6 +25,9 @@ public class CameraControl : MonoBehaviour {
     //deactivate Canvas
     CandleInteraction Candle;
 
+    //deactivate tavern-generating
+    taverne taverne;
+
     //Bewegungsgeschwindigkeit
     float camSpeed;
     float borderx, bordery, borderz;
@@ -78,6 +81,7 @@ public class CameraControl : MonoBehaviour {
         GetComponent<Camera>().cullingMask = 0;
         GetComponent<Camera>().clearFlags = CameraClearFlags.Depth;
         Candle = GameObject.Find("CandleInteraction").GetComponent<CandleInteraction>();
+        taverne = GameObject.Find("Tavern").GetComponent<taverne>();
         
         //borders defined by normal camera-position
         borderx = transform.position.x;
@@ -390,7 +394,9 @@ public class CameraControl : MonoBehaviour {
 
     public void GoDarting()
     {
+        //blocking some stuff
         blocked = true;
+        taverne.IsDarting = true;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(3.5f, 1.8f, 0.7f), camSpeed * 2 * Time.deltaTime);
 
         //rotation
@@ -409,7 +415,9 @@ public class CameraControl : MonoBehaviour {
     
     public void ReturnToSTD()
     {
+        //blocking some stuff
         blocked = true;
+        taverne.IsDarting = true;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(0, 2.8f, -7), camSpeed * 2 * Time.deltaTime);
         
         //rotation
@@ -423,7 +431,11 @@ public class CameraControl : MonoBehaviour {
            std = false;
             //if rotation is too slow
             transform.LookAt(fix);
+
+            //deblocking some stuff
             blocked = false;
+            taverne.IsDarting = true;
+
         }
     }
     

@@ -343,6 +343,9 @@ public void Rave() {
 
     //little jumps of excitement
     public IEnumerator Jump(GameObject guy) {
+        //blocking tavern
+        Taverne.IsJumping = true;
+
         float acceleration = 0;
 
         //forced jumps, so they dont get stuck in the chair
@@ -363,12 +366,15 @@ public void Rave() {
 
         jumping = false;
         //end
+        Taverne.IsJumping = false;
         yield return 0;
     }
 
     //jumping for parts of the crowd
     IEnumerator Jump(/*GameObject[] guys*/) {
         float acceleration = 0;
+        Taverne.IsJumping = true;
+
 
         while (true) {
 
@@ -423,6 +429,7 @@ public void Rave() {
                 }
                 acceleration = 0;
             }
+            Taverne.IsJumping = false;
             yield return new WaitForSeconds(0.49f);
         }
         //end
