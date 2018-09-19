@@ -62,7 +62,7 @@ public class BardCol : MonoBehaviour, IObserver {
     private void OnCollisionEnter(UnityEngine.Collision col) {
         if (col.gameObject.name != "Boden" && !onStage) rb.isKinematic = true;
         if (col.gameObject.name == "Boden") {
-            tavern.isJumping = false;
+            tavern.IsJumping = false;
         }
         rb.velocity = Vector3.zero;
         // Stairs
@@ -85,7 +85,7 @@ public class BardCol : MonoBehaviour, IObserver {
                 CollisionProt();
             }
             if (col.gameObject.name == "Buehne" && onStage) {
-                tavern.isJumping = true;
+                tavern.IsJumping = true;
             }
             if (col.gameObject.name == "Boden") {
                 if (onStage) onStage = false;
