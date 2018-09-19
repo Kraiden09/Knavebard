@@ -6,6 +6,8 @@ using UnityEngine;
 public class taverne : Subject {
 
     // Use this for initialization
+    public bool IsJumping = false;
+    public bool IsDarting = false;
     int cnt = 0;
     float konfig;
     float lastkonf = 0;
@@ -27,7 +29,8 @@ public class taverne : Subject {
     GameObject kamerabereich;*/
 
     //Deklaration der Objekte in den Bereichen
-
+    int TriggerNum = 0;
+    GameObject triggerCup;
     GameObject cup1;
     GameObject cup2;
     GameObject cup3;
@@ -717,138 +720,154 @@ public class taverne : Subject {
 
     //Zufällige Generierung
     void randomize() {
-        if (hockerzahl != 0) {
-            UpdateObserver();
-            GameObject[] hocks = getHocker();
-            for (int i = 1; i <= hockerzahl; i++) {
-                hock = hock + i;
-               
-                if (GameObject.Find(hock).transform.eulerAngles.y == 90) {
-                    GameObject.Find(hock).transform.Rotate(0, -90, 0);
-                }
-                if (GameObject.Find(hock).transform.eulerAngles.y == 270)
+    if (IsJumping == false && IsDarting == false)
+       {
+            if (hockerzahl != 0)
+            {
+                DestroyCupTrigger();
+                UpdateObserver();
+                GameObject[] hocks = getHocker();
+                for (int i = 1; i <= hockerzahl; i++)
                 {
-                    GameObject.Find(hock).transform.Rotate(0, 90, 0);
+                    hock = hock + i;
+
+                    if (GameObject.Find(hock).transform.eulerAngles.y == 90)
+                    {
+                        GameObject.Find(hock).transform.Rotate(0, -90, 0);
+                    }
+                    if (GameObject.Find(hock).transform.eulerAngles.y == 270)
+                    {
+                        GameObject.Find(hock).transform.Rotate(0, 90, 0);
+                    }
+                    if (GameObject.Find(hock).transform.eulerAngles.y == 180)
+                    {
+                        GameObject.Find(hock).transform.Rotate(0, -180, 0);
+                    }
+
+                    hock = "Hocker";
                 }
-                if (GameObject.Find(hock).transform.eulerAngles.y == 180)
+            }
+
+            hockerzahl = 0;
+            tischzahl = 0;
+            konfig = Mathf.Floor(Random.Range(1, 4));
+            float barpos = Random.Range(-6, -1);
+            float barpos2 = Random.Range(-1, 3);
+            if (konfig == 1)
+            {
+                //berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
+                barBuilder(bar, -7, 0, barpos);
+                //berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
+                //berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
+                tischmeshwaage(-0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
+                cup1.transform.position = new Vector3((Random.Range(-1.2f, 0.2f)), 0.61f, (Random.Range(-0.3f, 0.3f)));
+                tischmeshsenk(2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+                cup2.transform.position = new Vector3((Random.Range(2.2f, 2.8f)), 0.61f, (Random.Range(-2.2f, -0.8f)));
+                cup3.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 0.2f, barpos + 2.2f)));
+                cup4.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 2.7f, barpos + 4.8f)));
+            }
+
+            if (konfig == 2)
+            {
+                //berBuilder(barbereich, new Vector3(4, 0.1f, barpos2 - 6), new Vector3(4, 0.1f, barpos2 + 1), new Vector3(7, 0.1f, barpos2 - 6), new Vector3(7, 0.1f, barpos2 + 1));
+                barBuilder2(bar, 7, 0, barpos2);
+                //berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
+                //berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3(1, 0.1f, -4.5f), new Vector3(1, 0.1f, 1));
+                tischmeshwaage(0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
+                tischmeshsenk(-2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
+
+                cup1.transform.position = new Vector3((Random.Range(-0.2f, 1.2f)), 0.61f, (Random.Range(-0.3f, 0.3f)));
+                cup2.transform.position = new Vector3((Random.Range(-2.8f, -2.2f)), 0.61f, (Random.Range(-2.2f, -0.8f)));
+                cup3.transform.position = new Vector3((Random.Range(5.2f, 5.8f)), 0.51f, (Random.Range(barpos2 - 2.2f, barpos2 - 0.2f)));
+                cup4.transform.position = new Vector3((Random.Range(5.2f, 5.8f)), 0.51f, (Random.Range(barpos2 - 4.8f, barpos2 - 2.7f)));
+            }
+
+            if (konfig == 3)
+            {
+                if (lastkonf != 3)
                 {
-                    GameObject.Find(hock).transform.Rotate(0, -180, 0);
+                    tisch3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    tisch4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+                    hocker15 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker16 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker17 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker18 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker19 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker20 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker21 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker22 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker23 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker24 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker25 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker26 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    hocker27 = GameObject.CreatePrimitive(PrimitiveType.Quad);
+
+                    tisch3.name = "Tisch3";
+                    tisch4.name = "Tisch4";
+
+                    hocker15.name = "Hocker15";
+                    hocker16.name = "Hocker16";
+                    hocker17.name = "Hocker17";
+                    hocker18.name = "Hocker18";
+                    hocker19.name = "Hocker19";
+                    hocker20.name = "Hocker20";
+                    hocker21.name = "Hocker21";
+                    hocker22.name = "Hocker22";
+                    hocker23.name = "Hocker23";
+                    hocker24.name = "Hocker24";
+                    hocker25.name = "Hocker25";
+                    hocker26.name = "Hocker26";
+                    hocker27.name = "Hocker27";
                 }
 
-                hock = "Hocker";
+                //berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
+                barBuilder(bar, -7, 0, barpos);
+                //berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
+                //berBuilder(tischbereich, new Vector3(-3, 0.1f, -5), new Vector3(-3, 0.1f, 1), new Vector3(6, 0.1f, -5), new Vector3(6, 0.1f, 1));
+                tischmeshsenk(3.5f, 0, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
+                tischmeshsenk(3.5f, 0, -4, tisch2, hocker11, hocker12, hocker13, hocker14);
+                tischmeshsenk(-0.5f, 0, -1, tisch3, hocker15, hocker16, hocker17, hocker18);
+                tischmeshsenk(-0.5f, 0, -4, tisch4, hocker19, hocker20, hocker21, hocker22);
+
+                cup1.transform.position = new Vector3((Random.Range(3.2f, 3.8f)), 0.61f, (Random.Range(-1.6f, -0.4f)));
+                cup2.transform.position = new Vector3((Random.Range(-0.8f, 0.2f)), 0.61f, (Random.Range(-4.6f, -3.4f)));
+                cup3.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 0.2f, barpos + 2.2f)));
+                cup4.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 2.7f, barpos + 4.8f)));
             }
-        }
+            if (hockerzahl != maxhocker)
+            {
+                for (int i = hockerzahl + 1; i <= maxhocker; i++)
+                {
 
-        hockerzahl = 0;
-        tischzahl = 0;
-        konfig = Mathf.Floor(Random.Range(1, 4));
-        float barpos = Random.Range(-6, -1);
-        float barpos2 = Random.Range(-1, 3);
-        if (konfig == 1) {
-            //berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
-            barBuilder(bar, -7, 0, barpos);
-            //berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
-            //berBuilder(tischbereich, new Vector3(-1, 0.1f, -4.5f), new Vector3(-1, 0.1f, 1), new Vector3(4, 0.1f, -4.5f), new Vector3(4, 0.1f, 1));
-            tischmeshwaage(-0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
-            cup1.transform.position = new Vector3((Random.Range(-1.2f, 0.2f)), 0.61f,(Random.Range(-0.3f, 0.3f)));
-            tischmeshsenk(2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
-            cup2.transform.position = new Vector3((Random.Range(2.2f, 2.8f)), 0.61f, (Random.Range(-2.2f, -0.8f)));
-            cup3.transform.position = new Vector3((Random.Range( - 5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 0.2f, barpos + 2.2f)));
-            cup4.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 2.7f, barpos + 4.8f)));
-        }
-
-        if (konfig == 2) {
-            //berBuilder(barbereich, new Vector3(4, 0.1f, barpos2 - 6), new Vector3(4, 0.1f, barpos2 + 1), new Vector3(7, 0.1f, barpos2 - 6), new Vector3(7, 0.1f, barpos2 + 1));
-            barBuilder2(bar, 7, 0, barpos2);
-            //berBuilder(buehnenbereich, new Vector3(-4, 0.1f, 4), new Vector3(-4, 0.1f, 7), new Vector3(+4, 0.1f, 4), new Vector3(+4, 0.1f, 7));
-            //berBuilder(tischbereich, new Vector3(-4, 0.1f, -4.5f), new Vector3(-4, 0.1f, 1), new Vector3(1, 0.1f, -4.5f), new Vector3(1, 0.1f, 1));
-            tischmeshwaage(0.5f, 0, 0, tisch1, hocker7, hocker8, hocker9, hocker10);
-            tischmeshsenk(-2.5f, 0, -1.5f, tisch2, hocker11, hocker12, hocker13, hocker14);
-
-            cup1.transform.position = new Vector3((Random.Range(-0.2f, 1.2f)), 0.61f, (Random.Range(-0.3f, 0.3f)));
-            cup2.transform.position = new Vector3((Random.Range(-2.8f, -2.2f)), 0.61f, (Random.Range(-2.2f, -0.8f)));
-            cup3.transform.position = new Vector3((Random.Range(5.2f, 5.8f)), 0.51f, (Random.Range(barpos2 - 2.2f, barpos2 - 0.2f)));
-            cup4.transform.position = new Vector3((Random.Range(5.2f, 5.8f)), 0.51f, (Random.Range(barpos2 - 4.8f, barpos2 - 2.7f)));
-        }
-
-        if (konfig == 3) {
-            if (lastkonf != 3) {
-                tisch3 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                tisch4 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-
-                hocker15 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker16 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker17 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker18 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker19 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker20 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker21 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker22 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker23 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker24 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker25 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker26 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                hocker27 = GameObject.CreatePrimitive(PrimitiveType.Quad);
-
-                tisch3.name = "Tisch3";
-                tisch4.name = "Tisch4";
-
-                hocker15.name = "Hocker15";
-                hocker16.name = "Hocker16";
-                hocker17.name = "Hocker17";
-                hocker18.name = "Hocker18";
-                hocker19.name = "Hocker19";
-                hocker20.name = "Hocker20";
-                hocker21.name = "Hocker21";
-                hocker22.name = "Hocker22";
-                hocker23.name = "Hocker23";
-                hocker24.name = "Hocker24";
-                hocker25.name = "Hocker25";
-                hocker26.name = "Hocker26";
-                hocker27.name = "Hocker27";
+                    nr = i.ToString();
+                    hock = hock + nr;
+                    Destroy(GameObject.Find(hock));
+                    hock = "Hocker";
+                }
             }
+            if (tischzahl != maxtisch)
+            {
+                for (int i = tischzahl + 1; i <= maxtisch; i++)
+                {
+                    tinr = i.ToString();
+                    tis = tis + tinr;
+                    Destroy(GameObject.Find(tis));
+                    tis = "Tisch";
+                }
 
-            //berBuilder(barbereich, new Vector3(-7, 0.1f, barpos - 1), new Vector3(-7, 0.1f, barpos + 6), new Vector3(-4, 0.1f, barpos - 1), new Vector3(-4, 0.1f, barpos + 6));
-            barBuilder(bar, -7, 0, barpos);
-            //berBuilder(buehnenbereich, new Vector3(-4f, 0.1f, 4), new Vector3(-4f, 0.1f, 7), new Vector3(4f, 0.1f, 4), new Vector3(4f, 0.1f, 7));
-            //berBuilder(tischbereich, new Vector3(-3, 0.1f, -5), new Vector3(-3, 0.1f, 1), new Vector3(6, 0.1f, -5), new Vector3(6, 0.1f, 1));
-            tischmeshsenk(3.5f, 0, -1, tisch1, hocker7, hocker8, hocker9, hocker10);
-            tischmeshsenk(3.5f, 0, -4, tisch2, hocker11, hocker12, hocker13, hocker14);
-            tischmeshsenk(-0.5f, 0, -1, tisch3, hocker15, hocker16, hocker17, hocker18);
-            tischmeshsenk(-0.5f, 0, -4, tisch4, hocker19, hocker20, hocker21, hocker22);
+                GameObject[] tische = getTische();
+                for (int i = 0; i < tische.Length; i++)
+                {
+                    tische[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                }
 
-            cup1.transform.position = new Vector3((Random.Range(3.2f, 3.8f)), 0.61f,(Random.Range(-1.6f, -0.4f)));
-            cup2.transform.position = new Vector3((Random.Range(-0.8f, 0.2f)), 0.61f, (Random.Range(-4.6f, -3.4f)));
-            cup3.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 0.2f, barpos + 2.2f)));
-            cup4.transform.position = new Vector3((Random.Range(-5.8f, -5.2f)), 0.51f, (Random.Range(barpos + 2.7f, barpos + 4.8f)));
-        }
-        if (hockerzahl != maxhocker) {
-            for (int i = hockerzahl + 1; i <= maxhocker; i++) {
-
-                nr = i.ToString();
-                hock = hock + nr;
-                Destroy(GameObject.Find(hock));
-                hock = "Hocker";
-            }
-        }
-        if (tischzahl != maxtisch) {
-            for (int i = tischzahl + 1; i <= maxtisch; i++) {
-                tinr = i.ToString();
-                tis = tis + tinr;
-                Destroy(GameObject.Find(tis));
-                tis = "Tisch";
-            }
-
-            GameObject[] tische = getTische();
-            for (int i = 0; i < tische.Length; i++) {
-                tische[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-            }
-
-            GameObject[] hockers = getTische();
-            for (int i = 0; i < hockers.Length; i++) {
-                hockers[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-                hockers[i].GetComponent<Renderer>().receiveShadows = true;
-            }
+                GameObject[] hockers = getTische();
+                for (int i = 0; i < hockers.Length; i++)
+                {
+                    hockers[i].GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                    hockers[i].GetComponent<Renderer>().receiveShadows = true;
+                }
 
 
                 bar.GetComponent<Renderer>().receiveShadows = true;
@@ -856,10 +875,17 @@ public class taverne : Subject {
                 buehne.GetComponent<Renderer>().receiveShadows = true;
                 buehne.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 
-            
+
+            }
+            lastkonf = konfig;
+            GameObject.Find("AudienceBehave").GetComponent<AudienceBehave>().Reassemble();
+
+            CreateCupTrigger(cup1);
+            CreateCupTrigger(cup2);
+            CreateCupTrigger(cup3);
+            CreateCupTrigger(cup4);
+
         }
-        lastkonf = konfig;
-        GameObject.Find("AudienceBehave").GetComponent<AudienceBehave>().Reassemble();
         /*tischbereich.GetComponent<Renderer>().receiveShadows = true;
         buehnenbereich.GetComponent<Renderer>().receiveShadows = true;
         barbereich.GetComponent<Renderer>().receiveShadows = true;
@@ -881,6 +907,27 @@ public class taverne : Subject {
         mesh.RecalculateTangents();
 
 
+    }
+
+    void CreateCupTrigger(GameObject cup)
+    {
+        TriggerNum++;
+        triggerCup = new GameObject();
+        triggerCup.name = "triggerCup" + TriggerNum;
+        BoxCollider triggerCol; 
+        triggerCup.transform.position = cup.transform.position;
+        triggerCol = triggerCup.AddComponent<BoxCollider>();
+        triggerCol.size = new Vector3(1, 1, 1);
+        triggerCup.transform.parent = cup.transform;
+        triggerCup.AddComponent<CupTrigger>();
+        triggerCol.isTrigger = true;
+    }
+
+    void DestroyCupTrigger() {
+        for (int i = 1; i < 5; i++)
+        {
+            GameObject.Destroy(GameObject.Find("triggerCup" + i));
+        }
     }
 
     void createUVWandHV(GameObject Wand) {
@@ -914,44 +961,45 @@ public class taverne : Subject {
     }
 
     void createUVBar(GameObject square) {
-        Renderer rend = square.GetComponent<Renderer>();
-        Material wallMat = Resources.Load<Material>("Materials/Bark");
-        rend.material = wallMat;
-        Mesh mesh = square.GetComponent<MeshFilter>().mesh;
-        Vector3[] vertices = mesh.vertices;
-        Vector2[] uvs = new Vector2[vertices.Length];
+            Renderer rend = square.GetComponent<Renderer>();
+            Material wallMat = Resources.Load<Material>("Materials/Bark");
+            rend.material = wallMat;
+            Mesh mesh = square.GetComponent<MeshFilter>().mesh;
+            Vector3[] vertices = mesh.vertices;
+            Vector2[] uvs = new Vector2[vertices.Length];
 
-        int durchlauf = 0;
+            int durchlauf = 0;
 
-        for (int i = 0; i < vertices.Length; i = i + 4) {
-            durchlauf++;
-            if (durchlauf % 2 == 0) {
-                uvs[i] = new Vector2(vertices[i].z, vertices[i].y);
-                uvs[i + 1] = new Vector2(vertices[i + 1].z, vertices[i + 1].y);
-                uvs[i + 2] = new Vector2(vertices[i + 2].z, vertices[i + 2].y);
-                uvs[i + 3] = new Vector2(vertices[i + 3].z, vertices[i + 3].y);
+            for (int i = 0; i < vertices.Length; i = i + 4) {
+                durchlauf++;
+                if (durchlauf % 2 == 0) {
+                    uvs[i] = new Vector2(vertices[i].z, vertices[i].y);
+                    uvs[i + 1] = new Vector2(vertices[i + 1].z, vertices[i + 1].y);
+                    uvs[i + 2] = new Vector2(vertices[i + 2].z, vertices[i + 2].y);
+                    uvs[i + 3] = new Vector2(vertices[i + 3].z, vertices[i + 3].y);
+                }
+
+                if (durchlauf % 2 == 1 & durchlauf % 5 != 0) {
+                    uvs[i] = new Vector2(vertices[i].x, vertices[i].y);
+                    uvs[i + 1] = new Vector2(vertices[i + 1].x, vertices[i + 1].y);
+                    uvs[i + 2] = new Vector2(vertices[i + 2].x, vertices[i + 2].y);
+                    uvs[i + 3] = new Vector2(vertices[i + 3].x, vertices[i + 3].y);
+                }
+
+                if (i >= vertices.Length - 12) {
+                    //Debug.Log("a");
+                    uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
+                    uvs[i + 1] = new Vector2(vertices[i + 1].x, vertices[i + 1].z);
+                    uvs[i + 2] = new Vector2(vertices[i + 2].x, vertices[i + 2].z);
+                    uvs[i + 3] = new Vector2(vertices[i + 3].x, vertices[i + 3].z);
+                    durchlauf = 0;
+                }
             }
 
-            if (durchlauf % 2 == 1 & durchlauf % 5 != 0) {
-                uvs[i] = new Vector2(vertices[i].x, vertices[i].y);
-                uvs[i + 1] = new Vector2(vertices[i + 1].x, vertices[i + 1].y);
-                uvs[i + 2] = new Vector2(vertices[i + 2].x, vertices[i + 2].y);
-                uvs[i + 3] = new Vector2(vertices[i + 3].x, vertices[i + 3].y);
-            }
-
-            if (i >= vertices.Length - 12) {
-                //Debug.Log("a");
-                uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
-                uvs[i + 1] = new Vector2(vertices[i + 1].x, vertices[i + 1].z);
-                uvs[i + 2] = new Vector2(vertices[i + 2].x, vertices[i + 2].z);
-                uvs[i + 3] = new Vector2(vertices[i + 3].x, vertices[i + 3].z);
-                durchlauf = 0;
-            }
-        }
-
-        mesh.uv = uvs;
-        mesh.RecalculateNormals();
-        mesh.RecalculateTangents();
+            mesh.uv = uvs;
+            mesh.RecalculateNormals();
+            mesh.RecalculateTangents();
+        
     }
 
     void createUVHocker(GameObject square) {
