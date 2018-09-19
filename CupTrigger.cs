@@ -43,26 +43,35 @@ public class CupTrigger : MonoBehaviour {
 
     void TextAtTrigger()
     {
+
             triggerText.text = "Press \"C\" to drink.";
+
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider c)
     {
-        if (other.gameObject.name == "Bard")
+        if (c.gameObject.name == "Bard")
         {
-        TextAtTrigger();
+            if (triggerText == null)
+            {
+                triggerText = GameObject.Find("InteractionText").GetComponent<Text>();
+            }
+            TextAtTrigger();
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider c)
     {
         if (Input.GetKeyDown(KeyCode.C)){
             Slurp1.Play();
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider c)
     {
-        triggerText.text = "";
+        if (triggerText != null)
+        {
+            triggerText.text = "";
+        }
     }
 }
