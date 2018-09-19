@@ -138,6 +138,7 @@ public class Control : Subject, IObserver {
                 }
                 if (Input.GetKeyDown(KeyCode.Space) && !pressed) {
                     jumping = StartCoroutine(Jump());
+                    tavern.isJumping = true;
                 }
                 if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow)) {
                     colProt = false;

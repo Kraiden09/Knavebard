@@ -23,7 +23,6 @@ public class BardCol : MonoBehaviour, IObserver {
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
             tavernInit = true;
-
             Tische = GameObject.Find("Tavern").GetComponent<taverne>().getTische();
         }
     }
@@ -62,6 +61,9 @@ public class BardCol : MonoBehaviour, IObserver {
 
     private void OnCollisionEnter(UnityEngine.Collision col) {
         if (col.gameObject.name != "Boden" && !onStage) rb.isKinematic = true;
+        if (col.gameObject.name == "Boden") {
+            tavern.isJumping = false;
+        }
         rb.velocity = Vector3.zero;
         // Stairs
         if (col.gameObject.name == "Hand") {
@@ -81,6 +83,9 @@ public class BardCol : MonoBehaviour, IObserver {
             }
             if (col.gameObject.name == "Buehne" && !climbing && !onStage) {
                 CollisionProt();
+            }
+            if (col.gameObject.name == "Buehne" && onStage) {
+                tavern.isJumping = true;
             }
             if (col.gameObject.name == "Boden") {
                 if (onStage) onStage = false;
