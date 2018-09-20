@@ -35,6 +35,11 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     bool notInThere;
     int randSeed;
 
+    //stuff for audio
+    int prevJam;
+    bool badPlayed, goodPlayed, greatPlayed;
+
+
     //for use of AudAI too
     public bool jumping;
 
@@ -61,7 +66,12 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         //creating Audience
         //StartCoroutine(WaitForTavern());
 
+        //audio stuff
+        prevJam = 0;
         differentVoices = new AudioClip[4];
+        badPlayed = false;
+        goodPlayed = false;
+        greatPlayed = false;
 
         // Audio from Asset Store -> Universal Sound FX by imphenzia
         voices = gameObject.AddComponent<AudioSource>();
@@ -109,9 +119,7 @@ public void Rave() {
 
 }
 */
-    int prevJam = 0;
-    bool badPlayed = false, goodPlayed = false, greatPlayed = false;
-
+    
     void PlayVoice() {
         if (!voices.isPlaying) {
             if (jam < -10) {
