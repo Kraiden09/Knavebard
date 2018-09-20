@@ -14,7 +14,7 @@ public class Hut : MonoBehaviour {
     public int jamSchwabi;
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         red = new Color(1, 0, 0, 1);
         yellow = new Color(1, 1, 0, 1);
         green = new Color(0, 1, 0, 1);
@@ -36,7 +36,7 @@ public class Hut : MonoBehaviour {
 
         HutZylinder.transform.parent = LightHut.transform;
 
-        LightHut.transform.Translate(6.45f, 0, 3.8f);
+        LightHut.transform.Translate(-1, 0, 4);
 
         LightHut.GetComponent<CapsuleCollider>().isTrigger = true;
         HutZylinder.GetComponent<CapsuleCollider>().isTrigger = true;
@@ -44,18 +44,16 @@ public class Hut : MonoBehaviour {
         LightHut.AddComponent<HutTriggerScript>();
 
         //LightHut.AddComponent<CandleTrigger>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update() {
         //Debug.Log(LightHut.GetComponent<Renderer>().material.color);
         if (jam.jam < -20) {
             jamSchwabi = 0;
-        }
-        else if (jam.jam >= -20 && jam.jam < 20) {
+        } else if (jam.jam >= -20 && jam.jam < 40) {
             jamSchwabi = 1;
-        }
-        else {
+        } else {
             jamSchwabi = 2;
         }
 
@@ -104,8 +102,7 @@ public class Hut : MonoBehaviour {
                     HutZylinder.GetComponent<Renderer>().material.color = HutZylinder.GetComponent<Renderer>().material.color + new Color(0, -0.02f, 0, 0);
                 }
                 //Debug.Log("RICHTUNG=rot");
-            }
-            else if (Color == yellow) {
+            } else if (Color == yellow) {
                 if (LightHut.GetComponent<Renderer>().material.color.r < 1) {
                     LightHut.GetComponent<Renderer>().material.color = LightHut.GetComponent<Renderer>().material.color + new Color(0.02f, 0, 0, 0);
                     HutZylinder.GetComponent<Renderer>().material.color = HutZylinder.GetComponent<Renderer>().material.color + new Color(0.02f, 0, 0, 0);
@@ -115,8 +112,7 @@ public class Hut : MonoBehaviour {
                     HutZylinder.GetComponent<Renderer>().material.color = HutZylinder.GetComponent<Renderer>().material.color + new Color(0, 0.02f, 0, 0);
                 }
                 //Debug.Log("RICHTUNG=gelb");
-            }
-            else if (Color == green) {
+            } else if (Color == green) {
                 if (LightHut.GetComponent<Renderer>().material.color.r > 0) {
                     LightHut.GetComponent<Renderer>().material.color = LightHut.GetComponent<Renderer>().material.color + new Color(-0.02f, 0, 0, 0);
                     HutZylinder.GetComponent<Renderer>().material.color = HutZylinder.GetComponent<Renderer>().material.color + new Color(-0.02f, 0, 0, 0);
