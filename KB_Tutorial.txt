@@ -15,3 +15,5 @@ H: Aufheben des Hutes, falls Barde in der Nähe
 T: neues Tavernenlayout generieren (hauptsächlich für Testzwecke / zum Angeben)
 
 Starten des Rhythmusspiels: Laufe auf die Treppe an der linken Seite der Bühne
+
+C: aus Tasse trinken
