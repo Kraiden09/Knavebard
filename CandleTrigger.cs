@@ -115,10 +115,4 @@ public class CandleTrigger : MonoBehaviour {
         isLit = state;
     }
 
-    /*IEnumerator WaitForBard() {
-        while (!bardInit.initialized) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        bard = GameObject.Find("Bard");
-    }*/
 }

@@ -18,6 +18,10 @@ public class Control : Subject, IObserver {
     bool colProt = false;
     bool allowScore = true;
 
+    Vector3 startLeftHand, startRightHand;
+    Rigidbody lhrb, rhrb;
+    float step;
+
     Vector3[] spawnPos;
 
     // 1 = forward, -1 = backward
@@ -308,10 +312,6 @@ public class Control : Subject, IObserver {
         }
     }
 
-    Vector3 startLeftHand, startRightHand;
-    Rigidbody lhrb, rhrb;
-    float step;
-
     IEnumerator MoveHandsCR(float fadeTimeMusic, float speed, float refreshRate, Vector3 positionLeft, Vector3 positionRight, bool setNewStartPos) {
         allowPlaying = false;
         if (!handsInit) {
@@ -360,51 +360,6 @@ public class Control : Subject, IObserver {
             allowPlaying = false;
         }
     }
-
-    // Wait for character to be initialized
-    /*IEnumerator WaitForInit() {
-        while (!initDone.initialized) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        character = GameObject.Find("Bard");
-        StartCoroutine(WaitForTavern());
-        colHandler = character.AddComponent<BardCol>();
-        colHandler.AddColHandler(character, movement, rotation);
-        //character.transform.Translate(-4.23f, 0.606f, 0.98f);
-    }*/
-
-    /*IEnumerator WaitForTavern() {
-        while (tavern.getSpawn() == null) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        // Define Spawn position
-        Vector3[] spawnPos = tavern.getSpawnVert();
-        character.transform.position = new Vector3(spawnPos[0].x, 0.6f, spawnPos[0].z);
-        character.transform.Translate((spawnPos[3].x - spawnPos[0].x) / 2, 0, (spawnPos[3].z - spawnPos[0].z) / 2);
-        // Set LookAt Point
-        character.transform.LookAt(new Vector3(0, 0, 0));
-        character.transform.Rotate(0, -90, 0);
-        initDone.UpdateJoint();
-        if (character.GetComponent<Rigidbody>() == null) col.SetBardRB();
-        colHandler.SetBardRB();
-        StartCoroutine(WaitForRB());
-    }*/
-
-    // Wait for Rigid Body
-    /*IEnumerator WaitForRB() {
-        while (character.GetComponent<Rigidbody>() == null) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        Rigidbody rb = character.GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezePositionX;
-        rb.constraints = RigidbodyConstraints.FreezePositionZ;
-    }*/
-
-    /*IEnumerator BuildUp() {
-        GameObject.Find("Main Camera").GetComponent<Camera>().enabled = false;
-        yield return new WaitForSeconds(1);
-        GameObject.Find("Main Camera").GetComponent<Camera>().enabled = true;
-    }*/
 
     IEnumerator Jump() {
         pressed = true;

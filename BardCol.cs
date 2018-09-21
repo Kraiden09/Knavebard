@@ -8,6 +8,10 @@ public class BardCol : MonoBehaviour, IObserver {
     Control control;
     NoteBoard board;
     Rigidbody rb;
+    IMinigame scriptInvolvedInMoving;
+
+    bool stageMovement = true, moveToOtherPoint = false;
+    Vector3 lookAtPoint;
 
     Vector3 stageMid;
 
@@ -177,10 +181,6 @@ public class BardCol : MonoBehaviour, IObserver {
         StartCoroutine(Rotate(whereToStand, true, true));
     }
 
-    IMinigame scriptInvolvedInMoving;
-    bool stageMovement = true, moveToOtherPoint = false;
-    Vector3 lookAtPoint;
-
     IEnumerator Rotate(Vector3 point, bool firstRotation, bool stop) {
         /*GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         temp.transform.position = point;
@@ -291,11 +291,4 @@ public class BardCol : MonoBehaviour, IObserver {
             StartCoroutine(Rotate(new Vector3(stageMid.x, stageMid.y, stageMid.z - 1), false, true));
         }
     }
-
-    /*IEnumerator WaitForTavern() {
-        while (tavern.getSpawn() == null) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        tavernInit = true;
-    }*/
 }

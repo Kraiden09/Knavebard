@@ -89,16 +89,4 @@ public class CandleInteraction : MonoBehaviour, IObserver {
         }
     }
 
-    /*IEnumerator GetCandles() {
-        while (!cs.IsInit()) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        candles = cs.GetCandles();
-        triggerArea = new GameObject[candles.Length];
-        isLit = new bool[candles.Length];
-        for (int i = 0; i < isLit.Length; i++) {
-            isLit[i] = true;
-        }
-        CreateTriggerArea();
-    }*/
 }

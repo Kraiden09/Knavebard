@@ -82,14 +82,24 @@ public class NoteBoard : Subject, IObserver {
     // Music
     AudioSource music, murmur;
 
-    //GameObject stairs;
+    Collider rhsc, lhsc;
+
+    GameObject guitar;
+    Material[] guitarMaterials;
+
+    bool movedHands = false;
+
+    private readonly float baseScoreTime = 0.5f;
+    private float scoreTime;
+
+    // Position of the clipping "area"
+    float noteClippingPos;
+
+    float fiMoveAlongScreen;
 
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
             stageRef = tavern.getBuehne();
-            //stairs = tavern.getTreppe();
-            //floor.AddComponent<BoxCollider>();
-            //stageRef.AddComponent<BoxCollider>();
             BuildBoard();
         }
     }
@@ -106,8 +116,6 @@ public class NoteBoard : Subject, IObserver {
         tavern.Subscribe(this);
 
         cc = GameObject.Find("Main Camera").GetComponent<CameraControl>();
-
-        //stairs.AddComponent<MeshCollider>();
 
         despawningNotes = new GameObject[noteArrSize];
 
@@ -156,12 +164,6 @@ public class NoteBoard : Subject, IObserver {
         Mesh stageRefMesh = stageRef.GetComponent<MeshFilter>().mesh;
         Transform stageRefTrans = stageRef.GetComponent<Transform>();
 
-        // Get Length
-        /*float stageLenX = stageRefMesh.bounds.size.x * stageRefTrans.localScale.x;
-        float stageLenY = stageRefMesh.bounds.size.y * stageRefTrans.localScale.y;
-        float stageLenZ = stageRefMesh.bounds.size.z * stageRefTrans.localScale.z;
-        Debug.Log(stageLenX + " " + stageLenY + " " + stageLenZ + " ");*/
-
         BuildPosts(stageRefMesh, stageRefTrans);
         BuildScreen();
     }
@@ -207,9 +209,6 @@ public class NoteBoard : Subject, IObserver {
 
         AddMaterialPost(post1);
         AddMaterialPost(post2);
-
-        //Destroy(post1.GetComponent<CapsuleCollider>());
-        //Destroy(post2.GetComponent<CapsuleCollider>());
     }
 
     void AddMaterialPost(GameObject go) {
@@ -224,7 +223,6 @@ public class NoteBoard : Subject, IObserver {
     void BuildScreen() {
         screenMesh = new Mesh();
         screen = new GameObject("Screen");
-        //screen.transform.position = post2.transform.position;
 
         screen.AddComponent<MeshFilter>();
         screen.AddComponent<MeshRenderer>();
@@ -236,7 +234,6 @@ public class NoteBoard : Subject, IObserver {
         float post1YPos = post1.transform.position.y;
         float post1ZPos = post1.transform.position.z;
         float post2XPos = post2.transform.position.x + 0.1f;
-        //float post2YPos = post2.transform.position.y;
         float post2ZPos = post2.transform.position.z;
         float post1XScale = post1.transform.localScale.x;
         float post2XScale = post2.transform.localScale.x;
@@ -263,25 +260,11 @@ public class NoteBoard : Subject, IObserver {
 
         screenMesh.triangles = faces.ToArray();
 
-        //screen.GetComponent<Renderer>().material.color = Color.white;
-
         AddMaterialScreen();
-
-        //screenMesh.RecalculateNormals();
 
         BuildHitArea(upperLimit - lowerLimit, screenMesh.vertices[0]);
 
         NotifyAll();
-
-        /*GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        test.transform.position = post1.transform.position;
-        test.transform.Translate(post1.transform.localScale.x / 2, 1.1f, -0.01f);
-        test.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-
-        GameObject test2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        test2.transform.position = post1.transform.position;
-        test2.transform.Translate(post1.transform.localScale.x / 2, -0.1f, -0.01f);
-        test2.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);*/
     }
 
     void AddMaterialScreen() {
@@ -329,10 +312,6 @@ public class NoteBoard : Subject, IObserver {
         Destroy(borderRight.GetComponent<CapsuleCollider>());
     }
 
-    /*byte RandomColorVal() {
-        return (byte)rnd.Next(0, 255);
-    }*/
-
     // For score calculation
     private readonly float baseAcceptance = 0.20f;
     private float acceptance;
@@ -376,7 +355,6 @@ public class NoteBoard : Subject, IObserver {
     public void DestroyNote() {
         // Only destroy the note, if position is < the position of the right border + acceptance
         if (notes[0].transform.position.x < borderRight.transform.position.x + baseAcceptance) {
-            //StartCoroutine(WaitTillFade());
             ValidateFadeValues();
             StartCoroutine(FadeOut(curNotePos, fadeInterval, fadeTime, false));
         }
@@ -424,15 +402,12 @@ public class NoteBoard : Subject, IObserver {
         grad.SetKeys(new GradientColorKey[] { new GradientColorKey(newColor, 0.0f), new GradientColorKey(newColor, 1.0f) }, 
                      new GradientAlphaKey[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
         col.color = grad;
-        //Color newColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-        //emittedParticles.material.SetColor("_TintColor", newColor);
         main.startSize = 0.05f;
         emission.enabled = true;
         // Emission Rate
         emission.rateOverTime = 70;
 
         ps.Play();
-        //StartCoroutine(Recolor(ps));
         StartCoroutine(StopPS(emitter, ps, 0.5f, lifetime));
     }
 
@@ -464,9 +439,6 @@ public class NoteBoard : Subject, IObserver {
         StartCoroutine(FadeInMusic());
     }
 
-    GameObject guitar;
-    Material[] guitarMaterials;
-
     public void CreateGuitar() {
         if (guitar == null) {
             guitar = (GameObject)Instantiate(Resources.Load("Prefab/Guitar"));
@@ -483,8 +455,6 @@ public class NoteBoard : Subject, IObserver {
 
         StartCoroutine(FadeInObject(guitar, fadeTimeMusic, 0));
     }
-
-    bool movedHands = false;
 
     IEnumerator FadeInObject(GameObject obj, float time, float delay) {
         float increaseVal = 1 / (time * fpsCap);
@@ -566,8 +536,6 @@ public class NoteBoard : Subject, IObserver {
         Destroy(obj);
     }
 
-    Collider rhsc, lhsc;
-
     IEnumerator FadeInMusic() {
         if (bardRB == null) bardRB = GameObject.Find("Bard").GetComponent<Rigidbody>();
         bardRB.isKinematic = true;
@@ -614,16 +582,12 @@ public class NoteBoard : Subject, IObserver {
     }
 
     IEnumerator DropNote(int myPos) {
-        //Debug.Log(myPos);
         despawningNotes[myPos] = notes[0];
         notes.RemoveAt(0);
         curNoteEndPos--;
         curNotePos = (curNotePos + 1) % noteArrSize;
-        //notesDespawning++;
-        //StartCoroutine(WaitTillFade());
         Rigidbody noteRB = despawningNotes[myPos].AddComponent<Rigidbody>();
         Collider noteCol = despawningNotes[myPos].AddComponent<SphereCollider>();
-        //despawningNotes[myPos].AddComponent<NoteCol>();
         Physics.IgnoreCollision(noteCol, post1.GetComponent<Collider>());
         Physics.IgnoreCollision(noteCol, post2.GetComponent<Collider>());
         foreach (Collider item in despawningNotes[myPos].GetComponentsInChildren<Collider>()) {
@@ -675,17 +639,12 @@ public class NoteBoard : Subject, IObserver {
 
     IEnumerator FadeOut(int myPos, float decreaseInterval, float time, bool dropped) {
         // Multiple notes Despawning
-        //bool multiple = false;
         if (!dropped) {
             despawningNotes[myPos] = notes[0];
             notes.RemoveAt(0);
             curNoteEndPos--;
             curNotePos = (curNotePos + 1) % noteArrSize;
-            //notesDespawning++;
         }
-        /*if (notesDespawning > 1) {
-            multiple = true;
-        }*/
         CreateNoteParticle(despawningNotes[myPos].transform.position);
         if (decreaseInterval > time) decreaseInterval = time;
         // Fading happens over (time / decrease) times, which means to reach 0f it has
@@ -707,19 +666,8 @@ public class NoteBoard : Subject, IObserver {
             currentAlpha -= decreaseVal;
             yield return new WaitForSeconds(decreaseInterval);
         }
-        /*if (multiple) {
-            Destroy(notes[curNotePos-1]);
-            notes.RemoveAt(curNotePos-1);
-        } else {
-            Destroy(notes[myPos]);
-            notes.RemoveAt(myPos);
-        }*/
         Destroy(despawningNotes[myPos]);
         despawningNotes[myPos] = null;
-        //Debug.Log("Despawned");
-        //notesDespawning--;
-        //curNotePos--;
-        //curNoteEndPos--;
     }
 
     IEnumerator StopPS(GameObject emitter, ParticleSystem ps, float timeToEmit, float lifetime) {
@@ -732,18 +680,6 @@ public class NoteBoard : Subject, IObserver {
         yield return new WaitForSeconds(lifetime);
         Destroy(emitter);
     }
-
-    // TBC - Every Particle has another color (optional)
-    /*IEnumerator Recolor(ParticleSystem ps) {
-        ParticleSystem.Particle[] particles;
-        particles = new ParticleSystem.Particle[ps.particleCount];
-        int num = ps.GetParticles(particles);
-        Debug.Log(num);
-        yield return new WaitForSeconds(1f);
-    }*/
-
-    private readonly float baseScoreTime = 0.5f;
-    private float scoreTime;
 
     IEnumerator ShowScore(int scoreType) {
         scoreCRrunning = true;
@@ -778,9 +714,6 @@ public class NoteBoard : Subject, IObserver {
             yield return new WaitForSeconds(scoreTime);
         }
     }
-
-    // Position of the clipping "area"
-    float noteClippingPos;
 
     IEnumerator GenerateNotes() {
         GameObject note;
@@ -837,29 +770,14 @@ public class NoteBoard : Subject, IObserver {
                 }
             }
 
-            //StartCoroutine(fade(fadeMesh, 2f, true));
-            //note.AddComponent<NoteCol>();
             notes.Add(note);
 
             StartCoroutine(FadeIn(curNoteEndPos, fadeInterval, fadeTime, fadeInDelay));
 
-            //yield return new WaitForSeconds(noteTiming[i]);
-            //yield return new WaitForSeconds(noteReader.readTime(i) * Time.deltaTime * fpsCap);
             yield return new WaitForSeconds(noteReader.readTime(i) * (fpsCap / ShowFPS()));
         }
         finished = true;
     }
-
-    // Wait for stage to be initialized
-    /*IEnumerator WaitForStage() {
-        while ((GameObject.Find("Buehne") == null)) {
-            yield return new WaitForSeconds(0.1f);
-        }
-        /*StartCoroutine(GenerateNotes());
-        StartCoroutine(MoveNotes());*/
-    //}
-
-    float fiMoveAlongScreen;
 
     IEnumerator MoveNotes() {
         // FI = Framerate Independent
@@ -869,16 +787,11 @@ public class NoteBoard : Subject, IObserver {
             foreach (GameObject note in notes) {
                 note.transform.Translate(-fiMoveAlongScreen, 0, 0);
                 if (note.transform.position.x <= despawn.x) {
-                    /*if (i < notesDespawning) {
-                        i++;
-                        continue;
-                    }*/
                     remove = true;
                 }
             }
             if (remove) {
                 lastScoreCR = StartCoroutine(ShowScore(0));
-                //DestroyNote();
                 StartCoroutine(DropNote(curNotePos));
                 bad++;
                 remove = false;

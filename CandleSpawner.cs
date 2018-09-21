@@ -31,6 +31,10 @@ public class CandleSpawner : Subject, IObserver {
     bool[] isLit;
     Light[] lights;
 
+    // For position of the candle holders and candles
+    int numberOfCH;
+    float distanceOfWalls, spaceBetween, correction;
+
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
             posWallLeft = tavern.getWandLinksVert();
@@ -45,14 +49,7 @@ public class CandleSpawner : Subject, IObserver {
         tavern.Subscribe(this);
 
         initialized = false;
-        //wallLocated = false;
-        //StartCoroutine(GetWallLeft());
-        //StartCoroutine(GetWallRight());
-        //verticesPerLayer = 20;
-        //layers = 5;
         height = 2f;
-        // One half for the left wall, the other half for the right wall
-        //numberOfCandles = 2;
         particleSystems = new ParticleSystem[numberOfCandles];
         candles = new GameObject[numberOfCandles];
         wicks = new GameObject[numberOfCandles];
@@ -168,10 +165,8 @@ public class CandleSpawner : Subject, IObserver {
         for (int j = 0; j < layers; j++) {
             for (int i = 0; i < verticesPerLayer; i++) {
                 if (i == 0) lastLayerIndexStart[index] = i + (j * verticesPerLayer);
-                //newVertices[i + (j * (verticesPerLayer + 1))] = new Vector3(0.5f, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
                 newVertices[index][i + (j * verticesPerLayer)] = new Vector3(0.5f, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
             }
-            //newVertices[((j + 1) * verticesPerLayer) + j] = new Vector3(0, ((height / (layers - 1)) * (j - 1) + (height / (layers - 1))), 0f);
         }
         newVertices[index][verticesPerLayer * layers] = new Vector3(0, ((height / (layers - 1)) * (layers - 2) + (height / (layers - 1))), 0f);
 
@@ -182,13 +177,6 @@ public class CandleSpawner : Subject, IObserver {
                 newVertices[index][i] = rotation * newVertices[index][i];
             }
         }
-
-        // For Testing purposes
-        /*for (int i = 0; i < newVertices[index].Length; i++) {
-            GameObject test = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            test.transform.position = newVertices[index][i];
-            test.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        }*/
 
         List<int> faces = new List<int>();
 
@@ -237,10 +225,6 @@ public class CandleSpawner : Subject, IObserver {
         }
     }
 
-    // For position of the candle holders and candles
-    int numberOfCH;
-    float distanceOfWalls, spaceBetween, correction;
-
     void CreateCandleHolder() {
         float wallLen = Math.Abs(posWallLeft[0].x + posWallLeft[2].x);
         distanceOfWalls = Math.Abs(posWallLeft[0].x - posWallRight[2].x);
@@ -267,10 +251,6 @@ public class CandleSpawner : Subject, IObserver {
             candleHolders[i + numberOfCH].transform.Translate(distanceOfWalls - (correction * 2), 0, 0);
             candleHolders[i + numberOfCH].transform.Rotate(0, 180, 0);
             candleHolders[i + numberOfCH].name = "Candle Holder" + (i + numberOfCH + 1);
-
-            //AddMaterialCH(candleHolders[i]);
-            //AddMaterialCH(candleHolders[i].transform.GetChild(0).gameObject);
-            //AddMaterialCH(candleHolders[i + numberOfCH].transform.GetChild(0).gameObject);
         }
         MoveCandles();
     }
@@ -299,10 +279,6 @@ public class CandleSpawner : Subject, IObserver {
         return candles;
     }
 
-    /*public bool IsInit() {
-        return initialized;
-    }*/
-
     public bool ToggleOnOff(int index) {
         bool newState = isLit[index];
         if (candles[index] != null) {
@@ -319,44 +295,6 @@ public class CandleSpawner : Subject, IObserver {
         }
         return newState;
     }
-
-    /*IEnumerator WaitForCandles() {
-        for (int i = 0; i < numberOfCandles; i++) {
-            Debug.Log(candles[i]);
-        }
-        while (candles[0] == null) {
-            yield return new WaitForSeconds(0.05f);
-        }
-        candlesCreated = true;
-    }*/
-
-    /*IEnumerator GetWallLeft() {
-        bool valid = false;
-        while (!valid) {
-            valid = true;
-            try {
-                posWallLeft = tavern.getWandLinksVert();
-            } catch (NullReferenceException) {
-                valid = false;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-        wallLocated = true;
-    }
-
-    IEnumerator GetWallRight() {
-        bool valid = false;
-        while (!valid) {
-            valid = true;
-            try {
-                posWallRight = tavern.getWandRechtsVert();
-            } catch (NullReferenceException) {
-                valid = false;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-        wallLocated = true;
-    }*/
 
     IEnumerator BurnDown(GameObject candle, GameObject wick, int index) {
         int lastIndex = newVertices[index].Length - 1;
@@ -375,6 +313,7 @@ public class CandleSpawner : Subject, IObserver {
 
         int right, left;
 
+        // Which areas are burned
         bool[] burnt = new bool[verticesPerLayer];
 
         while (layer > 0) {
@@ -385,15 +324,19 @@ public class CandleSpawner : Subject, IObserver {
             while (!layerBurnt) {
                 main = UnityEngine.Random.Range(0, verticesPerLayer);
 
+                // Looking for next unburned area
                 while (burnt[main]) {
                     main = (main + 1) % verticesPerLayer;
                 }
 
+                // Set unburned area as main
                 main = main + (layer * verticesPerLayer);
 
+                // neighboring areas
                 right = ((main + 1) % verticesPerLayer) + (verticesPerLayer * layer);
                 left = ((main - 1) % verticesPerLayer) + (verticesPerLayer * layer);
 
+                // While layer higher than the layer below
                 while (newVertices[index][main].y >= newVertices[index][lastLayerIndexStart[index] - verticesPerLayer].y) {
                     if (isLit[index]) {
                         if (!middleBurnt) {
@@ -410,19 +353,13 @@ public class CandleSpawner : Subject, IObserver {
                         if ((newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[index][main - verticesPerLayer].y) {
                             newVertices[index][left] = newVertices[index][left] + new Vector3(0, -(burnValue / 2), 0);
                         }
-                        /*if (lastLayerIndexStart % verticesPerLayer == 0) {
-                            if ((newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0)).y > newVertices[lastLayerIndexStart - verticesPerLayer].y) {
-                                newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] = newVertices[(lastLayerIndexStart + verticesPerLayer) - 1] + new Vector3(0, -(burnValue / 2), 0);
-                            }
-                        } else {
-                        }*/
-
-                        //Debug.Log((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - (0.05f) + " " + (((candleMesh.bounds.size.y * candle.transform.localScale.y) / (layers - 1)) * (layer - 1)));
+                        // Burn wick
                         if (((wickMesh.bounds.size.y * wick.transform.localScale.y * candle.transform.localScale.y) - 0.05f) > ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * (layer - 1)) * candle.transform.localScale.y) {
                             wickBurnt = ((candleMeshs[index].bounds.size.y / (curLayers - 1)) * burnValue * ((burnTimeRate * 10) * 2.3f)) / verticesPerLayer;
                             wick.transform.localScale -= new Vector3(0, wickBurnt, 0);
                             wick.transform.Translate(0, -wickBurnt * candle.transform.localScale.y, 0);
                         }
+                        // Set Vertices and Normals
                         candleMeshs[index].vertices = newVertices[index];
                         candleMeshs[index].RecalculateNormals();
                     }
@@ -431,6 +368,7 @@ public class CandleSpawner : Subject, IObserver {
                 middleBurnt = true;
                 burnt[main % verticesPerLayer] = true;
 
+                // Check if every area in layer is burned
                 for (int i = 0; i < verticesPerLayer; i++) {
                     if (burnt[i] == false) {
                         layerBurnt = false;
@@ -449,10 +387,6 @@ public class CandleSpawner : Subject, IObserver {
                 candleMeshs[index].RecalculateNormals();
             }
 
-            /*for (int i = 0; i < verticesPerLayer; i++) {
-                newVertices[(((layer - 1) * verticesPerLayer) + i)] = newVertices[(layer * verticesPerLayer) + i];
-            }*/
-
             newVertices[index][layer * verticesPerLayer] = newVertices[index][lastIndex];
             lastIndex = layer * verticesPerLayer;
 
@@ -462,6 +396,7 @@ public class CandleSpawner : Subject, IObserver {
             middleBurnt = false;
             layerBurnt = false;
 
+            // Resize array to array with one layer less
             Array.Resize(ref newVertices[index], newVertices[index].Length - verticesPerLayer);
             List<int> faces = new List<int>();
             CreateFaces(faces, index, curLayers);
@@ -471,7 +406,6 @@ public class CandleSpawner : Subject, IObserver {
         }
         isLit[index] = false;
         // Set Candle Text to "Burned Out"
-        // NRE?
         GameObject.Find("TriggerCandle" + (index + 1)).GetComponent<CandleTrigger>().SetIsLit(isLit[index]);
         particleSystems[index].Stop();
         candles[index].GetComponent<AudioSource>().Stop();
