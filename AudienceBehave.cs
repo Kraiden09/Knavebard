@@ -14,6 +14,8 @@ public class AudienceBehave : MonoBehaviour, IObserver {
     GameObject[] crowd, crowd0, crowd50, crowd75, crowd99, guys, empty;
     GameObject[] allHocker;
 
+    GameObject mpty;
+
     //is there happy audience?
     bool happy;
 
@@ -42,6 +44,8 @@ public class AudienceBehave : MonoBehaviour, IObserver {
 
     //for use of AudAI too
     public bool jumping;
+    // jumping speed
+    float acceleration;
 
     public void UpdateObserver(Subject subject) {
         if (subject is NoteBoard) {
@@ -60,7 +64,7 @@ public class AudienceBehave : MonoBehaviour, IObserver {
         Taverne = GameObject.Find("Tavern").GetComponent<taverne>();
         Taverne.Subscribe(this);
 
-        GameObject mpty = new GameObject();
+        mpty = new GameObject();
         empty = new GameObject[] { mpty };
         tavernReady = false;
         //creating Audience
@@ -354,7 +358,7 @@ public void Rave() {
         //blocking tavern
         Taverne.IsJumping = true;
 
-        float acceleration = 0;
+        acceleration = 0;
 
         //forced jumps, so they dont get stuck in the chair
         guy.transform.Translate(Vector3.up * Time.deltaTime * Mathf.Cos(acceleration));

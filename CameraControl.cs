@@ -49,8 +49,9 @@ public class CameraControl : MonoBehaviour {
     //Fixpunkt
     Vector3 fix;
 
-    // for rotation
+    // for movement
     Vector3 targetDir, newDir;
+    
     /*
     // used structs
     CamPos[] Positions;
@@ -139,33 +140,34 @@ public class CameraControl : MonoBehaviour {
         
         //blocking while darting and so on
         if (!blocked) { 
-        //DIRECTOR-MODE
-        if (director) {
-            //moving camera from pos to pos
+
+            //DIRECTOR-MODE
+             if (director) {
+                //moving camera from pos to pos
             //waiting in between changes
-            if (!waiting) {
-                StartCoroutine(sleeper());
-                while (lastPos == random) {
-                    random = UnityEngine.Random.Range(0, Positions.Length);
+                if (!waiting) {
+                    StartCoroutine(sleeper());
+                    while (lastPos == random) {
+                        random = UnityEngine.Random.Range(0, Positions.Length);
+                    }
                 }
-            }
 
-            //moving
-            if (waiting && !there) {
-                CamMoveTo(Positions[random]);
-                if (Positions[random].transform.position == transform.position) {
-                    there = true;
+                //moving
+                if (waiting && !there) {
+                    CamMoveTo(Positions[random]);
+                    if (Positions[random].transform.position == transform.position) {
+                        there = true;
 
-                    //lastPos to eliminate returning to the last position
-                    lastPos = random;
+                        //lastPos to eliminate returning to the last position
+                        lastPos = random;
+                    }
                 }
-            }
-            if (there) {
-                //slowly moving in random direction
-                //int randomWays used
-                CameraMoveSC();
-            }
-        }
+                if (there) {
+                    //slowly moving in random direction
+                    //int randomWays used
+                    CameraMoveSC();
+                }
+             }
 
             //MANUAL-MODE
             if (!director)
@@ -379,9 +381,7 @@ public class CameraControl : MonoBehaviour {
 
     //move between set positions
     public void CamMoveTo(GameObject pos) {
-        float step = camSpeed * Time.deltaTime;
-        //Vector3 target = pos.transform.position;
-        Vector3 targetDir = pos.transform.position - transform.position;
+        targetDir = pos.transform.position - transform.position;
         
         //moving itself towards pos
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(pos.transform.position.x, pos.transform.position.y, pos.transform.position.z), camSpeed * 2 * Time.deltaTime);
