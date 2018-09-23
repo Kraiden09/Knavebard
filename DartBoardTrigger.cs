@@ -72,7 +72,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
             text.text = "Press \"Return\" to start Playing.";
         } else {
             text.text = "Press \"Return\" to throw Dart or \"Esc\" to stop.";
-            text.transform.localPosition = new Vector3(-300, 170, 0);
+            text.transform.localPosition = new Vector3(-380, 220, 0);
         }
     }
 
@@ -219,7 +219,7 @@ public class DartBoardTrigger : MonoBehaviour, IMinigame {
         samePosition = bard.transform.position;
         cam.darting = false;
         cam.std = true;
-        text.transform.localPosition = new Vector3(25, 50, 0);
+        text.transform.localPosition = new Vector3(0, 15, 0);
         ShowText();
         for (int i = 0; i < dartInBoard.Length; i++) {
             if (dart != dartInBoard[i]) Destroy(dart);

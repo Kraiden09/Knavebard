@@ -97,6 +97,14 @@ public class NoteBoard : Subject, IObserver {
 
     float fiMoveAlongScreen;
 
+    // For score calculation
+    private readonly float baseAcceptance = 0.20f;
+    private float acceptance;
+
+    private float rightBorder, leftBorder;
+
+    public ParticleSystemRenderMode renderMode = ParticleSystemRenderMode.Mesh;
+
     public void UpdateObserver(Subject subject) {
         if (subject is taverne) {
             stageRef = tavern.getBuehne();
@@ -282,8 +290,6 @@ public class NoteBoard : Subject, IObserver {
         mesh.RecalculateTangents();
     }
 
-    private float rightBorder, leftBorder;
-
     void BuildHitArea(float length, Vector3 screenPos) {
         screenPos.y = screenPos.y - length / 2;
         screenPos.x = screenPos.x + 0.6f;
@@ -311,10 +317,6 @@ public class NoteBoard : Subject, IObserver {
         Destroy(borderLeft.GetComponent<CapsuleCollider>());
         Destroy(borderRight.GetComponent<CapsuleCollider>());
     }
-
-    // For score calculation
-    private readonly float baseAcceptance = 0.20f;
-    private float acceptance;
 
     // Note Rating depending on HitArea
     public void ScorePos() {
@@ -367,8 +369,6 @@ public class NoteBoard : Subject, IObserver {
         else if (fps > (fpsCap + 10)) fps = fpsCap + 10;
         return fps;
     }
-
-    public ParticleSystemRenderMode renderMode = ParticleSystemRenderMode.Mesh;
 
     private void CreateNoteParticle(Vector3 pos) {
         // Create emitter
